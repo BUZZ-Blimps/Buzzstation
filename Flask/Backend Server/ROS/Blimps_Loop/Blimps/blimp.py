@@ -18,6 +18,7 @@ To-Do:
 # Imports
 from Packages.packages import *
 from .blimp_type import is_attack_blimp
+from time import time
 
 # Logger
 from rclpy.logging import get_logger
@@ -112,8 +113,31 @@ class Blimp:
         # Last Log Message
         self.log = None
 
-        # Last Time State Machine Publishes over ROS
-        self.last_online = 0
+        # Last Time Heartbeat Publishes over ROS
+        self.last_online = 0.0
+
+        # Heartbeat Time last Received
+        self.last_heartbeat_time = time()
+
+        # Heartbeat Data
+        self.heartbeat_data = None
+
+        self.init_heartbeat_sub()
+
+    def init_heartbeat_sub(self):
+        # Subscribe to heartbeat if not already subscribed
+        self.basestation_node.heartbeat_subs[self.name] = self.basestation_node.create_subscription(
+            Bool, # Data Type
+            f"/{self.name}/heartbeat", # Topic Name
+            self.check_heartbeat, # Callback
+            1 # QoS Profile
+        )
+
+    # Heartbeat Callback for checking if a Blimp is still alive
+    def check_heartbeat(self, msg):
+        # Update last message received time
+        self.last_heartbeat_time = time()
+        self.heartbeat_data = msg.data
 
     # Get Redis Values
     def get_value(self, key, data_type):

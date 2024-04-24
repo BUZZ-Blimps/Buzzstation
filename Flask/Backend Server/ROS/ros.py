@@ -22,6 +22,7 @@ To-Do:
 
 # Imports
 from Packages.packages import *
+from time import time
 
 global basestation_node
 
@@ -68,7 +69,7 @@ class Basestation(Node):
         self.heartbeat_subs = {}
 
         # Heartbeat Timeout
-        self.heartbeat_timeout = 1
+        self.heartbeat_timeout = 4.0
 
         # Blimps Loop Speed
         self.blimps_loop_speed = 5 # Depends on CPU Speed (Future To-Do: Optimize Frontend/UI to run main loop faster)
@@ -80,7 +81,7 @@ class Basestation(Node):
         self.blimps_loop_count = 0
 
         # Blimps Loop Timeout (Total Timeout = Heartbeat Timeout + Blimp Timeout)
-        self.blimp_timeout = 4
+        self.blimp_timeout = 1.0
         
         # Create Blimps Loop Timer
         from .Blimps_Loop.blimps_loop import blimps_loop

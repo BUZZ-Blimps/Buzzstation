@@ -8,8 +8,9 @@ Sends and recieves blimp data over ROS.
 """
 
 # Imports
+from Packages.packages import socketio
 from ..ros import basestation_node, redis_client
-from .Blimps.update_blimp_lists import alive_blimps, new_blimps, timeout_blimps
+from .Blimps.update_blimp_lists import alive_blimps, new_blimps, timeout_blimps, reorder_blimp_names
 from .Blimps.update_blimp_data import update_component_for_all_blimps, update_blimp_component_color
 from .Blimps.add_blimps import add_new_blimps
 from .Blimps.remove_blimps import remove_timeout_blimps
@@ -40,10 +41,8 @@ def update_global_values():
     # All Autonomous State (Sends all current blimps into autonomous mode)
     # To-Do: Need to make function in update_blimps_data
 
-def update_blimp_values(current_blimp_names):
-    # Loop?
-    for blimp_name in current_blimp_names:
-        update_blimp_component_color()
+def update_blimp_values(current_blimps):
+    pass
 
 def update_blimps():
 
@@ -62,12 +61,24 @@ def update_blimps():
     # Handle New Blimps
     add_new_blimps(basestation_node, new_blimp_names)
 
-    # To-Do: Reorder names here
-    # reorder_blimp_names(basestation_node, new_blimp_names)
+    # Reorder Blimp Names
+    alive_blimp_names = reorder_blimp_names(alive_blimp_names)
+    basestation_node.current_blimp_names = reorder_blimp_names(basestation_node.current_blimp_names)
 
-    # Save Current Blimp Names to Redis
-    current_blimp_names = ','.join(alive_blimp_names)
-    redis_client.set('current_blimp_names', current_blimp_names)
+    # Get Current Blimp Names from Redis
+    current_blimp_names = redis_client.get('current_blimp_names').decode("utf-8")
 
-    # Update Blimp Values on Frontend and over ROS
-    update_blimp_values(current_blimp_names)
+    # If Blimp Names Changed, Update Frontend
+    if ','.join(basestation_node.current_blimp_names) != current_blimp_names:
+        
+        # Save Current Blimp Names to Redis
+        current_blimp_names = ','.join(basestation_node.current_blimp_names)
+        redis_client.set('current_blimp_names', current_blimp_names)
+
+        # Update Blimp Names on Frontend
+        socketio.emit('update_blimp_names', current_blimp_names.split(','))
+
+        logger.info('Blimp Names Changed')
+
+    # To-Do: Update Blimp Values on Frontend and over ROS (Do Individual Emits)
+    #update_blimp_values(basestation_node.current_blimps)

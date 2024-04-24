@@ -8,49 +8,41 @@ Description:
 # Imports
 from Packages.packages import *
 from time import time
+from .blimp_names import blimp_names_order
 
 # Logger
 from rclpy.logging import get_logger
 logger = get_logger('Basestation')
 
-# Initialize a timestamp to track the last heartbeat message received time
-global last_heartbeat_time
-last_heartbeat_time = time()
-
-# Heartbeat Data
-global heartbeat_data
-heartbeat_data = None
-
 # Check for alive blimps with heartbeat data available
 def alive_blimps(basestation_node):
-    heartbeat_topics = [topic_name for topic_name, _ in basestation_node.get_topic_names_and_types()
-                        if topic_name.endswith('/heartbeat')]
+    # Get all heartbeat topics
+    heartbeat_topics = [topic_name for topic_name, _ in basestation_node.get_topic_names_and_types() if topic_name.endswith('/heartbeat')]
 
-    namespaces = []
-    for topic_name in heartbeat_topics:
-        # Extract namespace from the topic name
-        namespace = topic_name.split('/')[1]
+    # Extract namespaces from topic names
+    namespaces = {topic_name.split('/')[1] for topic_name in heartbeat_topics}
 
-        if namespace not in basestation_node.heartbeat_subs:
-            heartbeat_sub = basestation_node.create_subscription(Bool, topic_name, check_heartbeat, 10)
-            basestation_node.heartbeat_subs[namespace] = heartbeat_sub
+    alive_blimps = []
 
-        # Check if heartbeat is recent
-        if heartbeat_data is not None and time() - last_heartbeat_time <= basestation_node.heartbeat_timeout:
-            # Alive Blimp
-            namespaces.append(namespace)
-            # Blimp is online
-            if namespace in basestation_node.current_blimps:
-                basestation_node.current_blimps[namespace].last_online = basestation_node.get_clock().now()
+    for namespace in namespaces:
+        if namespace not in blimp_names_order:
+            continue  # Skip if not in blimp order list
 
-    return namespaces
+        blimp = basestation_node.current_blimps.get(namespace)
+        if blimp is None:
+            # If first time this blimp is seen, initialize it
+            alive_blimps.append(namespace)
+            continue
 
-# Heartbeat Callback for checking if a Blimp is still alive
-def check_heartbeat(msg):
-    # Update last message received time
-    global last_heartbeat_time, heartbeat_data
-    last_heartbeat_time = time()
-    heartbeat_data = msg.data
+        # Check if heartbeat data is available and within timeout
+        current_time = time()
+        time_since_last_heartbeat = current_time - blimp.last_heartbeat_time
+        if time_since_last_heartbeat <= basestation_node.heartbeat_timeout:
+            blimp.heartbeat_data = None  # Reset heartbeat data
+            alive_blimps.append(namespace)
+            blimp.last_online = basestation_node.get_clock().now()  # Update last online time
+
+    return alive_blimps
 
 # Make new blimps name list
 def new_blimps(alive_blimps, current_blimps):
@@ -63,6 +55,20 @@ def timeout_blimps(new_blimps, current_blimps):
     old_and_new = find_different_values(new_blimps, current_blimps)
     old = find_common_values(current_blimps, old_and_new)
     return old
+
+# Reorder Current Blimp Names
+def reorder_blimp_names(current_blimp_names):
+    # Create a mapping of the base order to use for sorting
+    order_map = {value: index for index, value in enumerate(blimp_names_order)}
+    
+    # Sort the list based on the index from the base_order
+    # Defaulting to a large number if the item is not in base_order
+    reordered_list = sorted(
+        current_blimp_names, 
+        key=lambda item: order_map.get(item, float('inf'))
+    )
+    
+    return reordered_list
 
 # Helper function to find common values in two lists
 # Returns a list of common values

@@ -4,54 +4,85 @@
 import React, { useEffect, useState } from 'react';
 
 // React Native 
-import { View, Text, StyleSheet, Platform, Dimensions } from 'react-native';
+import { View, SafeAreaView, Text, StyleSheet, Platform, Dimensions } from 'react-native';
 
 // Expo
 import * as ScreenOrientation from 'expo-screen-orientation';
 
 // Components
-import SquareButton from './SquareButton'; 
+import Button from './Button'; 
+import BlimpsContainer from './BlimpsContainer'; 
+
+// IOS
+const isIOS = Platform.OS === 'ios';
+
+// Android
+const isAndroid = Platform.OS === 'android';
+
+// Lock the screen orientation to landscape mode on mobile platforms
+function lockOrientation() {
+  if (isAndroid || isIOS) {
+    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
+  }
+}
 
 export default function App() {
 
   useEffect(() => {
-    if (Platform.OS === 'android' || Platform.OS === 'ios') {
-      // Lock the screen orientation to landscape mode
-      ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
-    }
+    lockOrientation();
   }, []);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.buzzBlimps}>Buzz Blimps</Text>
-      <View style={styles.buttonContainer}>
-        <SquareButton blimpName='none' buttonKey='goal_color' buttonColor='orange' />
-        <SquareButton blimpName='none' buttonKey='enemy_color' buttonColor='blue' />
-      </View>
-    </View>
+    <SafeAreaView style={styles.container}>
+
+      <SafeAreaView style={styles.topContainer}>
+        <Text style={styles.buzzBlimps}>Buzz Blimps</Text>
+      </SafeAreaView>
+
+      <SafeAreaView style={styles.buttonContainer}>
+          <Button blimpName='none' buttonKey='goal_color' buttonColor='orange' buttonText='Goal' buttonWidth={100} buttonHeight={50} />
+          <Button blimpName='none' buttonKey='enemy_color' buttonColor='blue' buttonText='Enemy' buttonWidth={100} buttonHeight={50} />
+      </SafeAreaView>
+
+      <SafeAreaView style={styles.blimpContainer}>
+        <BlimpsContainer />
+      </SafeAreaView>
+
+    </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     paddingTop: 20,
-    position: 'relative', // Position relative to contain absolute elements
   },
   buzzBlimps: {
     fontSize: 40,
-    textAlign: 'center',
-    position: 'absolute',
-    top: Platform.OS === 'ios' ? '5%' : '3%', // Adjust top position based on platform
-    left: Platform.OS === 'ios' ? '44%' : '47%', // Position in the middle horizontally
-    transform: [{ translateX: -50 }, { translateY: 0 }], // Centering trick
+    position: 'absolute', // Enables absolute positioning
+    top: 15, // Distance from the top edge
+    left: isAndroid || isIOS ? '41%' : '47%', // Positions the text at the horizontal center
+    transform: [{ translateX: -50 }], // Adjusts position to ensure exact centering
+    fontWeight: 'bold',
+    color: 'gold', // Text color
+    textShadowColor: 'black', // Outline color
+    textShadowOffset: { width: 2, height: 2 }, // Direction of the shadow
+    textShadowRadius: isAndroid || isIOS ? 1 : 2.5, // Spread of the shadow
+  },
+  topContainer: {
+    flexDirection: 'row', // Arranges buttons horizontally
+    justifyContent: 'center', // Ensures buttons are at the end of the row
+    alignItems: 'center', // Aligns content in the middle vertically
   },
   buttonContainer: {
-    flexDirection: 'row',
-    position: 'absolute',
-    top: Platform.OS === 'ios' ? '1.25%' : '2%', // Adjust top position based on platform
-    right: Platform.OS === 'ios' ? '-10%' : '25%', // Adjust top position based on platform
+    flexDirection: 'row', // Arranges buttons horizontally
+    justifyContent: 'flex-end', // Ensures buttons are at the end of the row
+    alignItems: 'center', // Aligns content in the middle vertically
+  },
+  blimpContainer: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    marginLeft: '2%',
   },
 });
