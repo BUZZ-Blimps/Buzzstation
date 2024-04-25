@@ -9,6 +9,15 @@ import { View, StyleSheet, Pressable, Text, Platform } from 'react-native';
 // SocketIO
 import { socket } from './Constants'; // Importing the SocketIO instance
 
+// Async Storage on Device
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// Unique User ID
+import uuid from 'react-native-uuid';
+
+// Generate a UUID to assign a unique ID
+// const userID = uuid.v4();
+
 // IOS
 const isIOS = Platform.OS === 'ios';
 
@@ -16,7 +25,14 @@ const isIOS = Platform.OS === 'ios';
 const isAndroid = Platform.OS === 'android';
 
 const BlimpsContainer: React.FC = () => {
+  // Store Blimp Names
   const [blimps, setBlimps] = useState<string[]>([]);
+
+  // Store User ID in Async Storage
+  const [userID, setUserId] = useState<string | null>(null);
+
+  // Store Blimp Button Colors
+  const [blimpColors, setBlimpColors] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
     // Define the event handler for 'update_blimps'
@@ -37,14 +53,67 @@ const BlimpsContainer: React.FC = () => {
     };
   }, []); // Empty dependency array to ensure the effect runs only once when the component mounts
 
+  useEffect(() => {
+    const handleToggleBlimpColor = (val: { userID: string; blimp: string; color: string }) => {
+      const { userID: receivedUserID, blimp: receivedBlimp } = val;
+
+      let newColor = 'red'; // Default color for other users
+      if (receivedUserID === userID) {
+        newColor = 'blue'; // Color for the current user
+      } else if (receivedUserID === 'none') {
+        newColor = 'green'; // Color for all users if userID is 'none'
+      }
+
+      console.log(newColor);
+
+      setBlimpColors((prevColors) => ({
+        ...prevColors,
+        [receivedBlimp]: newColor,
+      }));
+    };
+
+    socket.on('toggle_blimp_button_color', handleToggleBlimpColor);
+
+    return () => {
+      socket.off('toggle_blimp_button_color', handleToggleBlimpColor);
+    };
+  }, [userID]);
+
+  useEffect(() => {
+    const getOrCreateUUID = async () => {
+      let storedUUID = await AsyncStorage.getItem('userUUID');
+      if (!storedUUID) {
+        // If no UUID is found, create a new one and store it
+        const newUUID = String(uuid.v4());
+        await AsyncStorage.setItem('userUUID', newUUID);
+        storedUUID = newUUID;
+      }
+      setUserId(storedUUID); // Set the UUID in state
+    };
+
+    getOrCreateUUID(); // Run on component mount
+  }, []);
+
+  // Handle Blimp NameButton Click
+  const handleClick = (blimp: string) => {
+    if (blimp !== 'none') {
+      if (userID) {
+        socket.emit('toggle_blimp_button', { userID: userID, blimp: blimp });
+        // Testing
+        console.log(userID);
+        console.log(`Blimp ${blimp} pressed`);
+      }
+    }
+};
+
   return (
     <View style={styles.container}>
       {blimps.length > 0 ? (
         blimps.map((blimp, index) => (
           <Pressable
             key={index}
-            style={styles.blimpButton}
-            onPress={() => console.log(`Blimp ${blimp} pressed`)}
+            style={[styles.blimpButton, { backgroundColor: blimpColors[blimp] || 'green' }]}
+            onPress={() => handleClick(blimp)}
             android_disableSound={true}
             android_ripple={{ color: 'transparent' }}
             role='button'
