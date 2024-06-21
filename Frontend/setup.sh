@@ -26,7 +26,6 @@ add_lines_to_bashrc() {
             echo "$line" >> "$bashrc_file"
         fi
     done
-    echo "NVM configuration complete."
 }
 
 # Main setup script
@@ -53,11 +52,14 @@ main() {
 
     # Add NVM lines to .bashrc
     add_lines_to_bashrc "${NVM_LINES[@]}"
+    add_lines_to_bashrc "nvm use 20.12.1 > /dev/null 2>&1"
 
     # Export NVM_DIR
     export NVM_DIR="$HOME/.nvm" && \
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && \
     [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+    echo "NVM configuration complete."
 
     # Install Node.js version 20.12.1, Yarn, Expo Ngrok, and Typescript
     echo "Installing NodeJS, Yarn, Expo Ngrok, and Typescript..."
