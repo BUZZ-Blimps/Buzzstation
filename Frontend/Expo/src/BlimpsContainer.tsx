@@ -64,6 +64,8 @@ const BlimpsContainer: React.FC = () => {
         newColor = 'green'; // Color for all users if userID is 'none'
       }
 
+      console.log(newColor);
+
       setBlimpColors((prevColors) => ({
         ...prevColors,
         [receivedBlimp]: newColor,

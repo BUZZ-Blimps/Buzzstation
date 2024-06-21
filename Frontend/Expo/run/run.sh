@@ -1,4 +1,4 @@
 #!/bin/bash
 
-cd ../'Frontend Server'
+cd ../src
 yarn start --tunnel

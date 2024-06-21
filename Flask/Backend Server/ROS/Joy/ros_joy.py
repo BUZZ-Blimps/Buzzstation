@@ -1,6 +1,0 @@
-# ROS Joy #
-
-"""
-Description:
-
-"""
