@@ -2,7 +2,6 @@ README.md (Frontend)
 
 Requirements
 - OS: Ubuntu 22.04
-- Any Version of python3
 
 Steps
 

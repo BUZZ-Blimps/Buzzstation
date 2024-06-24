@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Source ROS 2 Humble setup script
+source /opt/ros/humble/setup.bash
+
 # Check if /Backend/bin/activate exists
 activate_script="/Backend/bin/activate"
 if [ ! -f "$activate_script" ]; then

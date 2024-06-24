@@ -2,13 +2,12 @@ README.md (Backend)
 
 Requirements
 - OS: Ubuntu 22.04
-- Any Version of python3
 
 Steps
 
 1. Run the following command to setup the python virtual environment:
 
-sudo ./setup.py 
+sudo ./setup.sh 
 
 How to activate the python virtual environment:
 
