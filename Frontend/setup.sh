@@ -41,7 +41,7 @@ main() {
     # Install NVM
     echo "Installing NVM..."
     cd "$CURRENT_DIR/Expo/src"
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh > /dev/null 2>&1 | bash > /dev/null 2>&1
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash > /dev/null 2>&1
 
     # NVM configuration
     NVM_LINES=(

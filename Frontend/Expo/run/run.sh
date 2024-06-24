@@ -1,4 +1,4 @@
 #!/bin/bash
 
 cd ../src
-yarn start --tunnel
+yarn start --tunnel --port 8080

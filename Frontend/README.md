@@ -14,6 +14,6 @@ source setup.sh
 
 ./run.sh
 
-Alias Option:
+Alias Option after running 'source ~/.bashrc':
 
 fr
