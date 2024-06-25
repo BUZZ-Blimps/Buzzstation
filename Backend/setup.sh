@@ -44,13 +44,13 @@ add_alias_to_bashrc() {
     alias_command=$2
     user=$3
     bashrc_file="/home/${user}/.bashrc"
-    alias_entry="alias $alias_name=\"$alias_command\""
+    alias_entry="alias $alias_name='$alias_command'"
 
     if ! grep -Fxq "$alias_entry" "$bashrc_file"; then
         echo -e "\n# Backend Run\n$alias_entry" | sudo -u "$user" tee -a "$bashrc_file" > /dev/null
         echo "Alias '$alias_name' added to $bashrc_file for user $user."
     else
-        echo "Alias '$alias_name' already exists in $bashrc_file for user $user. Skipping addition.                                                                                                           "
+        echo "Alias '$alias_name' already exists in $bashrc_file for user $user. Skipping addition."
     fi
 }
 
@@ -61,22 +61,17 @@ main() {
     fi
 
     # Get the directory the script is being run from
-    CURRENT_DIR=$(pwd)
+    CURRENT_DIR=$(dirname "$(readlink -f "$0")")
 
     # Define alias name and command
     alias_name='br'
-    alias_command="cd ${CURRENT_DIR} && source run.sh"
+    alias_command="cd $CURRENT_DIR && source run.sh"
 
     # Retrieve the user who invoked sudo
     # If SUDO_USER is not set, fall back to logname
     sudo_user=${SUDO_USER:-$(logname)}
 
     # Validate that we have a user
-    if [ -z "$sudo_user" ]; then
-        echo "No user identified who called sudo. Cannot proceed."
-        exit 1
-    fi
-
     if [ -n "$sudo_user" ]; then
         add_alias_to_bashrc "$alias_name" "$alias_command" "$sudo_user"
     else
