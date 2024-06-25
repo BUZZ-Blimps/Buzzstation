@@ -66,6 +66,7 @@ main() {
     nvm install 20.12.1 > /dev/null 2>&1
     npm install -g yarn@1.22.22 @expo/ngrok@^4.1.0 typescript > /dev/null 2>&1
     yarn upgrade > /dev/null 2>&1
+    yarn install > /dev/null 2>&1
 
     # Clean up packages
     sudo apt clean
