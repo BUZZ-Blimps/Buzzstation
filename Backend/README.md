@@ -5,7 +5,7 @@ Requirements
 
 ## Setup
 
-1. Run the following command to setup the Python virtual environment:
+Run the following command to setup the Python virtual environment:
 ```bash
 sudo ./setup.sh 
 ```
@@ -19,7 +19,7 @@ deactivate
 ```
 ## Startup
 
-1. Choose one of the following options to activate the Python virtual environment and run the program:
+Choose one of the following options to activate the Python virtual environment and run the program:
 
 Option 1
 ```bash
