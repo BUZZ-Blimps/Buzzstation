@@ -14,12 +14,12 @@ sudo ./setup.sh
 
 Choose one of the following options to activate the Python virtual environment and run the program:
 
-Option 1
+- **Option 1**
 ```bash
 source run.sh
 ```
 
-Option 2
+- **Option 2**
 
 Alias option after running 'source ~/.bashrc' following setup:
 ```bash
