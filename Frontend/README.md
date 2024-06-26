@@ -20,7 +20,7 @@ source setup.sh
 ./run.sh
 ```
 
-&emsp;Option 2
+- **Option 2**
 
 &emsp;Alias option after running 'source ~/.bashrc' following setup:
 ```bash
