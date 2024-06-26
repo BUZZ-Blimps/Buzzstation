@@ -26,7 +26,7 @@ Alias option after running 'source ~/.bashrc' following setup:
 br
 ```
 
-## Optional Usage
+## Miscellaneous Information
 How to activate the Python virtual environment:
 ```bash
 source /Backend/bin/activate
