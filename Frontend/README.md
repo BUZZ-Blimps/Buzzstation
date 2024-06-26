@@ -26,5 +26,5 @@ Alias Option after running 'source ~/.bashrc' following setup:
 ```bash
 fr
 ```
-2. Open the webpage URL address provided in the terminal (i.e. http://localhost:8080).
+2. Open the webpage's URL address provided in the terminal (i.e. http://localhost:8080).
 3. To connect to the web server on another device, verify you are on the same Wi-Fi network as the host.
