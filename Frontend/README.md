@@ -5,20 +5,23 @@
 
 ## Setup
 
-1. Run the following command to setup the frontend environment:
+1. Run the following command to setup the frontend server environment:
 ```bash
 source setup.sh
 ```
-2. Edit the 'Constants.tsx' file in the Expo Directory for the backend server URL address (i.e. http://localhost:5000).
+2. Edit the 'Constants.tsx' file in the Expo directory for the backend server URL address (i.e. http://localhost:5000).
 
 ## Startup
 
 1. Run one of the following commands to run the program:
+
 Option 1
 ```bash
 ./run.sh
 ```
+
 Option 2
+
 Alias Option after running 'source ~/.bashrc':
 ```bash
 fr
