@@ -15,12 +15,12 @@ source setup.sh
 
 1. Choose one of the following options to run the program:
 
-Option 1
+a. Option 1
 ```bash
 ./run.sh
 ```
 
-Option 2
+b. Option 2
 
 Alias Option after running 'source ~/.bashrc' following setup:
 ```bash
