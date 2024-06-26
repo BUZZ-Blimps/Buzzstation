@@ -5,6 +5,8 @@ A React Native app to send commands and receive data to/from blimps using ROS 2
 
 **Note:** This app is not yet complete. It is still in the developmental stage and has only been tested with fake blimps.
 
+![Buzz_Blimps_App](https://github.com/awilwayco/Buzzstation/assets/56363833/7b55024e-7c6e-4cfa-b207-a733a153444a)
+
 ## Requirements
 
 - A device with the Ubuntu 22.04 Operating System (https://ubuntu.com/tutorials/install-ubuntu-desktop#1-overview)
