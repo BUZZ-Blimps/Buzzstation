@@ -28,4 +28,4 @@ fr
 ```
 2. Open the webpage's URL address provided in the terminal (i.e. http://localhost:8080).
 3. To open the webpage on another device, verify you are on the same Wi-Fi network as the host.
-4. To view the frontend as an app, download the Expo app on a mobile device and scan the QR code found in the terminal after running the program.
+4. To view the frontend as an app, download the 'Expo Go' app on a mobile device and scan the QR code found in the terminal after running the program.
