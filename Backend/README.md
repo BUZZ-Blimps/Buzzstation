@@ -19,7 +19,7 @@ deactivate
 ```
 ## Startup
 
-2. Choose one of the following options to activate the Python virtual environment and run the program:
+1. Choose one of the following options to activate the Python virtual environment and run the program:
 
 Option 1
 ```bash
