@@ -1,26 +1,33 @@
-README.md (Backend)
+# Backend
 
 Requirements
 - OS: Ubuntu 22.04
 
-Steps
+## Setup
 
-1. Run the following command to setup the python virtual environment:
-
+1. Run the following command to setup the Python virtual environment:
+```bash
 sudo ./setup.sh 
-
-How to activate the python virtual environment:
-
+```
+How to activate the Python virtual environment:
+```bash
 source /Backend/bin/activate
-
-How to deactivate the python virtual environment:
-
+```
+How to deactivate the Python virtual environment:
+```bash
 deactivate
+```
+## Startup
 
-2. Source the following script to activate the python virtual environment and run the program:
+2. Choose one of the following options to activate the Python virtual environment and run the program:
 
+Option 1
+```bash
 source run.sh
+```
 
+Option 2
 Alias Option:
-
-br
+```bash
+be
+```
