@@ -21,7 +21,7 @@ source run.sh
 
 - **Option 2**
 
-Alias option after running 'source ~/.bashrc' following setup:
+&emsp;Alias option after running 'source ~/.bashrc' following setup:
 ```bash
 br
 ```
