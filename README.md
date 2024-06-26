@@ -66,7 +66,7 @@ Bugs
 
 <p align="center">
 
-![Controller Mapping Idea](https://github.com/awilwayco/Buzzstation/assets/56363833/462e1a73-a10e-49b2-912c-bf1957f7f82e)
+![Controller Mapping Idea](https://github.com/awilwayco/Buzzstation/assets/56363833/43eaec0d-e121-4890-a705-e21683139139)
 <p align="center">
 <em>Figure 3. Tuning Page Schematic</em>
 </p>
