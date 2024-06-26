@@ -13,7 +13,7 @@ source setup.sh
 
 ## Startup
 
-1. Run one of the following commands to run the program:
+1. Choose one of the following options to run the program:
 
 Option 1
 ```bash
@@ -22,7 +22,7 @@ Option 1
 
 Option 2
 
-Alias Option after running 'source ~/.bashrc':
+Alias Option after running 'source ~/.bashrc' following setup:
 ```bash
 fr
 ```
