@@ -29,13 +29,16 @@ Features
 
 Features
 - Add Auto Button
-- Add virtual joysticks for the app and test performance/functionality when multiple blimps are being controlled
+- Add Virtual Joysticks for the app and test performance and functionality when multiple blimps are being controlled
 - Add State Machine text (with dropdown)
 - Add All Auto and All Manual Buttons
 - Add Calibrate Button (with Height value)
-- Column Headers
+- Add Column Headers
+- Add Barometer Integration
+- Add Tuning Page
+- Add Vision ON/OFF Buttons
+- Add Sidebar menu
+
+Bugs
 - Fix Spacing on all platforms/devices (Make buttons resize based on screen dimensions)
-- Barometer Integration
-- Tuning Page
-- Vision ON/OFF Buttons
-- Sidebar menu
+- Fix Multi-controller issue of when a device or browser closes and the blimp name button stays red (Add a timeout to check for device)
