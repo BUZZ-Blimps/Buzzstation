@@ -27,7 +27,8 @@ source run.sh
 ```
 
 Option 2
+
 Alias Option:
 ```bash
-be
+br
 ```
