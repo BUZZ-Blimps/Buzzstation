@@ -9,14 +9,7 @@ Run the following command to setup the Python virtual environment:
 ```bash
 sudo ./setup.sh 
 ```
-How to activate the Python virtual environment:
-```bash
-source /Backend/bin/activate
-```
-How to deactivate the Python virtual environment:
-```bash
-deactivate
-```
+
 ## Startup
 
 Choose one of the following options to activate the Python virtual environment and run the program:
@@ -28,7 +21,17 @@ source run.sh
 
 Option 2
 
-Alias Option:
+Alias option after running 'source ~/.bashrc' following setup:
 ```bash
 br
+```
+
+## Optional Usage
+How to activate the Python virtual environment:
+```bash
+source /Backend/bin/activate
+```
+How to deactivate the Python virtual environment:
+```bash
+deactivate
 ```
