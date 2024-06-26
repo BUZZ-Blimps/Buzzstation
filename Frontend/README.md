@@ -15,7 +15,7 @@ source setup.sh
 
 1. Choose one of the following options to run the program:
 
-- **1a.** Option 1
+- **Option 1**
 ```bash
 ./run.sh
 ```
