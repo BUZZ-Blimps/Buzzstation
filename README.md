@@ -42,3 +42,28 @@ Features
 Bugs
 - Fix Spacing on all platforms/devices (Make buttons resize based on screen dimensions)
 - Fix Multi-controller issue of when a device or browser closes and the blimp name button stays red (Add a timeout to check for device)
+
+## Ideas
+
+### Schematics
+
+![Future Basestation Idea Schematic](https://github.com/awilwayco/Buzzstation/assets/56363833/42d1ada5-12ba-4d33-97d4-c54773996f03)
+<p align="center">
+<em>Figure 2. Main Page Schematic</em>
+</p>
+</p>
+
+![Tuning Page Idea](https://github.com/awilwayco/Buzzstation/assets/56363833/b473b9cc-6c5c-47ab-b007-11b4d6503f2f)
+<p align="center">
+<em>Figure 3. Tuning Page Schematic</em>
+</p>
+</p>
+
+![Controller Mapping Idea](https://github.com/awilwayco/Buzzstation/assets/56363833/462e1a73-a10e-49b2-912c-bf1957f7f82e)
+<p align="center">
+<em>Figure 3. Tuning Page Schematic</em>
+</p>
+</p>
+
+### Suggestions
+- Use a steam deck or mobile device to control blimps instead of an Xbox controller
