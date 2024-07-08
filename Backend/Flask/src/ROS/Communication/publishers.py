@@ -51,11 +51,11 @@ def publish_enemy_color(blimp):
 
 # Both Catching and Attack Blimp Publishers #
 
-def publish_auto(blimp):
-    # Publish auto value to the ROS topic
+def publish_mode(blimp):
+    # Publish mode value to the ROS topic
     msg = Bool()
-    msg.data = blimp.auto
-    blimp.pub_auto.publish(msg)
+    msg.data = blimp.mode
+    blimp.pub_mode.publish(msg)
 
 def publish_motor_commands(blimp):
     # Publish motor_commands value to the ROS topic

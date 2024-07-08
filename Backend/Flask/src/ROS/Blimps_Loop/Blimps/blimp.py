@@ -89,14 +89,11 @@ class Blimp:
 
         # Both Catching and Attacking Blimps
 
-        # Autonomous Mode (False: Manual, True: Autonomous)
-        self.auto = False
+        # Mode (False: Manual, True: Autonomous)
+        self.mode = False
 
         # Motor Commands
         self.motor_commands = [0.0, -0.0, 0.0, -0.0]
-
-        # Controlled status
-        self.controlled = False  # Initially not controlled
 
         # Barometer Value
         self.barometer = 99668.2 # Competition Default Value
@@ -123,6 +120,37 @@ class Blimp:
         self.heartbeat_data = None
 
         self.init_heartbeat_sub()
+
+    def to_dict(self):
+        base_dict = {
+            'name': str(self.name),
+            'type': str(self.type),
+            'state_machine': str(self.state_machine),
+            'mode': str(self.mode),
+            'motor_commands': str(self.motor_commands),
+            'barometer': str(self.barometer),
+            'calibrate_barometer': str(self.calibrate_barometer),
+            'height': str(self.height),
+            'z_velocity': str(self.z_velocity),
+            'log': str(self.log),
+        }
+
+        # Catching blimp
+        if not self.type:
+            catching_dict = {
+                'goal_color': str(self.goal_color),
+                'catching': str(self.catching),
+                'shooting': str(self.shooting),
+            }
+            base_dict.update(catching_dict)
+        # Attacking blimp
+        else:
+            attacking_dict = {
+                'enemy_color': str(self.enemy_color),
+            }
+            base_dict.update(attacking_dict)
+
+        return base_dict
 
     def init_heartbeat_sub(self):
         # Subscribe to heartbeat if not already subscribed
@@ -197,7 +225,7 @@ class Blimp:
             """
 
         # Both Catching and Attack Blimps
-        self.pub_auto = self.create_pub('auto', 'Bool')
+        self.pub_mode = self.create_pub('mode', 'Bool')
         self.pub_motor_commands = self.create_pub('motor_commands', 'Float64MultiArray')
         self.pub_barometer = self.create_pub('barometer', 'Bool')
         self.pub_calibrate_barometer = self.create_pub('calibrate_barometer', 'Bool')
@@ -255,7 +283,7 @@ class Blimp:
             """
 
         # Both Catching and Attack Blimps
-        self.destroy_pub('pub_auto')
+        self.destroy_pub('pub_mode')
         self.destroy_pub('pub_motor_commands')
         self.destroy_pub('pub_barometer')
         self.destroy_pub('pub_calibrate_barometer')

@@ -29,7 +29,7 @@ add_command_to_bashrc() {
     command=$1
     user=$2
     bashrc_file="/home/${user}/.bashrc"
-    command_entry="# Source ROS 2 Humble setup script\n${command}"
+    command_entry="${command}"
 
     if ! grep -Fxq "$command" "$bashrc_file"; then
         echo -e "\n$command_entry" | sudo -u "$user" tee -a "$bashrc_file" > /dev/null
@@ -106,13 +106,14 @@ main() {
 
     echo "Installing ROS 2 Humble..."
     run_command "add-apt-repository universe"
-    run_command "curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/s                                                                                                           hare/keyrings/ros-archive-keyring.gpg"
-    run_command "echo \"deb [arch=\$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-a                                                                                                           rchive-keyring.gpg] http://packages.ros.org/ros2/ubuntu \$(lsb_release -sc) main\" | tee /etc/apt/s                                                                                                           ources.list.d/ros2.list > /dev/null"
+    run_command "curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg"
+    run_command "echo \"deb [arch=\$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu \$(lsb_release -sc) main\" | tee /etc/apt/sources.list.d/ros2.list > /dev/null"
     run_command "apt update"
     run_command "apt upgrade -y"
     run_command "apt install -y ros-humble-desktop ros-humble-ros-base ros-dev-tools"
     run_command "rm /etc/apt/sources.list.d/ros2.list"
     add_command_to_bashrc "source /opt/ros/humble/setup.bash" "$sudo_user"
+    add_command_to_bashrc "export ROS_DOMAIN_ID=1" "$sudo_user"
     run_command "apt clean"
 
     echo "Setup complete."

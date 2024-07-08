@@ -10,8 +10,11 @@ import { View, SafeAreaView, Text, StyleSheet, Platform, Dimensions } from 'reac
 import * as ScreenOrientation from 'expo-screen-orientation';
 
 // Components
-import Button from './Button'; 
-import BlimpsContainer from './BlimpsContainer'; 
+import BlimpsContainer from './BlimpsContainer';
+import Button from './Button';
+
+// Functions
+import { useButtonColor } from './AllBlimpsButtonColor'; 
 
 // IOS
 const isIOS = Platform.OS === 'ios';
@@ -32,6 +35,28 @@ export default function App() {
     lockOrientation();
   }, []);
 
+  // All Blimps Buttons: Used for Goal Color, Enemy Color, All Auto, All Manual //
+
+  // Goal Color
+  const { 
+          AllBlimpsButtonStyle: goalColorButtonStyle, 
+          buttonColor: goalColorButtonColor, 
+          handleClick: handleGoalColorClick 
+        } = useButtonColor('orange', 'goal_color');
+
+  // Enemy Color
+  const { 
+          AllBlimpsButtonStyle: enemyColorButtonStyle, 
+          buttonColor: enemyColorButtonColor, 
+          handleClick: handleEnemyColorClick 
+        } = useButtonColor('blue', 'enemy_color');
+
+  // All Auto
+  // ...
+
+  // All Manual
+  // ...
+
   return (
     <SafeAreaView style={styles.container}>
 
@@ -40,11 +65,31 @@ export default function App() {
       </SafeAreaView>
 
       <SafeAreaView style={styles.buttonContainer}>
-          <Button blimpName='none' buttonKey='goal_color' buttonColor='orange' buttonText='Goal' buttonWidth={100} buttonHeight={50} />
-          <Button blimpName='none' buttonKey='enemy_color' buttonColor='blue' buttonText='Enemy' buttonWidth={100} buttonHeight={50} />
+
+          {/* Goal Color Button */}
+          <Button 
+              blimpName='none' // Blimp Name
+              buttonKey='goal_color' // Type of Button
+              buttonColor={goalColorButtonColor} // Button Color
+              buttonText='Goal' // Text Seen on Button
+              buttonStyle={goalColorButtonStyle} // Button Style
+              onPress={() => handleGoalColorClick('goal_color')} // On Press Function
+          />
+
+          {/* Enemy Color Button */}
+          <Button 
+              blimpName='none' // Blimp Name
+              buttonKey='enemy_color' // Type of Button
+              buttonColor={enemyColorButtonColor} // Button Color
+              buttonText='Enemy' // Text Seen on Button
+              buttonStyle={enemyColorButtonStyle} // Button Style
+              onPress={() => handleEnemyColorClick('enemy_color')} // On Press Function
+          />
+
       </SafeAreaView>
 
       <SafeAreaView style={styles.blimpContainer}>
+        {/* Blimps */}
         <BlimpsContainer />
       </SafeAreaView>
 

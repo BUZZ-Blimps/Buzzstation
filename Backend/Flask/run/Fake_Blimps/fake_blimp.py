@@ -59,11 +59,11 @@ class Blimp(Node):
             self.sub_enemy_color = self.create_subscription(Bool, topic_enemy_color, self.enemy_callback, 10)
 
         # Both Catching and Attacking Blimps
-        topic_auto = "auto"
+        topic_mode = "mode"
         topic_motor_commands = "motor_commands"
         topic_barometer = "barometer"
         topic_calibrate_barometer = "calibrate_barometer"
-        self.sub_auto = self.create_subscription(Bool, topic_auto, self.auto_callback, 10)
+        self.sub_mode = self.create_subscription(Bool, topic_mode, self.mode_callback, 10)
         self.sub_motor_commands = self.create_subscription(Float64MultiArray, topic_motor_commands, self.motor_callback, 10)
         self.sub_barometer = self.create_subscription(Float64, topic_barometer, self.barometer_callback, 10)
         self.sub_calibrate_barometer = self.create_subscription(Bool, topic_calibrate_barometer, self.calibrate_barometer_callback, 10)
@@ -124,9 +124,9 @@ class Blimp(Node):
 
     # Subscribers #
 
-    def auto_callback(self, msg):
+    def mode_callback(self, msg):
         log_msg = String()
-        log_msg.data = 'Autonomous set to {}'.format(msg.data)
+        log_msg.data = 'Mode set to {}'.format(msg.data)
         self.pub_log.publish(log_msg)
 
         self.get_logger().info(log_msg.data)

@@ -8,8 +8,10 @@ Sends and recieves blimp data over ROS.
 """
 
 # Imports
-from Packages.packages import socketio
+from datetime import datetime
+from Packages.packages import socketio, json
 from ..ros import basestation_node, redis_client
+from ..Communication.publishers import publish_generic
 from .Blimps.update_blimp_lists import alive_blimps, new_blimps, timeout_blimps, reorder_blimp_names
 from .Blimps.update_blimp_data import update_component_for_all_blimps, update_blimp_component_color
 from .Blimps.add_blimps import add_new_blimps
@@ -41,8 +43,16 @@ def update_global_values():
     # All Autonomous State (Sends all current blimps into autonomous mode)
     # To-Do: Need to make function in update_blimps_data
 
+# To-Do: Finish this function
 def update_blimp_values(current_blimps):
-    pass
+    # Update Individual Blimp Values
+    for name in current_blimps:
+        
+        # State
+        # ...
+
+        # Mode
+        update_blimp_component_color(current_blimps[name], 'mode', 'red', 'green')
 
 def update_blimps():
 
@@ -66,19 +76,28 @@ def update_blimps():
     basestation_node.current_blimp_names = reorder_blimp_names(basestation_node.current_blimp_names)
 
     # Get Current Blimp Names from Redis
-    current_blimp_names = redis_client.get('current_blimp_names').decode("utf-8")
+    current_blimp_names = redis_client.get('current_names').decode("utf-8")
 
     # If Blimp Names Changed, Update Frontend
     if ','.join(basestation_node.current_blimp_names) != current_blimp_names:
-        
+
         # Save Current Blimp Names to Redis
         current_blimp_names = ','.join(basestation_node.current_blimp_names)
-        redis_client.set('current_blimp_names', current_blimp_names)
+        redis_client.set('current_names', current_blimp_names)
 
         # Update Blimp Names on Frontend
-        socketio.emit('update_blimp_names', current_blimp_names.split(','))
+        socketio.emit('update_names', current_blimp_names.split(','))
 
         logger.info('Blimp Names Changed')
 
-    # To-Do: Update Blimp Values on Frontend and over ROS (Do Individual Emits)
-    #update_blimp_values(basestation_node.current_blimps)
+    # Update Blimp Values on Frontend and over ROS
+    update_blimp_values(basestation_node.current_blimps)
+
+    # To-Do: Make this latched by comparing to most recent data if changed #
+    # Blimps Dictionary
+    blimps_dict = {blimp.name: blimp.to_dict() for blimp in basestation_node.current_blimps.values()}
+    
+    # Store each blimp's data in Redis using HMSET
+    for blimp_name, blimp_data in blimps_dict.items():
+        redis_client.hmset(str("blimp:" + blimp_name), blimp_data)
+    # End of To-Do #

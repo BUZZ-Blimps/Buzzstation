@@ -28,3 +28,6 @@ def add_new_blimps(basestation_node, new_blimp_names):
                 publish_generic('publish_enemy_color', new_blimp)
             else:
                 publish_generic('publish_goal_color', new_blimp)
+            
+            # Publish Individual Values
+            publish_generic('publish_mode', new_blimp)

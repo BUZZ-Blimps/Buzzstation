@@ -14,10 +14,11 @@ To-Do:
 
 # Imports
 from Packages.packages import *
+from ROS.Blimps_Loop.Blimps.blimp_names import blimp_names_order
 
-# Blimp Button Colors
-global blimp_button_colors
-blimp_button_colors = {}
+# Blimp Name Button Colors
+global name_button_colors
+name_button_colors = {}
 
 # Logger
 from rclpy.logging import get_logger
@@ -32,9 +33,9 @@ def handle_connect():
     # Get Values upon Connection
     get_redis_values()
 
-# Changing Buttons with Two Colors
-@socketio.on('toggle_button_color')
-def toggle_button_color(key):
+# Changing All Blimps Buttons with Two Colors
+@socketio.on('toggle_all_blimps_button_color')
+def toggle_all_blimps_button_color(key):
 
     # Get Redis Value
     button_color = bool(int(redis_client.get(key).decode('utf-8')))
@@ -43,85 +44,122 @@ def toggle_button_color(key):
     button_color = not button_color
     redis_client.set(key, int(button_color))
 
+# Changing Blimp Buttons with Two Colors
+@socketio.on('toggle_blimp_button_color')
+def toggle_blimp_button_color(val):
+    from ROS.ros import basestation_node
+    from ROS.Blimps_Loop.Blimps.update_blimp_data import update_blimp_component_color
+
+    # Retrieve Blimp Name and Key
+    name = val['name']
+    key = val['key']
+
+    if hasattr(basestation_node.current_blimps[name], key):
+
+        # Change the Value of the Key for the Specific Blimp Name
+        setattr(basestation_node.current_blimps[name], key, not getattr(basestation_node.current_blimps[name], key))
+        
 # Changing Buttons with 3 Colors
-@socketio.on('toggle_blimp_button')
-def toggle_blimp_button(val):
+@socketio.on('toggle_name_button')
+def toggle_name_button(val):
 
     # Retrieve Blimp Name and UserID
-    blimp = val['blimp']
+    name = val['name']
     userID = val['userID']
 
-    global blimp_button_colors
+    global name_button_colors
 
     # Turn on Piloting for Specified User
-    if blimp not in blimp_button_colors:
+    if name not in name_button_colors:
         
         # Only allow each user to pilot one blimp
-        if userID not in blimp_button_colors.values():
+        if userID not in name_button_colors.values():
 
             # Add Blimp Name and UserID to Dictionary
-            blimp_button_colors[blimp] = userID
+            name_button_colors[name] = userID
 
             # Make Blimp Button Blue for UserID, Red for everyone else
-            socketio.emit('toggle_blimp_button_color', { 'userID': userID, 'blimp': blimp})
+            socketio.emit('toggle_name_button_color', { 'userID': userID, 'name': name})
 
     # Turn off Piloting (Disconnect from blimp)
-    elif blimp_button_colors[blimp] == userID:
+    elif name_button_colors[name] == userID:
 
         # Remove Blimp Name and UserID from Dictionary
-        del blimp_button_colors[blimp]
+        del name_button_colors[name]
 
-        # Make Blimp Button Green for all users
-        socketio.emit('toggle_blimp_button_color', { 'userID': 'none', 'blimp': blimp})
+        # Make Blimp Name Button Green for all users
+        socketio.emit('toggle_name_button_color', { 'userID': 'none', 'name': name})
 
     # Store Blimp Button Colors to Redis
-    redis_client.set("blimp_button_colors", json.dumps(blimp_button_colors))
+    redis_client.set('name_button_colors', json.dumps(name_button_colors))
 
-def get_button_color(key, default_color, nondefault_color):
+# Get a Color for any Button
+def get_button_color(name, key, default_color, nondefault_color):
 
     # Get Redis Value
     button_color = bool(int(redis_client.get(key).decode('utf-8')))
 
     # Send Update to Frontend
     if (button_color == False):
-        socketio.emit('update_button_color', {'blimp': 'none', 'key': key, 'color': default_color})
+        socketio.emit('update_button_color', {'name': name, 'key': key, 'color': default_color})
     else:
-        socketio.emit('update_button_color', {'blimp': 'none', 'key': key, 'color': nondefault_color})
+        socketio.emit('update_button_color', {'name': name, 'key': key, 'color': nondefault_color})
 
-def get_blimp_names():
+# Get Current Blimp Names
+def get_names():
     # Get Current Blimp Names from Redis
-    current_blimp_names = redis_client.get('current_blimp_names').decode("utf-8")
+    current_names = redis_client.get('current_names').decode("utf-8")
 
     # Update Blimp Names on Frontend
-    socketio.emit('update_blimp_names', current_blimp_names.split(','))
+    socketio.emit('update_names', current_names.split(','))
 
 # Get Blimp Button Colors for Each Blimp
-def get_blimp_button_colors():
+def get_name_button_colors():
     # Get Current Blimp Names from Redis
-    current_blimp_names = redis_client.get('current_blimp_names').decode("utf-8")
+    current_names = redis_client.get('current_names').decode("utf-8")
 
-    for blimp in current_blimp_names.split(','):
-        if blimp in blimp_button_colors:
+    for name in current_names.split(','):
+        if name in name_button_colors:
             # Make Blimp Button Blue for UserID, Red for everyone else
-            socketio.emit('toggle_blimp_button_color', { 'userID': blimp_button_colors[blimp], 'blimp': blimp})
+            socketio.emit('toggle_name_button_color', { 'userID': name_button_colors[name], 'name': name})
         else:
              # Make Blimp Button Green for all users
-            socketio.emit('toggle_blimp_button_color', { 'userID': 'none', 'blimp': blimp})
+            socketio.emit('toggle_name_button_color', { 'userID': 'none', 'name': name})
+
+# Get Mode for Each Blimp
+def get_mode_button_colors():
+
+    # Get Current Blimp Names from Redis
+    current_names = redis_client.get('current_names').decode("utf-8")
+
+    for name in current_names.split(','):
+        if redis_client.hget(str('blimp:' + name), 'mode') is not None:
+            current_component_color = redis_client.hget(str('blimp:' + name), 'mode').decode('utf-8')
+            # Send Update to Frontend
+            if str(current_component_color) == 'True':
+                socketio.emit('update_button_color', {'name': name, 'key': 'mode', 'color': 'green'})
+            else:
+                socketio.emit('update_button_color', {'name': name, 'key': 'mode', 'color': 'red'})
 
 # Get Redis Values and Sends to Frontend UI
 def get_redis_values():
 
     # List of all Redis Values #
-    get_blimp_names()
 
-    # Blimp Button Colors
-    get_blimp_button_colors()
+    # Names
+    get_names()
+
+    # Name Button Colors
+    get_name_button_colors()
+
+    # Mode Button Colors
+    get_mode_button_colors()
 
     # Goal Color Button (Default: Orange, Nondefault: Yellow)
-    get_button_color('goal_color', 'orange', 'yellow')
+    get_button_color('none', 'goal_color', 'orange', 'yellow')
     
     # Enemy Color Button (Default: Blue, Nondefault: Red)
-    get_button_color('enemy_color', 'blue', 'red')
+    get_button_color('none', 'enemy_color', 'blue', 'red')
 
     # ...
 
@@ -132,8 +170,12 @@ def init_redis_values():
     redis_client.set('goal_color', 0) # 0: Orange, 1: Yellow
     redis_client.set('enemy_color', 0) # 0: Blue, 1: Red
     redis_client.set('all_auto_state', 0) # 0: False, 1: True
-    redis_client.set('current_blimp_names', "") # Empty on Start
-    redis_client.set("blimp_button_colors", "{}") # Empty on Start
+    redis_client.set('current_names', '') # Empty on Start
+    redis_client.set('name_button_colors', '{}') # Empty on Start
+
+    # Reset each blimp's data in Redis to null (empty)
+    for name in blimp_names_order:
+        redis_client.delete("blimp:" + name)
 
 # Start Backend Server
 def start_backend_server(host, port):

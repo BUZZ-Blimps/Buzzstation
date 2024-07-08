@@ -14,4 +14,4 @@ catching_blimp_names = ['BurnCream', 'SillyAh', 'Turbo', 'GameChamber', 'FiveGuy
 attack_blimp_names = ['Yoshi', 'Luigi', 'Geoph', 'ThisGuy']
 
 # Order
-blimp_names_order = ['BurnCream', 'SillyAh', 'Turbo', 'GameChamber', 'FiveGuys', 'SuperBeef', 'Yoshi', 'Luigi', 'Geoph', 'ThisGuy']
+blimp_names_order = catching_blimp_names + attack_blimp_names

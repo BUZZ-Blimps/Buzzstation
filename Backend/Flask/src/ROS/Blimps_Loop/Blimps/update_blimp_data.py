@@ -15,20 +15,33 @@ logger = get_logger('Basestation')
 
 # Generic Function for updating the color of a ROS topic's UI component for a Blimp's component
 def update_blimp_component_color(blimp, component, default_color, nondefault_color):
-    # To-Do: Fix Redis Access for a Specific Blimp Component
-    current_component_color = bool(int(redis_client.get(component).decode('utf-8')))
-    if getattr(blimp, component) is not current_component_color:
-        setattr(blimp, component, current_component_color)
+    if hasattr(blimp, component):
 
-        # Update Frontend
-        if not getattr(blimp, component):
-            socketio.emit('update_button_color', {'blimp': blimp.name, 'key': component, 'color': default_color})
+        # Get Redis Value for the Blimp's Component
+        current_value = redis_client.hget(f'blimp:{blimp.name}', component)
+        
+        if current_value is not None:
+
+            # Redis Value
+            current_value = current_value.decode('utf-8')
+            
+            # Blimp Value
+            blimp_component_value = getattr(blimp, component)
+
+            if str(blimp_component_value) != str(current_value):
+
+                # Get Color
+                color = default_color if not blimp_component_value else nondefault_color
+
+                # Update Frontend
+                socketio.emit('update_button_color', {'name': blimp.name, 'key': component, 'color': color})
+                
+                # Publish if the value has changed
+                publish_generic(f'publish_{component}', blimp)
         else:
-            socketio.emit('update_button_color', {'blimp': blimp.name, 'key': component, 'color': nondefault_color})
-
-        # Publish over ROS
-        # Call the publish method for the specified component over ROS
-        publish_generic('publish_' + str(component), blimp)
+            
+            # Sets Component Color to Default at Start of Program
+            socketio.emit('update_button_color', {'name': blimp.name, 'key': component, 'color': default_color})
 
 # Generic Function for updating the color of a ROS topic's UI component for all blimps (Global Value i.e. Goal Color, Enemy Color, All Auto State)
 def update_component_for_all_blimps(basestation_node, component, default_color, nondefault_color):
@@ -40,7 +53,7 @@ def update_component_for_all_blimps(basestation_node, component, default_color, 
             # Change Global Component Anyway
             update_global_component_color(basestation_node, component, default_color, nondefault_color)
         else:
-            for blimp_name, blimp in basestation_node.current_blimps.items():
+            for name, blimp in basestation_node.current_blimps.items():
                 if hasattr(blimp, component):
                     # Publish over ROS
                     if getattr(blimp, component) is not current_value:
@@ -51,9 +64,9 @@ def update_component_for_all_blimps(basestation_node, component, default_color, 
             
             # Update Frontend
             if not getattr(basestation_node, component):
-                socketio.emit('update_button_color', {'blimp': 'none', 'key': component, 'color': default_color})
+                socketio.emit('update_button_color', {'name': 'none', 'key': component, 'color': default_color})
             else:
-                socketio.emit('update_button_color', {'blimp': 'none', 'key': component, 'color': nondefault_color})
+                socketio.emit('update_button_color', {'name': 'none', 'key': component, 'color': nondefault_color})
         
         # Testing
         if str(component) == 'goal_color':
@@ -71,6 +84,14 @@ def update_global_component_color(basestation_node, component, default_color, no
 
         # Update Frontend
         if not getattr(basestation_node, component):
-            socketio.emit('update_button_color', {'blimp': 'none', 'key': component, 'color': default_color})
+            socketio.emit('update_button_color', {'name': 'none', 'key': component, 'color': default_color})
         else:
-            socketio.emit('update_button_color', {'blimp': 'none', 'key': component, 'color': nondefault_color})
+            socketio.emit('update_button_color', {'name': 'none', 'key': component, 'color': nondefault_color})
+
+        # Testing
+        if str(component) == 'goal_color':
+            logger.info(str('Overall Goal Color: ' + str(basestation_node.goal_color)))
+        elif str(component) == 'enemy_color':
+            logger.info(str('Overall Enemy Color: ' + str(basestation_node.enemy_color)))
+        elif str(component) == 'all_auto_state':
+            logger.info(str('All Auto State: ' + str(basestation_node.all_auto_state)))
