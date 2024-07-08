@@ -37,10 +37,10 @@ Necessary Features
 - Add Barometer Integration
 
 "Nice to Have" Features
-- Add Sidebar menu
+- Add Sidebar Menu
 - Add Logs Page
 - Add Tuning Page
-- Dropdown menu for State Machine
+- Dropdown Menu for State Machine
 - Select and deselect visible blimps on Main Page
 - Add Virtual Joysticks for the app and test performance and functionality when multiple blimps are being controlled
 - Add Vision ON/OFF Buttons
