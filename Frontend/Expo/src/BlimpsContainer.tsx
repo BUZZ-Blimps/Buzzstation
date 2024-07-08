@@ -46,6 +46,15 @@ const BlimpsContainer: React.FC = () => {
             />
 
             {/* State Dropdown */}
+            {/* Placeholder Button Here: */}
+            <Button 
+                blimpName={name} // Blimp Name
+                buttonKey='state' // Type of Button
+                buttonColor='grey' // Button Color
+                buttonText='Searching' // Text Seen on Button
+                buttonStyle={modeButtonStyle} // Button Style
+                onPress={() => null} // On Press Function
+            />
 
             {/* Mode Button */}
             <Button 
@@ -58,8 +67,32 @@ const BlimpsContainer: React.FC = () => {
             />
 
             {/* Calibrate Button */}
+            {/* Placeholder Button Here: */}
+            <Button 
+                blimpName={name} // Blimp Name
+                buttonKey='calibrate' // Type of Button
+                buttonColor='red' // Button Color
+                buttonText='Height: 1.00m' // Text Seen on Button
+                buttonStyle={{
+                  ...modeButtonStyle,
+                  button: {
+                      ...modeButtonStyle.button,
+                      width: 130, // Example new width
+                  },
+                }}
+                onPress={() => null} // On Press Function
+            />
 
             {/* Vision Button */}
+            {/* Placeholder Button Here: */}
+            <Button 
+                blimpName={name} // Blimp Name
+                buttonKey='vision' // Type of Button
+                buttonColor='red' // Button Color
+                buttonText='Off' // Text Seen on Button
+                buttonStyle={modeButtonStyle} // Button Style
+                onPress={() => null} // On Press Function
+            />
             
           </View>
         ))
