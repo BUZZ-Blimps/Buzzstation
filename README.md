@@ -72,7 +72,7 @@ Bugs
 <img src=https://github.com/awilwayco/Buzzstation/assets/56363833/43eaec0d-e121-4890-a705-e21683139139) />
 </p>
 <p align="center">
-<em>Figure 3. Tuning Page Schematic</em>
+<em>Figure 4. Controls Schematic</em>
 </p>
 
 ### Suggestions
