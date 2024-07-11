@@ -8,7 +8,7 @@ A React Native app to send commands and receive data to/from blimps using ROS 2
 
 ![Buzzstation_Main_Page](https://github.com/SWAMP-Blimps/Buzzstation/assets/56363833/2033cf04-2fda-402c-a147-82c1b9d3a77f)
 <p align="center">
-<em>Figure 1. Basestation UI on a Mobile Device</em>
+<em>Figure 1. Basestation UI</em>
   
 <em>Multi-Controller Functionality: The green blimp names indicate blimps not under control, blue indicates the blimp the device currently controls, and red indicates blimps being controlled by other devices. Each device can only control a single blimp at a time. To unselect a blimp, press the blue button to change it back to green. </em>
 </p>
