@@ -6,7 +6,7 @@ A React Native app to send commands and receive data to/from blimps using ROS 2
 **Note:** This app is not yet complete. It is still in the developmental stage and has only been tested with fake blimps.
 
 <p align="center">
-<img src=https://github.com/SWAMP-Blimps/Buzzstation/assets/56363833/892e5403-dc56-44fd-898b-d7f492281e90) />
+<img src="https://github.com/SWAMP-Blimps/Buzzstation/assets/56363833/892e5403-dc56-44fd-898b-d7f492281e90" />
 </p>
 <p align="center">
 <em>Figure 1. Basestation UI</em>
@@ -54,21 +54,21 @@ Bugs
 ### Schematics
 
 <p align="center">
-<img src=https://github.com/SWAMP-Blimps/Buzzstation/assets/56363833/e6a9dfd9-489b-472e-a24c-880bda73f7cc) />
+<img src=:https://github.com/SWAMP-Blimps/Buzzstation/assets/56363833/e6a9dfd9-489b-472e-a24c-880bda73f7cc" />
 </p>
 <p align="center">
 <em>Figure 2. Main Page Schematic</em>
 </p>
 
 <p align="center">
-<img src=https://github.com/awilwayco/Buzzstation/assets/56363833/b473b9cc-6c5c-47ab-b007-11b4d6503f2f) />
+<img src="https://github.com/awilwayco/Buzzstation/assets/56363833/b473b9cc-6c5c-47ab-b007-11b4d6503f2f" />
 </p>
 <p align="center">
 <em>Figure 3. Tuning Page Schematic</em>
 </p>
 
 <p align="center">
-<img src=https://github.com/awilwayco/Buzzstation/assets/56363833/43eaec0d-e121-4890-a705-e21683139139) />
+<img src="https://github.com/awilwayco/Buzzstation/assets/56363833/43eaec0d-e121-4890-a705-e21683139139" />
 </p>
 <p align="center">
 <em>Figure 4. Controls Schematic</em>
