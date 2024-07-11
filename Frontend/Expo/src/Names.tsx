@@ -52,11 +52,11 @@ export const useNames = () => {
       const handleToggleNameButtonColor = (val: { userID: string; name: string; color: string }) => {
         const { userID: receivedUserID, name: receivedName } = val;
   
-        let newColor = 'red'; // Default color for other users
+        let newColor = '#E11C1C'; // Default color for other users // red
         if (receivedUserID === userID) {
-          newColor = 'blue'; // Color for the current user
+          newColor = '#006FFF'; // Color for the current user // blue
         } else if (receivedUserID === 'none') {
-          newColor = 'green'; // Color for all users if userID is 'none'
+          newColor = 'green'; // Color for all users if userID is 'none' // green
         }
 
         // Testing

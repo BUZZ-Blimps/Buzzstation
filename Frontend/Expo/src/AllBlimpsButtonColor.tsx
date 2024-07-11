@@ -60,9 +60,8 @@ export const useButtonColor = (defaultColor: string, buttonKey: string): ButtonC
         width: 100,
         height: 50,
         alignItems: 'center',
-        marginVertical: 20,
-        marginRight: isAndroid || isIOS ? '1%' : '1%', // Adjust top position based on platform
-        padding: isAndroid || isIOS ? 10 : 7, // Center Text Vertically
+        justifyContent: 'center',
+        marginVertical: isAndroid || isIOS ? 5 : '14%',
         borderRadius: 5,
         borderWidth: 2,
         borderColor: 'black',
@@ -70,8 +69,9 @@ export const useButtonColor = (defaultColor: string, buttonKey: string): ButtonC
       buttonText: {
           fontWeight: 'bold',
           color: 'white', // Text color
-          fontSize: 20, // Text size
+          fontSize: 18, // Text size
           textAlign: 'center', // Center the text
+          textAlignVertical: 'center',
           textShadowColor: 'black', // Outline color
           textShadowOffset: { width: 1, height: 1 }, // Direction of the shadow
           textShadowRadius: isAndroid || isIOS ? 0.1 : 1, // Spread of the shadow

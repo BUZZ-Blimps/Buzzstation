@@ -25,11 +25,18 @@ export const useModes = () => {
             const receivedButtonKey: string = val['key'];
             const receivedButtonColor: string = val['color'];
 
+            let newColor = '#E11C1C'; // Default color 
+            if (receivedButtonColor === 'red') {
+              newColor = '#E11C1C';
+            } else if (receivedButtonColor === 'green') {
+              newColor = 'green';
+            }
+
             if (receivedButtonKey === 'mode') {
                 // Update modeColors with the new color for the specific blimp
                 setModeColors(prevModeColors => ({
                     ...prevModeColors,
-                    [receivedName]: receivedButtonColor,
+                    [receivedName]: newColor,
                 }));
 
                 // Testing
