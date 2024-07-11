@@ -55,7 +55,7 @@ Bugs
 
 <p align="center">
 
-![Future Basestation Idea Schematic](https://github.com/awilwayco/Buzzstation/assets/56363833/42d1ada5-12ba-4d33-97d4-c54773996f03)
+![Buzzstation Main Page Schematic](https://github.com/SWAMP-Blimps/Buzzstation/assets/56363833/e6a9dfd9-489b-472e-a24c-880bda73f7cc)
 <p align="center">
 <em>Figure 2. Main Page Schematic</em>
 </p>
