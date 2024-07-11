@@ -124,7 +124,7 @@ export default function App() {
             blimpName='none' // Blimp Name
             buttonKey='all_auto' // Type of Button
             buttonColor='green' // Button Color
-            buttonText='All Manual' // Text Seen on Button
+            buttonText='All Auto' // Text Seen on Button
             buttonStyle={{
               ...goalColorButtonStyle,
               buttonText: {
