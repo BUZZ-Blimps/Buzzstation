@@ -54,7 +54,7 @@ Bugs
 ### Schematics
 
 <p align="center">
-<img src=:https://github.com/SWAMP-Blimps/Buzzstation/assets/56363833/e6a9dfd9-489b-472e-a24c-880bda73f7cc" />
+<img src="https://github.com/SWAMP-Blimps/Buzzstation/assets/56363833/e6a9dfd9-489b-472e-a24c-880bda73f7cc" />
 </p>
 <p align="center">
 <em>Figure 2. Main Page Schematic</em>
