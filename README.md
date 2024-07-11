@@ -34,7 +34,6 @@ Necessary Features
 - Add State Machine text
 - Add 'All Auto' and 'All Manual' Buttons
 - Add Calibrate Button (with Height value)
-- Add Column Headers
 - Add Barometer Integration
 
 "Nice to Have" Features
