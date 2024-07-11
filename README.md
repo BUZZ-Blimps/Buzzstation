@@ -6,7 +6,7 @@ A React Native app to send commands and receive data to/from blimps using ROS 2
 **Note:** This app is not yet complete. It is still in the developmental stage and has only been tested with fake blimps.
 <p align="center">
 
-![Buzzstation_Main_Page](https://github.com/awilwayco/Buzzstation/assets/56363833/1bf52e02-73db-4060-b895-9c1fcd369237)
+![Buzzstation_Main_Page](https://github.com/SWAMP-Blimps/Buzzstation/assets/56363833/2033cf04-2fda-402c-a147-82c1b9d3a77f)
 <p align="center">
 <em>Figure 1. Basestation UI on a Mobile Device</em>
   
