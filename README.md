@@ -23,17 +23,20 @@ A React Native app to send commands and receive data to/from blimps using ROS 2
 
 ### Backend
 
-Features
-- Backend virtual joystick usage
+Necessary Features
 - Re-add rosjoy functionality and test
+- Any corresponding frontend functionality
+
+"Nice to Have" Features
+- Backend virtual joystick usage
 
 ### Frontend
 
 Necessary Features
-- Add Full Controller Functionality for web and app users
-- Add State Machine text
-- Add 'All Auto' and 'All Manual' Buttons
-- Add Calibrate Button (with Height value)
+- Add Controller functionality for web and app users
+- Add State Machine text updating
+- Add 'All Auto' and 'All Manual' button functionality
+- Add Calibrate button functionality (with height value)
 - Add Barometer Integration
 
 "Nice to Have" Features
@@ -43,11 +46,11 @@ Necessary Features
 - Dropdown Menu for State Machine
 - Select and deselect visible blimps on Main Page
 - Add Virtual Joysticks for the app and test performance and functionality when multiple blimps are being controlled
-- Add Vision ON/OFF Buttons
+- Add Vision ON/OFF button functionality (To start vision code on blimps)
 
 Bugs
-- Fix Spacing on all platforms/devices (Make buttons resize based on screen dimensions)
-- Fix Multi-controller issue of when a device or browser closes and the blimp name button stays red (Add a timeout to check for the device)
+- Fix Multi-Controller issue of when a device or browser closes and the blimp name button stays red (Add a timeout to check for the device using the UUID)
+- Fix button spacing on all platforms/devices (Make buttons resize based on screen dimensions)
 
 ## Ideas
 
@@ -75,4 +78,4 @@ Bugs
 </p>
 
 ### Suggestions
-- Use a steam deck or mobile device to control blimps instead of an Xbox controller
+- Use a Steam Deck or mobile device to control blimps instead of an Xbox controller
