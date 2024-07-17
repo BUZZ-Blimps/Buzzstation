@@ -14,7 +14,8 @@ import BlimpsContainer from './BlimpsContainer';
 import Button from './Button';
 
 // Functions
-import { useButtonColor } from './AllBlimpsButtonColor'; 
+import { useTargetButtonColor } from './TargetButtonColor'; 
+import { useAllMode } from './AllMode'; 
 
 // IOS
 const isIOS = Platform.OS === 'ios';
@@ -59,20 +60,23 @@ export default function App() {
 
   // Goal Color
   const { 
-          AllBlimpsButtonStyle: goalColorButtonStyle, 
+          TargetButtonStyle: goalColorButtonStyle, 
           buttonColor: goalColorButtonColor, 
           handleClick: handleGoalColorClick 
-        } = useButtonColor('orange', 'goal_color');
+        } = useTargetButtonColor('orange', 'goal_color');
 
   // Enemy Color
   const { 
-          AllBlimpsButtonStyle: enemyColorButtonStyle, 
+          TargetButtonStyle: enemyColorButtonStyle, 
           buttonColor: enemyColorButtonColor, 
           handleClick: handleEnemyColorClick 
-        } = useButtonColor('blue', 'enemy_color');
+        } = useTargetButtonColor('blue', 'enemy_color');
 
   // All Auto
-  // ...
+  const { 
+          AllModeButtonStyle: AllModeButtonStyle, 
+          handleClick: handleAllAutoClick 
+        } = useAllMode('green', 'all_auto');
 
   // All Manual
   // ...
@@ -125,14 +129,8 @@ export default function App() {
             buttonKey='all_auto' // Type of Button
             buttonColor='green' // Button Color
             buttonText='All Auto' // Text Seen on Button
-            buttonStyle={{
-              ...goalColorButtonStyle,
-              buttonText: {
-                  ...goalColorButtonStyle.buttonText,
-                  fontSize: 15,
-              },
-            }}
-            onPress={() => null} // On Press Function
+            buttonStyle={AllModeButtonStyle} // Button Style
+            onPress={() => handleAllAutoClick('all_auto')} // On Press Function
         />
 
         {/* All Manual Button */}
@@ -141,14 +139,8 @@ export default function App() {
             buttonKey='all_manual' // Type of Button
             buttonColor='#E11C1C' // Button Color
             buttonText='All Manual' // Text Seen on Button
-            buttonStyle={{
-              ...goalColorButtonStyle,
-              buttonText: {
-                  ...goalColorButtonStyle.buttonText,
-                  fontSize: 15,
-              },
-            }}
-            onPress={() => null} // On Press Function
+            buttonStyle={AllModeButtonStyle} // Button Style
+            onPress={() => handleAllAutoClick('all_manual')} // On Press Function
         />
 
         </SafeAreaView>
@@ -172,6 +164,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column', // Arranges buttons horizontally
     position: 'absolute',
     right: isAndroid || isIOS ? '2%' : '17%',
+    marginTop: isAndroid || isIOS ? -35 : -5,
   },
   blimpContainer: {
     flex: 1,
@@ -183,8 +176,8 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   imageHalfSize: {
-    width: 624/2, // Half width
-    height: 150/2, // Half height
+    width: 624/2.75, // Half width
+    height: 150/2.75, // Half height
     resizeMode: 'contain',
   },
 });

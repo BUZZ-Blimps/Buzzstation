@@ -17,8 +17,8 @@ To-Do:
 
 # Imports
 from Packages.packages import *
-from .blimp_type import is_attack_blimp
 from time import time
+from .blimp_type import is_attack_blimp
 
 # Logger
 from rclpy.logging import get_logger
@@ -64,7 +64,7 @@ class Blimp:
             self.state_machine = 0
             """
             0: Searching
-            1: Approach
+            1: Approaching
             2: Catching
             3: Caught
             4: Goal Search
@@ -295,15 +295,46 @@ class Blimp:
     # Note: Maybe Move to subscribers.py and refactor (Test first using rti)
     
     def create_subscribers(self):
-        pass
+        # Catching Blimp
+        if self.type is False:
+
+            # State Machine
+            self.sub_state_machine = self.create_sub('state_machine', 'Int64')
+
+        # Attack Blimp
+        else:
+
+            # State Machine
+            self.sub_state_machine = self.create_sub('state_machine', 'Bool')
+
 
     def create_sub(self, key, data_type):
-        pass
+        if key is 'state_machine':
+            if data_type == 'Bool':
+                sub = self.basestation_node.create_subscription(Bool, f'{self.name}/{key}', self.state_machine_callback, 10)
+            elif data_type == 'Int64':
+                sub = self.basestation_node.create_subscription(Int64, f'{self.name}/{key}', self.state_machine_callback, 10)
+        return sub
 
     def destroy_subscribers(self):
+        # Catching Blimp
+        if self.type is False:
+
+            # State Machine
+            self.destroy_sub('sub_state_machine')
+
+        # Attack Blimp
+        else:
+
+            # State Machine
+            self.destroy_sub('sub_state_machine')
+
         # Destroy Heartbeat Subscriber and Remove from Heartbeat Subscriber Dictionary
         self.basestation_node.destroy_subscription(self.basestation_node.heartbeat_subs[self.name])
         del self.basestation_node.heartbeat_subs[self.name]
     
     def destroy_sub(self, key):
-        pass
+        self.basestation_node.destroy_subscription(getattr(self, key))
+
+    def state_machine_callback(self, msg):
+        self.state_machine = msg.data

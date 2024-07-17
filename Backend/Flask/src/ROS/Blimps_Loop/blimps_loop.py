@@ -8,12 +8,10 @@ Sends and recieves blimp data over ROS.
 """
 
 # Imports
-from datetime import datetime
-from Packages.packages import socketio, json
+from Packages.packages import socketio
 from ..ros import basestation_node, redis_client
-from ..Communication.publishers import publish_generic
 from .Blimps.update_blimp_lists import alive_blimps, new_blimps, timeout_blimps, reorder_blimp_names
-from .Blimps.update_blimp_data import update_component_for_all_blimps, update_blimp_component_color
+from .Blimps.update_blimp_data import update_component_for_all_blimps, update_blimp_component_color, update_blimp_component_value
 from .Blimps.add_blimps import add_new_blimps
 from .Blimps.remove_blimps import remove_timeout_blimps
 
@@ -40,8 +38,9 @@ def update_global_values():
     # Enemy Color (Default: Blue, Nondefault: Red)
     update_component_for_all_blimps(basestation_node, 'enemy_color', 'blue', 'red')
 
-    # All Autonomous State (Sends all current blimps into autonomous mode)
+    # All Mode (Sends all current blimps into autonomous or manual mode)
     # To-Do: Need to make function in update_blimps_data
+    #update_component_for_all_blimps(basestation_node, 'all_mode', 'green', 'green')
 
 # To-Do: Finish this function
 def update_blimp_values(current_blimps):
@@ -49,7 +48,7 @@ def update_blimp_values(current_blimps):
     for name in current_blimps:
         
         # State
-        # ...
+        update_blimp_component_value(current_blimps[name], 'state_machine')
 
         # Mode
         update_blimp_component_color(current_blimps[name], 'mode', 'red', 'green')

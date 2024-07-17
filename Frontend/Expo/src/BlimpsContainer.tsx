@@ -4,11 +4,20 @@
 import React from 'react';
 import { View, StyleSheet, Platform } from 'react-native';
 
+// IOS
+const isIOS = Platform.OS === 'ios';
+
+// Android
+const isAndroid = Platform.OS === 'android';
+
 // Button Component
 import Button from './Button';
 
 // Names
 import { useNames } from './Names'; // Import the useNames hook
+
+// States
+import { useStates } from './States'; // Import the useModes hook
 
 // Modes
 import { useModes } from './Modes'; // Import the useModes hook
@@ -18,7 +27,7 @@ const BlimpsContainer: React.FC = () => {
   const { names, nameColors, nameButtonStyle, handleNameClick } = useNames();
 
   // States
-  // ...
+  const { stateValues, stateButtonStyle } = useStates();
 
   // Modes
   const { modeColors, modeButtonStyle, handleModeClick } = useModes();
@@ -43,6 +52,7 @@ const BlimpsContainer: React.FC = () => {
             ...modeButtonStyle,
             button: {
                 ...modeButtonStyle.button,
+                marginTop: -10,
                 //borderColor: 'white',
             },
           }}
@@ -57,7 +67,8 @@ const BlimpsContainer: React.FC = () => {
           buttonStyle={{
             ...modeButtonStyle,
             button: {
-                ...modeButtonStyle.button,
+                ...stateButtonStyle.button,
+                marginTop: -10,
                 //borderColor: 'white',
             },
           }}
@@ -73,6 +84,7 @@ const BlimpsContainer: React.FC = () => {
             ...modeButtonStyle,
             button: {
                 ...modeButtonStyle.button,
+                marginTop: -10,
                 //borderColor: 'white',
             },
           }}
@@ -88,6 +100,7 @@ const BlimpsContainer: React.FC = () => {
             ...modeButtonStyle,
             button: {
                 ...modeButtonStyle.button,
+                marginTop: -10,
                 width: 130, // Example new width
                 //borderColor: 'white',
             },
@@ -104,6 +117,7 @@ const BlimpsContainer: React.FC = () => {
             ...modeButtonStyle,
             button: {
                 ...modeButtonStyle.button,
+                marginTop: -10,
                 //borderColor: 'white',
             },
           }}
@@ -135,8 +149,8 @@ const BlimpsContainer: React.FC = () => {
                   blimpName={name} // Blimp Name
                   buttonKey='state' // Type of Button
                   buttonColor='grey' // Button Color
-                  buttonText='Searching' // Text Seen on Button
-                  buttonStyle={modeButtonStyle} // Button Style
+                  buttonText={stateValues[name] || 'None'} // Text Seen on Button
+                  buttonStyle={stateButtonStyle} // Button Style
                   onPress={() => null} // On Press Function
               />
 
@@ -198,8 +212,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row', // Arrange buttons in a row
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: -3,
     marginBottom: 10, // Space between rows
-    marginHorizontal: 0,
+    marginLeft: isAndroid || isIOS ? -50 : 0,
   },
 });
 

@@ -1,4 +1,4 @@
-// AllBlimpsButtonColor.tsx
+// TargetButtonColor.tsx
 
 // React and React Native
 import { useState, useEffect } from 'react';
@@ -14,12 +14,12 @@ const isIOS = Platform.OS === 'ios';
 const isAndroid = Platform.OS === 'android';
 
 interface ButtonColorState {
-    AllBlimpsButtonStyle: any; // Replace 'any' with your actual style type if possible
+    TargetButtonStyle: any; // Replace 'any' with your actual style type if possible
     buttonColor: string;
     handleClick: (buttonKey: string) => void;
 }
 
-export const useButtonColor = (defaultColor: string, buttonKey: string): ButtonColorState => {
+export const useTargetButtonColor = (defaultColor: string, buttonKey: string): ButtonColorState => {
     const [buttonColor, setButtonColor] = useState<string>(defaultColor);
   
     useEffect(() => {
@@ -55,13 +55,13 @@ export const useButtonColor = (defaultColor: string, buttonKey: string): ButtonC
         }
     };
   
-    const AllBlimpsButtonStyle = StyleSheet.create({
+    const TargetButtonStyle = StyleSheet.create({
       button: {
         width: 100,
         height: 50,
         alignItems: 'center',
         justifyContent: 'center',
-        marginVertical: isAndroid || isIOS ? 5 : '14%',
+        marginVertical: isAndroid || isIOS ? 10 : '10%',
         borderRadius: 5,
         borderWidth: 2,
         borderColor: 'black',
@@ -79,7 +79,7 @@ export const useButtonColor = (defaultColor: string, buttonKey: string): ButtonC
     }); 
   
     return {
-      AllBlimpsButtonStyle,
+      TargetButtonStyle,
       buttonColor,
       handleClick,
     };

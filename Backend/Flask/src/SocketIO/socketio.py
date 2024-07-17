@@ -48,7 +48,6 @@ def toggle_all_blimps_button_color(key):
 @socketio.on('toggle_blimp_button_color')
 def toggle_blimp_button_color(val):
     from ROS.ros import basestation_node
-    from ROS.Blimps_Loop.Blimps.update_blimp_data import update_blimp_component_color
 
     # Retrieve Blimp Name and Key
     name = val['name']
@@ -59,6 +58,21 @@ def toggle_blimp_button_color(val):
         # Change the Value of the Key for the Specific Blimp Name
         setattr(basestation_node.current_blimps[name], key, not getattr(basestation_node.current_blimps[name], key))
         
+# Set Blimp Button to specific value
+@socketio.on('set_blimp_button_value')
+def set_blimp_button_value(val):
+    from ROS.ros import basestation_node
+
+    # Retrieve Blimp Name, Key, and Value
+    name = val['name']
+    key = val['key']
+    value = bool(int(val['value']))
+
+    if hasattr(basestation_node.current_blimps[name], key):
+
+        # Change the Value of the Key for the Specific Blimp Name
+        setattr(basestation_node.current_blimps[name], key, value)
+
 # Changing Buttons with 3 Colors
 @socketio.on('toggle_name_button')
 def toggle_name_button(val):
@@ -169,7 +183,7 @@ def init_redis_values():
     # Set to Default Value when Server Starts
     redis_client.set('goal_color', 0) # 0: Orange, 1: Yellow
     redis_client.set('enemy_color', 0) # 0: Blue, 1: Red
-    redis_client.set('all_auto_state', 0) # 0: False, 1: True
+    redis_client.set('all_mode', 0) # 0: False, 1: True
     redis_client.set('current_names', '') # Empty on Start
     redis_client.set('name_button_colors', '{}') # Empty on Start
 
