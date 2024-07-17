@@ -34,8 +34,6 @@ Necessary Features
 
 Necessary Features
 - Add Controller functionality for web and app users
-- Add State Machine text updating
-- Add 'All Auto' and 'All Manual' button functionality
 - Add Calibrate button functionality (with height value)
 - Add Barometer Integration
 
