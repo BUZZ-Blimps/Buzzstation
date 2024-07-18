@@ -64,7 +64,7 @@ export const useAllMode = (defaultColor: string, buttonKey: string): ButtonColor
         height: 50,
         alignItems: 'center',
         justifyContent: 'center',
-        marginVertical: isAndroid || isIOS ? 10 : '10%',
+        marginVertical: 12,
         borderRadius: 5,
         borderWidth: 2,
         borderColor: 'black',

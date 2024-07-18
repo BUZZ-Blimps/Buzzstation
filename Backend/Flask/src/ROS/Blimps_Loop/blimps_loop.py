@@ -25,7 +25,7 @@ def blimps_loop():
     # Increment Blimps Loop Count
     basestation_node.blimps_loop_count = basestation_node.blimps_loop_count + 1
 
-    # Update Global Values: Goal Color, Enemy Color, All Auto State
+    # Update Global Values: Goal Color, Enemy Color
     update_global_values()
 
     # Update Blimps
@@ -37,10 +37,6 @@ def update_global_values():
 
     # Enemy Color (Default: Blue, Nondefault: Red)
     update_component_for_all_blimps(basestation_node, 'enemy_color', 'blue', 'red')
-
-    # All Mode (Sends all current blimps into autonomous or manual mode)
-    # To-Do: Need to make function in update_blimps_data
-    #update_component_for_all_blimps(basestation_node, 'all_mode', 'green', 'green')
 
 # To-Do: Finish this function
 def update_blimp_values(current_blimps):

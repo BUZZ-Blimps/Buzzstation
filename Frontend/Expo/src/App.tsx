@@ -12,6 +12,7 @@ import * as ScreenOrientation from 'expo-screen-orientation';
 // Components
 import BlimpsContainer from './BlimpsContainer';
 import Button from './Button';
+import Controller from './Controller';
 
 // Functions
 import { useTargetButtonColor } from './TargetButtonColor'; 
@@ -74,74 +75,155 @@ export default function App() {
 
   // All Auto
   const { 
-          AllModeButtonStyle: AllModeButtonStyle, 
+          AllModeButtonStyle: AllAutoButtonStyle, 
           handleClick: handleAllAutoClick 
         } = useAllMode('green', 'all_auto');
 
   // All Manual
-  // ...
+  const { 
+          AllModeButtonStyle: AllManualButtonStyle, 
+          handleClick: handleAllManualClick 
+        } = useAllMode('#E11C1C', 'all_manual');
 
   return (
     <SafeAreaView style={styles.container}>
 
-    <SafeAreaView style={styles.topContainer}>
-      <TouchableOpacity onPress={handleLogoPress}>
-        <Image 
-          source={require('./assets/buzz_blimps_logo.png')} 
-          style={Platform.OS === 'ios' || Platform.OS === 'android' ? styles.imageHalfSize : styles.image} 
+      <SafeAreaView style={styles.topContainer}>
+
+        {/* Siderbar Menu Button */}
+        <Button 
+          blimpName='none' // Blimp Name
+          buttonKey='sidebar_menu' // Type of Button
+          buttonColor='black' // Button Color
+          buttonText='≡' // Text Seen on Button
+          buttonStyle={{
+            ...goalColorButtonStyle,
+            button: {
+                ...goalColorButtonStyle.button,
+                position: isAndroid || isIOS ?  'relative' : 'absolute',
+                left: isAndroid || isIOS ? '0%' : '0%',
+                top: isAndroid || isIOS ? '0%' : '-10%',
+                marginTop: isAndroid || isIOS ? -5 : -5,
+                marginRight: isAndroid || isIOS ? 15 : 0,
+                width: 50,
+                marginVertical: 0,
+            },
+            buttonText: {
+              ...goalColorButtonStyle.buttonText,
+              fontWeight: 'normal',
+              fontSize: 40,
+            }
+          }}
+          onPress={() => null} // On Press Function
         />
-      </TouchableOpacity>
+
+        {/* Controller Input Display Button */}
+        <Controller
+          blimpName='none'
+          buttonKey='controller'
+          buttonColor='black'
+          buttonStyle={{
+            ...goalColorButtonStyle.button,
+            width: isAndroid || isIOS ? 200 : 235,
+            height: isAndroid || isIOS ? 40 : 100,
+            marginVertical: 0,
+            marginTop: 5,
+            marginRight: 20,
+            borderColor: 'white',
+          }}
+          onPress={() => null}
+        />
+
+        <TouchableOpacity onPress={handleLogoPress}>
+
+          {/* Buzz Blimps Logo */}
+          <Image 
+            source={require('./assets/buzz_blimps_logo.png')} 
+            style={Platform.OS === 'ios' || Platform.OS === 'android' ? styles.imageHalfSize : styles.image} 
+          />
+
+        </TouchableOpacity>
+
+        {/* Barometer Button */}
+        <Button 
+          blimpName='none' // Blimp Name
+          buttonKey='barometer' // Type of Button
+          buttonColor='#E11C1C' // Button Color
+          buttonText='Barometer: Disconnected' // Text Seen on Button
+          buttonStyle={{
+            ...goalColorButtonStyle,
+            button: {
+                ...goalColorButtonStyle.button,
+                width: 235,
+                height: isAndroid || isIOS ? 40 : 100,
+                marginVertical: 0,
+                marginTop: 5,
+                marginLeft: isAndroid || isIOS ? 20 : 20,
+            },
+            buttonText: {
+              ...goalColorButtonStyle.buttonText,
+              fontSize: isAndroid || isIOS ? 17 : 18,
+            }
+          }}
+          onPress={() => null} // On Press Function
+        />
+
       </SafeAreaView>
 
-      <SafeAreaView style={styles.blimpContainer}>
-        {/* Blimps */}
-        <BlimpsContainer />
-      </SafeAreaView>
+      <SafeAreaView style={styles.mainContainer}>
 
-      <SafeAreaView style={[
-        styles.buttonContainer,
-        { top: isFullScreen ? '29%' : (Platform.OS === 'android' || Platform.OS === 'ios' ? '35%' : '37%') }
-      ]}>
+        <SafeAreaView style={styles.blimpContainer}>
+          {/* Blimps */}
+          <BlimpsContainer />
+        </SafeAreaView>
 
-        {/* Goal Color Button */}
-        <Button 
-            blimpName='none' // Blimp Name
-            buttonKey='goal_color' // Type of Button
-            buttonColor={goalColorButtonColor} // Button Color
-            buttonText='Goal' // Text Seen on Button
-            buttonStyle={goalColorButtonStyle} // Button Style
-            onPress={() => handleGoalColorClick('goal_color')} // On Press Function
-        />
+        {/* <SafeAreaView style={[
+          styles.buttonContainer,
+          { top: isFullScreen ? '29%' : (Platform.OS === 'android' || Platform.OS === 'ios' ? '35%' : '37%') }
+        ]}> */}
+        <SafeAreaView style={styles.buttonContainer}>
 
-        {/* Enemy Color Button */}
-        <Button 
-            blimpName='none' // Blimp Name
-            buttonKey='enemy_color' // Type of Button
-            buttonColor={enemyColorButtonColor} // Button Color
-            buttonText='Enemy' // Text Seen on Button
-            buttonStyle={enemyColorButtonStyle} // Button Style
-            onPress={() => handleEnemyColorClick('enemy_color')} // On Press Function
-        />
+          {/* Goal Color Button */}
+          <Button 
+              blimpName='none' // Blimp Name
+              buttonKey='goal_color' // Type of Button
+              buttonColor={goalColorButtonColor} // Button Color
+              buttonText='Goal' // Text Seen on Button
+              buttonStyle={goalColorButtonStyle} // Button Style
+              onPress={() => handleGoalColorClick('goal_color')} // On Press Function
+          />
 
-        {/* All Auto Button */}
-        <Button 
-            blimpName='none' // Blimp Name
-            buttonKey='all_auto' // Type of Button
-            buttonColor='green' // Button Color
-            buttonText='All Auto' // Text Seen on Button
-            buttonStyle={AllModeButtonStyle} // Button Style
-            onPress={() => handleAllAutoClick('all_auto')} // On Press Function
-        />
+          {/* Enemy Color Button */}
+          <Button 
+              blimpName='none' // Blimp Name
+              buttonKey='enemy_color' // Type of Button
+              buttonColor={enemyColorButtonColor} // Button Color
+              buttonText='Enemy' // Text Seen on Button
+              buttonStyle={enemyColorButtonStyle} // Button Style
+              onPress={() => handleEnemyColorClick('enemy_color')} // On Press Function
+          />
 
-        {/* All Manual Button */}
-        <Button 
-            blimpName='none' // Blimp Name
-            buttonKey='all_manual' // Type of Button
-            buttonColor='#E11C1C' // Button Color
-            buttonText='All Manual' // Text Seen on Button
-            buttonStyle={AllModeButtonStyle} // Button Style
-            onPress={() => handleAllAutoClick('all_manual')} // On Press Function
-        />
+          {/* All Auto Button */}
+          <Button 
+              blimpName='none' // Blimp Name
+              buttonKey='all_auto' // Type of Button
+              buttonColor='green' // Button Color
+              buttonText='All Auto' // Text Seen on Button
+              buttonStyle={AllAutoButtonStyle} // Button Style
+              onPress={() => handleAllAutoClick('all_auto')} // On Press Function
+          />
+
+          {/* All Manual Button */}
+          <Button 
+              blimpName='none' // Blimp Name
+              buttonKey='all_manual' // Type of Button
+              buttonColor='#E11C1C' // Button Color (red)
+              buttonText='All Manual' // Text Seen on Button
+              buttonStyle={AllManualButtonStyle} // Button Style
+              onPress={() => handleAllManualClick('all_manual')} // On Press Function
+          />
+
+          </SafeAreaView>
 
         </SafeAreaView>
 
@@ -160,24 +242,27 @@ const styles = StyleSheet.create({
     justifyContent: 'center', // Ensures buttons are centered
     alignItems: 'center', // Aligns content in the middle vertically
   },
-  buttonContainer: {
-    flexDirection: 'column', // Arranges buttons horizontally
-    position: 'absolute',
-    right: isAndroid || isIOS ? '2%' : '17%',
-    marginTop: isAndroid || isIOS ? -35 : -5,
+  mainContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center', // Center content horizontally
   },
   blimpContainer: {
-    flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'center',
     marginTop: '2%',
+    marginLeft: isAndroid || isIOS ? '10%' : 100,
+  },
+  buttonContainer: {
+    flexDirection: 'column', // Arranges buttons horizontally
+    justifyContent: 'flex-end',
+    marginLeft: 5,
   },
   image: {
     resizeMode: 'contain',
   },
   imageHalfSize: {
-    width: 624/2.75, // Half width
-    height: 150/2.75, // Half height
+    width: 624/2.6, // Half width
+    height: 150/2.6, // Half height
     resizeMode: 'contain',
   },
 });

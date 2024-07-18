@@ -20,7 +20,7 @@ interface ButtonProps {
   onPress: () => void; // Handle Click Function
 }
 
-const Button: React.FC<ButtonProps> = ({ blimpName, buttonKey, buttonColor, buttonText, buttonStyle, onPress}) => {
+const Button: React.FC<ButtonProps> = ({ blimpName, buttonKey, buttonColor, buttonText, buttonStyle, onPress }) => {
 
 return (
     <Pressable 
@@ -31,7 +31,7 @@ return (
         android_disableSound={true}
         android_ripple={{ color: 'transparent' }}
     >
-        <Text style={buttonStyle.buttonText}>{buttonText}</Text>
+        <Text selectable={false} style={buttonStyle.buttonText}>{buttonText}</Text>
     </Pressable>
   );
 };

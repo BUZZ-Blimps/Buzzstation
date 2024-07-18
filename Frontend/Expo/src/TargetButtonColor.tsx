@@ -2,7 +2,7 @@
 
 // React and React Native
 import { useState, useEffect } from 'react';
-import { View, StyleSheet, Platform } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 
 // SocketIO
 import { socket } from './Constants'; // Importing the SocketIO instance
@@ -61,7 +61,7 @@ export const useTargetButtonColor = (defaultColor: string, buttonKey: string): B
         height: 50,
         alignItems: 'center',
         justifyContent: 'center',
-        marginVertical: isAndroid || isIOS ? 10 : '10%',
+        marginVertical: 12,
         borderRadius: 5,
         borderWidth: 2,
         borderColor: 'black',
