@@ -70,14 +70,14 @@ export const useAllMode = (defaultColor: string, buttonKey: string): ButtonColor
         borderColor: 'black',
       },
       buttonText: {
-          fontWeight: 'bold',
-          color: 'white', // Text color
-          fontSize: 15, // Text size
-          textAlign: 'center', // Center the text
-          textAlignVertical: 'center',
-          textShadowColor: 'black', // Outline color
-          textShadowOffset: { width: 1, height: 1 }, // Direction of the shadow
-          textShadowRadius: isAndroid || isIOS ? 0.1 : 1, // Spread of the shadow
+        fontWeight: 'bold',
+        color: 'white', // Text color
+        fontSize: 15, // Text size
+        textAlign: 'center', // Center the text
+        textAlignVertical: 'center',
+        textShadowColor: 'black', // Outline color
+        textShadowOffset: { width: 0, height: 0 }, // Direction of the shadow
+        textShadowRadius: isAndroid || isIOS ? 2 : 2.5, // Spread of the shadow
       },
     }); 
   

@@ -31,7 +31,7 @@ return (
         android_disableSound={true}
         android_ripple={{ color: 'transparent' }}
     >
-        <Text selectable={false} style={buttonStyle.buttonText}>{buttonText}</Text>
+      <Text selectable={false} style={buttonStyle.buttonText}>{buttonText}</Text>
     </Pressable>
   );
 };

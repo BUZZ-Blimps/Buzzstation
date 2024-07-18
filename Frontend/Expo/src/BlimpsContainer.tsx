@@ -186,8 +186,8 @@ const BlimpsContainer: React.FC = () => {
               <Button 
                   blimpName={name} // Blimp Name
                   buttonKey='vision' // Type of Button
-                  buttonColor='#E11C1C' // Button Color
-                  buttonText='Off' // Text Seen on Button
+                  buttonColor='green' // Button Color
+                  buttonText='On' // Text Seen on Button
                   buttonStyle={modeButtonStyle} // Button Style
                   onPress={() => null} // On Press Function
               />

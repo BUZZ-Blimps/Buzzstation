@@ -3,6 +3,7 @@
 // React and React Native
 import { useState, useEffect } from 'react';
 import { StyleSheet, Platform } from 'react-native';
+import PropTypes from 'prop-types';
 
 // SocketIO
 import { socket } from './Constants'; // Importing the SocketIO instance
@@ -29,9 +30,20 @@ export const useTargetButtonColor = (defaultColor: string, buttonKey: string): B
         const receivedButtonKey: string = val['key'];
         const receivedButtonColor: string = val['color'];
 
+        let newColor = defaultColor; // Default color 
+        if (receivedButtonColor === 'orange') {
+          newColor = '#FF5D01';
+        } else if (receivedButtonColor === 'yellow') {
+          newColor = '#DADE00';
+        } else if (receivedButtonColor === 'blue') {
+          newColor = '#0044A6';
+        } else if (receivedButtonColor === 'red') {
+          newColor = '#D20F18';
+        }
+
         if (receivedName === 'none') {
             if (receivedButtonKey === buttonKey) {
-                setButtonColor(receivedButtonColor);
+                setButtonColor(newColor);
                 // Testing
                 console.log(buttonKey + " changed to " + receivedButtonColor);
             }
@@ -73,8 +85,8 @@ export const useTargetButtonColor = (defaultColor: string, buttonKey: string): B
           textAlign: 'center', // Center the text
           textAlignVertical: 'center',
           textShadowColor: 'black', // Outline color
-          textShadowOffset: { width: 1, height: 1 }, // Direction of the shadow
-          textShadowRadius: isAndroid || isIOS ? 0.1 : 1, // Spread of the shadow
+          textShadowOffset: { width: 0, height: 0 }, // Direction of the shadow
+          textShadowRadius: isAndroid || isIOS ? 2 : 2.5, // Spread of the shadow
       },
     }); 
   

@@ -64,14 +64,14 @@ export default function App() {
           TargetButtonStyle: goalColorButtonStyle, 
           buttonColor: goalColorButtonColor, 
           handleClick: handleGoalColorClick 
-        } = useTargetButtonColor('orange', 'goal_color');
+        } = useTargetButtonColor('#FF5D01', 'goal_color');
 
   // Enemy Color
   const { 
           TargetButtonStyle: enemyColorButtonStyle, 
           buttonColor: enemyColorButtonColor, 
           handleClick: handleEnemyColorClick 
-        } = useTargetButtonColor('blue', 'enemy_color');
+        } = useTargetButtonColor('#0044A6', 'enemy_color');
 
   // All Auto
   const { 
@@ -155,7 +155,7 @@ export default function App() {
             button: {
                 ...goalColorButtonStyle.button,
                 width: 235,
-                height: isAndroid || isIOS ? 40 : 100,
+                height: isAndroid || isIOS ? 50 : 100,
                 marginVertical: 0,
                 marginTop: 5,
                 marginLeft: isAndroid || isIOS ? 20 : 20,
@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
   blimpContainer: {
     justifyContent: 'flex-start',
     alignItems: 'center',
-    marginTop: '2%',
+    marginTop: '1.75%',
     marginLeft: isAndroid || isIOS ? '10%' : 100,
   },
   buttonContainer: {

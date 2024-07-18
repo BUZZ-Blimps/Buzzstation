@@ -103,69 +103,70 @@ const Controller: React.FC<ButtonProps> = ({ blimpName, buttonKey, buttonColor, 
     }, []);
   
     return (
-        <TouchableOpacity style={[styles.button, buttonStyle.button]} onPress={onPress}>
-          <View style={styles.gridContainer}>
-            {/* Left Grid */}
-            <View style={styles.grid}>
-              <Animated.View style={[styles.dot, { left: leftDotX, top: leftDotY }]} />
-              <View style={styles.xAxis} />
-              <View style={styles.yAxis} />
-            </View>
-            {/* Right Grid */}
-            <View style={styles.grid}>
-              <Animated.View style={[styles.dot, { left: rightDotX, top: rightDotY }]} />
-              <View style={styles.xAxis} />
-              <View style={styles.yAxis} />
-            </View>
+      <TouchableOpacity style={[styles.button, buttonStyle.button]} onPress={onPress}>
+        <View style={styles.gridContainer}>
+          {/* Left Grid */}
+          <View style={styles.grid}>
+            <Animated.View style={[styles.dot, { left: leftDotX, top: leftDotY }]} />
+            <View style={styles.xAxis} />
+            <View style={styles.yAxis} />
           </View>
-        </TouchableOpacity>
-      );
-    };
+          {/* Right Grid */}
+          <View style={[styles.grid, styles.rightGrid]}>
+            <Animated.View style={[styles.dot, { left: rightDotX, top: rightDotY }]} />
+            <View style={styles.xAxis} />
+            <View style={styles.yAxis} />
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  };
   
-  
-    const styles = StyleSheet.create({
-        button: {
-          justifyContent: 'center',
-          alignItems: 'center',
-        },
-        gridContainer: {
-          flexDirection: 'row',
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginTop: 5,
-          marginRight: 20,
-        },
-        grid: {
-          position: 'relative',
-          height: isAndroid || isIOS ? 100/2 : 100,
-          width: isAndroid || isIOS ? 125/2 : 125,
-          borderWidth: 1,
-          borderColor: 'white',
-        },
-        dot: {
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          width: isAndroid || isIOS ? 15/2 : 15,
-          height: isAndroid || isIOS ? 15/2 : 15,
-          borderRadius: isAndroid || isIOS ? 7.5/2 : 7.5,
-          backgroundColor: 'white',
-          transform: isAndroid || isIOS ? [{ translateX: -125/4+15/2+0.5 }, { translateY: -100/4-7.5/2}] : [{ translateX: 7.5/2-0.5 }, { translateY: -15/2 }],
-        },
-        xAxis: {
-          position: 'absolute',
-          top: '50%',
-          width: '100%',
-          height: 1,
-          backgroundColor: 'white',
-        },
-        yAxis: {
-          position: 'absolute',
-          left: '50%',
-          height: '100%',
-          width: 1,
-          backgroundColor: 'white',
-        },
-    });
+  const styles = StyleSheet.create({
+    button: {
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    gridContainer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginTop: 5,
+    },
+    grid: {
+      position: 'relative',
+      height: isAndroid || isIOS ? 50 : 100,
+      width: isAndroid || isIOS ? 62.5 : 125,
+      borderWidth: 1,
+      borderColor: 'white',
+    },
+    rightGrid: {
+      marginLeft: -1, // Adjust this value to remove the overlapping border
+    },
+    dot: {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      width: isAndroid || isIOS ? 7.5 : 15,
+      height: isAndroid || isIOS ? 7.5 : 15,
+      borderRadius: isAndroid || isIOS ? 3.75 : 7.5,
+      backgroundColor: 'white',
+      transform: isAndroid || isIOS ? [{ translateX: -125/4+15/2+0.5 }, { translateY: -100/4-7.5/2 }] : [{ translateX: 7.5/2+0.5/2 }, { translateY: -15/2+0.5/2 }],
+    },
+    xAxis: {
+      position: 'absolute',
+      top: '50%',
+      width: '100%',
+      height: 1,
+      backgroundColor: 'white',
+    },
+    yAxis: {
+      position: 'absolute',
+      left: '50%',
+      height: '100%',
+      width: 1,
+      backgroundColor: 'white',
+    },
+  });
   
   export default Controller;
