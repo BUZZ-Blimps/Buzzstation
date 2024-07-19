@@ -24,7 +24,7 @@ A React Native app to send commands and receive data to/from blimps using ROS 2
 ### Backend
 
 Necessary Features
-- Re-add rosjoy functionality and test
+- Finish Controller Functionality
 - Any corresponding frontend functionality
 
 "Nice to Have" Features
@@ -33,7 +33,7 @@ Necessary Features
 ### Frontend
 
 Necessary Features
-- Add Controller functionality for web and app users
+- Finish adding Controller functionality for web and app users
 - Add Calibrate button functionality (with height value)
 - Add Barometer Integration
 
