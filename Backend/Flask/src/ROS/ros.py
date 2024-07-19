@@ -22,6 +22,7 @@ To-Do:
 
 # Imports
 from Packages.packages import *
+from .Joy.ros_joy import init_ros_joy
 
 global basestation_node
 
@@ -29,6 +30,8 @@ global basestation_node
 class Basestation(Node):
     def __init__(self):
         super().__init__('Basestation')
+
+        init_ros_joy(self)
 
         # Initialize attributes for Basestation Node
         self.init_attributes()
@@ -62,6 +65,9 @@ class Basestation(Node):
         self.goal_color = bool(int(self.redis_client.get('goal_color').decode('utf-8')))
         self.enemy_color = bool(int(self.redis_client.get('enemy_color').decode('utf-8')))
         self.all_mode = bool(int(self.redis_client.get('all_mode').decode('utf-8')))
+
+        # ROS Joy (Controller)
+        #init_ros_joy(self)
 
     def create_blimps_loop(self):
         # Heartbeat Subscriptions
