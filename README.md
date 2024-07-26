@@ -6,7 +6,7 @@ A React Native app to send commands and receive data to/from blimps using ROS 2
 **Note:** This app is not yet complete. It is still in the developmental stage and has only been tested with fake blimps.
 
 <p align="center">
-<img src="https://github.com/user-attachments/assets/6b0ab482-93c6-49d0-add1-a4cbe74f1498" />
+<img src="https://github.com/user-attachments/assets/ab131e69-8f9c-4a88-977d-7e1ce25869a3" />
 </p>
 <p align="center">
 <em>Figure 1. Basestation UI</em>
