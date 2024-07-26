@@ -170,7 +170,7 @@ const BlimpsContainer: React.FC = () => {
                   blimpName={name} // Blimp Name
                   buttonKey='calibrate' // Type of Button
                   buttonColor='#E11C1C' // Button Color
-                  buttonText='Height: 1.00m' // Text Seen on Button
+                  buttonText='Height: 0.00m' // Text Seen on Button
                   buttonStyle={{
                     ...modeButtonStyle,
                     button: {

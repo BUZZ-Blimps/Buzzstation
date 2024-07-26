@@ -74,7 +74,7 @@ export const useStates = () => {
                 }));
 
                 // Testing
-                console.log(`${receivedButtonKey} for ${receivedName} changed to ${receivedValue}`);
+                //console.log(`${receivedButtonKey} for ${receivedName} changed to ${receivedValue}`);
             }
         };
 

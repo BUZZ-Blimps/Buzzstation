@@ -45,7 +45,7 @@ export const useTargetButtonColor = (defaultColor: string, buttonKey: string): B
             if (receivedButtonKey === buttonKey) {
                 setButtonColor(newColor);
                 // Testing
-                console.log(buttonKey + " changed to " + receivedButtonColor);
+                //console.log(buttonKey + " changed to " + receivedButtonColor);
             }
         }
       };
@@ -63,7 +63,7 @@ export const useTargetButtonColor = (defaultColor: string, buttonKey: string): B
         if (buttonKey !== 'None') {
             socket.emit('toggle_all_blimps_button_color', buttonKey);
             // Testing
-            console.log(buttonKey + " button clicked!");
+            //console.log(buttonKey + " button clicked!");
         }
     };
   

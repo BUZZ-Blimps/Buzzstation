@@ -40,7 +40,7 @@ export const useModes = () => {
                 }));
 
                 // Testing
-                console.log(`${receivedButtonKey} for ${receivedName} changed to ${receivedButtonColor}`);
+                //console.log(`${receivedButtonKey} for ${receivedName} changed to ${receivedButtonColor}`);
             }
         };
 

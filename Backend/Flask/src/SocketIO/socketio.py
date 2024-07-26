@@ -34,6 +34,27 @@ def handle_connect():
     get_redis_values()
 
 # Changing All Blimps Buttons with Two Colors
+@socketio.on('motor_command')
+def get_blimp_motor_command(val):
+    from ROS.ros import basestation_node
+    from ROS.Communication.publishers import publish_generic
+
+    # Retrieve Blimp Name and Key
+    name = val['name']
+    axes = val['axes']
+
+    axes[0] = float(axes[0])
+    axes[1] = float(axes[1] * -1) # Invert
+    axes[2] = float(axes[2])
+    axes[3] = float(axes[3] * -1) # Invert
+
+    if hasattr(basestation_node.current_blimps[name], 'motor_commands'):
+
+        # Change the Value of the Motor Commands for the Specific Blimp Name
+        setattr(basestation_node.current_blimps[name], 'motor_commands', axes)
+        publish_generic('publish_' + 'motor_commands', basestation_node.current_blimps[name])
+
+# Changing All Blimps Buttons with Two Colors
 @socketio.on('toggle_all_blimps_button_color')
 def toggle_all_blimps_button_color(key):
 

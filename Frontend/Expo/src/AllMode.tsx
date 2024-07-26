@@ -31,7 +31,8 @@ export const useAllMode = (defaultColor: string, buttonKey: string): ButtonColor
             // Iterate through the modeColors dictionary
             for (const name in modeColors) {
                 if (modeColors.hasOwnProperty(name)) {
-                    console.log(`Mode for ${name}: ${modeColors[name]}`);
+                    // Testing
+                    //console.log(`Mode for ${name}: ${modeColors[name]}`);
                     // Optionally, you can call handleModeClick or any other function here
                     const val = { name: name, key: 'mode', value: 1};
                     socket.emit('set_blimp_button_value', val);
@@ -39,13 +40,14 @@ export const useAllMode = (defaultColor: string, buttonKey: string): ButtonColor
             }
 
             // Testing
-            console.log(buttonKey + " button clicked!");
+            //console.log(buttonKey + " button clicked!");
 
         } else if (buttonKey === 'all_manual') {
             // Iterate through the modeColors dictionary
             for (const name in modeColors) {
                 if (modeColors.hasOwnProperty(name)) {
-                    console.log(`Mode for ${name}: ${modeColors[name]}`);
+                    // Testing
+                    //console.log(`Mode for ${name}: ${modeColors[name]}`);
                     // Optionally, you can call handleModeClick or any other function here
                     const val = { name: name, key: 'mode', value: 0};
                     socket.emit('set_blimp_button_value', val);
@@ -53,7 +55,7 @@ export const useAllMode = (defaultColor: string, buttonKey: string): ButtonColor
             }
 
             // Testing
-            console.log(buttonKey + " button clicked!");
+            //console.log(buttonKey + " button clicked!");
 
         }
     };

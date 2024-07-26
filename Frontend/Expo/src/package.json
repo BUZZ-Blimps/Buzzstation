@@ -9,27 +9,27 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@babel/preset-env": "^7.24.7",
+    "@babel/preset-env": "^7.24.8",
     "@expo/metro-runtime": "~3.2.1",
     "@react-native-async-storage/async-storage": "1.23.1",
-    "@react-native/babel-preset": "^0.74.84",
-    "axios": "^1.6.8",
-    "expo": "~51.0.2",
+    "@react-native/babel-preset": "^0.74.85",
+    "axios": "^1.7.2",
+    "expo": "~51.0.22",
     "expo-screen-orientation": "~7.0.5",
     "expo-status-bar": "~1.12.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-gamepads": "^1.0.0",
-    "react-native": "0.74.2",
+    "react-native": "0.74.3",
     "react-native-uuid": "^2.0.2",
-    "react-native-web": "~0.19.6",
-    "redis": "^4.6.13",
-    "semver": "^7.5.2",
+    "react-native-web": "~0.19.12",
+    "redis": "^4.6.15",
+    "semver": "^7.6.3",
     "socket.io-client": "^4.7.5",
-    "uuid": "^9.0.1"
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0",
+    "@babel/core": "^7.24.9",
     "@types/react": "~18.2.79",
     "typescript": "~5.3.3"
   },

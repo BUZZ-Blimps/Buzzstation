@@ -93,7 +93,7 @@ class Blimp:
         self.mode = False
 
         # Motor Commands
-        self.motor_commands = [0.0, -0.0, 0.0, -0.0]
+        self.motor_commands = [float(0.0), float(0.0), float(0.0), float(0.0)]
 
         # Barometer Value
         self.barometer = 99668.2 # Competition Default Value
@@ -309,7 +309,7 @@ class Blimp:
 
 
     def create_sub(self, key, data_type):
-        if key is 'state_machine':
+        if key == 'state_machine':
             if data_type == 'Bool':
                 sub = self.basestation_node.create_subscription(Bool, f'{self.name}/{key}', self.state_machine_callback, 10)
             elif data_type == 'Int64':
