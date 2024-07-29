@@ -1,13 +1,16 @@
 // Controller.tsx
 
 // React
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 
 // React Native
-import { View, TouchableOpacity, StyleSheet, Animated, Platform, ViewStyle, TextStyle } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Platform, ViewStyle, TextStyle, DevSettings } from 'react-native';
+
+// React Native Animations
+import Animated, { Easing, useSharedValue, withTiming, useAnimatedStyle } from 'react-native-reanimated';
 
 // SocketIO
-import { socket } from './Constants'; // Importing the SocketIO instance
+import { socket } from './Constants';
 
 // IOS
 const isIOS = Platform.OS === 'ios';
@@ -15,11 +18,11 @@ const isIOS = Platform.OS === 'ios';
 // Android
 const isAndroid = Platform.OS === 'android';
 
-// Check the platform
+// Web
 const isWeb = Platform.OS === 'web';
 
 // Names
-import { useNames } from './Names'; // Import the useNames hook
+import { useNames } from './Names';
 
 // Gamepads
 import { useGamepads } from "react-gamepads";
@@ -38,184 +41,267 @@ interface ButtonProps {
 }
 
 const Controller: React.FC<ButtonProps> = ({ blimpName, buttonKey, buttonColor, buttonStyle, onPress }) => {
-    const leftDotX = useRef(new Animated.Value(50)).current;
-    const leftDotY = useRef(new Animated.Value(50)).current;
-    const rightDotX = useRef(new Animated.Value(50)).current;
-    const rightDotY = useRef(new Animated.Value(50)).current;
+    // Dot Values
+    const leftDotX = useSharedValue(50);
+    const leftDotY = useSharedValue(50);
+    const rightDotX = useSharedValue(50);
+    const rightDotY = useSharedValue(50);
 
-    // Names
-    const { names, nameColors } = useNames();
+    // Names, Name Colors, and UserIDs
+    const { names, nameColors, userID } = useNames();
 
     // GamePads
     const [gamepads, setGamepads] = useState<{ [index: number]: Gamepad }>({});
 
+    // First Gamepad
+    const firstGamepad = Object.values(gamepads)[0];
+
+    // Axes States
+    const prevAxesRef = useRef([0, 0, 0, 0]);
+
+    // Button States
+    const [buttonStates, setButtonStates] = useState<{ [key: string]: boolean }>({});
+    const prevButtonStatesRef = useRef<{ [key: string]: boolean }>({});
+
+    // Get Gamepads for Web
     if (isWeb) {
       useGamepads((gamepads) => setGamepads(gamepads));
     }
-  
-    const moveDots = (gamepad: Gamepad) => {
-      if (!gamepad) return;
-      const { axes } = gamepad;
 
-      let leftStickX = axes[0] || 0;
-      let leftStickY = axes[1] || 0;
-      let rightStickX = axes[2] || 0;
-      let rightStickY = axes[3] || 0;
+    // Update Buttons
+    const updateButtons = useCallback((gamepad: Gamepad) => {
+      const newButtonStates: { [key: string]: boolean } = {};
+      gamepad.buttons.forEach((button, index) => {
+        newButtonStates[`button${index}`] = button.pressed;
+      });
   
-      // Apply dead zone and other processing as before
-      const deadZero = 0.1;
-      const deadOne = 0.01;
+      const prevButtonStates = prevButtonStatesRef.current;
   
-      leftStickX = Math.abs(leftStickX) < deadZero ? 0 : leftStickX;
-      leftStickY = Math.abs(leftStickY) < deadZero ? 0 : leftStickY;
-      rightStickX = Math.abs(rightStickX) < deadZero ? 0 : rightStickX;
-      rightStickY = Math.abs(rightStickY) < deadZero ? 0 : rightStickY;
-  
-      leftStickX = leftStickX > 1 - deadOne ? 1 : leftStickX;
-      leftStickY = leftStickY > 1 - deadOne ? 1 : leftStickY;
-      rightStickX = rightStickX > 1 - deadOne ? 1 : rightStickX;
-      rightStickY = rightStickY > 1 - deadOne ? 1 : rightStickY;
-  
-      leftStickX = leftStickX < -1 + deadOne ? -1 : leftStickX;
-      leftStickY = leftStickY < -1 + deadOne ? -1 : leftStickY;
-      rightStickX = rightStickX < -1 + deadOne ? -1 : rightStickX;
-      rightStickY = rightStickY < -1 + deadOne ? -1 : rightStickY;
-  
-      leftStickX = parseFloat(leftStickX.toFixed(2));
-      leftStickY = parseFloat(leftStickY.toFixed(2));
-      rightStickX = parseFloat(rightStickX.toFixed(2));
-      rightStickY = parseFloat(rightStickY.toFixed(2));
+      let stateChanged = false;
+      for (let key in newButtonStates) {
+        if (prevButtonStates[key] !== newButtonStates[key]) {
+          stateChanged = true;
+          if (prevButtonStates[key] && !newButtonStates[key]) {
 
-      const new_axes = [leftStickX, leftStickY, rightStickX, rightStickY];
+            let count = 0;
 
-      for (let index = 0; index < names.length; index++) {
-        const name = names[index];
-        if (nameColors[name] === '#006FFF') {
-          // Testing
-          //console.log(new_axes);
+            // Handle the button release event here
+            for (let index = 0; index < names.length; index++) {
+              const name = names[index];
+              if (nameColors[name] === '#006FFF') {
+                let val: { name?: string; button?: string; userID?: string} = {};
+                val['name'] = name;
+                val['button'] = key;
+                val['userID'] = String(userID);
+                
+                // Emit to Backend
+                socket.emit('blimp_button', val);
 
-          let val: { name?: string; axes?: number[] } = {};
-          val['name'] = name;
-          val['axes'] = new_axes;
-          
-          // Emit to Backend
-          socket.emit('motor_command', val);
+                // Increase Count
+                count++;
+              }
+            }
+
+            // No Blimps Connected
+            if (count === 0) {
+              let val: { button?: string; userID?: string} = {};
+              val['button'] = key;
+              val['userID'] = String(userID);
+              socket.emit('nonblimp_button', val);
+            }
+
+          }
         }
       }
   
-      // Animate the dots
-      Animated.parallel([
-        Animated.timing(leftDotX, {
-            toValue: 50 + leftStickX * 45,
-            duration: 0, // Reduced duration
-            useNativeDriver: false,
-        }),
-        Animated.timing(leftDotY, {
-            toValue: 50 + leftStickY * 45,
-            duration: 0, // Reduced duration
-            useNativeDriver: false,
-        }),
-        Animated.timing(rightDotX, {
-            toValue: 50 + rightStickX * 45,
-            duration: 0, // Reduced duration
-            useNativeDriver: false,
-        }),
-        Animated.timing(rightDotY, {
-            toValue: 50 + rightStickY * 45,
-            duration: 0, // Reduced duration
-            useNativeDriver: false,
-        })
-      ]).start();
+      if (stateChanged) {
+        setButtonStates(newButtonStates);
+        prevButtonStatesRef.current = newButtonStates;
+      }
+    }, [names, nameColors]);
+
+    // Update Joysticks
+    const updateJoysticks = useCallback((gamepad: Gamepad) => {
+      const { axes } = gamepad;
+      const [leftStickX, leftStickY, rightStickX, rightStickY] = axes;
+
+      const deadZone = 0.1;
+      const deadZoneApplied = (value: number) => (Math.abs(value) < deadZone ? 0 : value);
+      const clampedAxes = [
+          parseFloat(deadZoneApplied(leftStickX).toFixed(2)),
+          parseFloat(deadZoneApplied(leftStickY).toFixed(2)),
+          parseFloat(deadZoneApplied(rightStickX).toFixed(2)),
+          parseFloat(deadZoneApplied(rightStickY).toFixed(2)),
+      ];
+
+      const prevAxes = prevAxesRef.current;
+      const axesChanged = !clampedAxes.every((value, index) => value === prevAxes[index]);
+
+      if (axesChanged) {
+          prevAxesRef.current = clampedAxes;
+          for (let index = 0; index < names.length; index++) {
+              const name = names[index];
+              if (nameColors[name] === '#006FFF') {
+                  let val: { name?: string; axes?: number[] } = {};
+                  val['name'] = name;
+                  val['axes'] = clampedAxes;
+                  socket.emit('motor_command', val);
+              }
+          }
+          // Animate the values
+          leftDotX.value = withTiming(50 + clampedAxes[0] * 45, { duration: 0, easing: Easing.linear });
+          leftDotY.value = withTiming(50 + clampedAxes[1] * 45, { duration: 0, easing: Easing.linear });
+          rightDotX.value = withTiming(50 + clampedAxes[2] * 45, { duration: 0, easing: Easing.linear });
+          rightDotY.value = withTiming(50 + clampedAxes[3] * 45, { duration: 0, easing: Easing.linear });
+      }
+    }, [names, nameColors]);
+
+  // Controller Inputs
+  useEffect(() => {
+    if (firstGamepad) {
+      updateJoysticks(firstGamepad);
+      updateButtons(firstGamepad);
+    }
+  }, [firstGamepad, updateJoysticks, updateButtons]);
+
+  // Left Dot Animation
+  const leftDotStyle = useAnimatedStyle(() => ({
+    left: leftDotX.value,
+    top: leftDotY.value,
+  }));
+
+  // Right Dot Animation
+  const rightDotStyle = useAnimatedStyle(() => ({
+    left: rightDotX.value,
+    top: rightDotY.value,
+  }));
+
+  // User ID Reference
+  const userIDRef = useRef(userID);
+  useEffect(() => {
+    userIDRef.current = userID;
+  }, [userID]);
+
+  // Reload Page
+  useEffect(() => {
+
+    const reloadPageHandler = (receivedUserID: string) => {
+
+      // Testing
+      //console.log('Reload page event received from user:', receivedUserID);
+      //console.log('Current user:', userIDRef.current);
+      
+      if (isWeb) {
+
+        if (userIDRef.current === receivedUserID) {
+          // Reload the webpage for the specified user
+          window.location.reload();
+        }
+
+      } else {
+
+        // To-Do: Reload the app on native platforms
+        if (DevSettings && DevSettings.reload) {
+          if (userIDRef.current === receivedUserID) {
+            DevSettings.reload();
+          }
+        } else {
+          console.log('DevSettings.reload() is not available');
+        }
+
+      }
     };
 
-    useEffect(() => {
-        // Handle gamepad data and update dots
-        const firstGamepad = Object.values(gamepads)[0];
-        console.log(gamepads);
-        moveDots(firstGamepad);
-    }, [gamepads]);
-  
-    return (
-      <TouchableOpacity style={[styles.button, buttonStyle.button]} onPress={onPress}>
-        <View style={styles.gridContainer}>
-          {/* Left Grid */}
-          <View style={styles.grid}>
-            <View style={styles.circle} />
-            <Animated.View style={[styles.dot, { left: leftDotX, top: leftDotY }]} />
-            <View style={styles.xAxis} />
-            <View style={styles.yAxis} />
-          </View>
-          {/* Right Grid */}
-          <View style={[styles.grid, styles.rightGrid]}>
-            <View style={styles.circle} /> 
-            <Animated.View style={[styles.dot, { left: rightDotX, top: rightDotY }]} />
-            <View style={styles.xAxis} />
-            <View style={styles.yAxis} />
-          </View>
+    socket.on('reload_page', reloadPageHandler);
+
+    return () => {
+      socket.off('reload_page', reloadPageHandler);
+      socket.disconnect();
+    };
+  }, []);
+
+  return (
+    <TouchableOpacity style={[styles.button, buttonStyle.button]} onPress={onPress}>
+      <View style={styles.gridContainer}>
+        {/* Left Grid */}
+        <View style={styles.grid}>
+          <View style={styles.circle} />
+          <Animated.View style={[styles.dot, leftDotStyle]} />
+          <View style={styles.xAxis} />
+          <View style={styles.yAxis} />
         </View>
-      </TouchableOpacity>
-    );
-  };
-  
-  const styles = StyleSheet.create({
-    button: {
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    gridContainer: {
-      flexDirection: 'row',
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginTop: 5,
-      marginRight: 20,
-    },
-    grid: {
-      position: 'relative',
-      height: isAndroid || isIOS ? 51 : 101,
-      width: isAndroid || isIOS ? 51 : 101,
-      borderWidth: 1,
-      borderColor: 'white',
-    },
-    rightGrid: {
-      marginLeft: -1, // Adjust this value to remove the overlapping border
-    },
-    circle: {
-      position: 'relative',
-      width: isAndroid || isIOS ? 50 : 100, // Diameter of the circle
-      height: isAndroid || isIOS ? 50 : 100, // Diameter of the circle
-      borderRadius: isAndroid || isIOS ? 25 : 50, // Radius of the circle
-      borderWidth: 2, // Border width
-      borderColor: 'white', // Border color
-      backgroundColor: 'transparent', // Transparent inner color
-      marginLeft: isAndroid || isIOS ? -0.75 : -0.25,
-    },
-    dot: {
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      width: isAndroid || isIOS ? 7.5 : 15,
-      height: isAndroid || isIOS ? 7.5 : 15,
-      borderRadius: isAndroid || isIOS ? 3.75 : 7.5,
-      backgroundColor: 'white',
-      transform: [
-          { translateX: -((isAndroid || isIOS ? 58 : 15) / 2) }, // Center horizontally
-          { translateY: -((isAndroid || isIOS ? 58 : 15) / 2) }, // Center vertically
-      ],
-    },
-    xAxis: {
-      position: 'absolute',
-      top: '50%',
-      width: '100%',
-      height: 1,
-      backgroundColor: 'white',
-    },
-    yAxis: {
-      position: 'absolute',
-      left: '50%',
-      height: '100%',
-      width: 1,
-      backgroundColor: 'white',
-    },
-  });
+        {/* Right Grid */}
+        <View style={[styles.grid, styles.rightGrid]}>
+          <View style={styles.circle} />
+          <Animated.View style={[styles.dot, rightDotStyle]} />
+          <View style={styles.xAxis} />
+          <View style={styles.yAxis} />
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+};
+
+// Controller Input Display Styles
+const styles = StyleSheet.create({
+  button: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  gridContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 5,
+    marginRight: 20,
+  },
+  grid: {
+    position: 'relative',
+    height: isAndroid || isIOS ? 51 : 101,
+    width: isAndroid || isIOS ? 51 : 101,
+    borderWidth: 1,
+    borderColor: 'white',
+  },
+  rightGrid: {
+    marginLeft: -1, // Adjust this value to remove the overlapping border
+  },
+  circle: {
+    position: 'relative',
+    width: isAndroid || isIOS ? 50 : 100, // Diameter of the circle
+    height: isAndroid || isIOS ? 50 : 100, // Diameter of the circle
+    borderRadius: isAndroid || isIOS ? 25 : 50, // Radius of the circle
+    borderWidth: 2, // Border width
+    borderColor: 'white', // Border color
+    backgroundColor: 'transparent', // Transparent inner color
+    marginLeft: isAndroid || isIOS ? -0.75 : -0.25,
+  },
+  dot: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    width: isAndroid || isIOS ? 7.5 : 15,
+    height: isAndroid || isIOS ? 7.5 : 15,
+    borderRadius: isAndroid || isIOS ? 3.75 : 7.5,
+    backgroundColor: 'white',
+    transform: [
+        { translateX: -((isAndroid || isIOS ? 58 : 15) / 2) }, // Center horizontally
+        { translateY: -((isAndroid || isIOS ? 58 : 15) / 2) }, // Center vertically
+    ],
+  },
+  xAxis: {
+    position: 'absolute',
+    top: '50%',
+    width: '100%',
+    height: 1,
+    backgroundColor: 'white',
+  },
+  yAxis: {
+    position: 'absolute',
+    left: '50%',
+    height: '100%',
+    width: 1,
+    backgroundColor: 'white',
+  },
+});
   
   export default Controller;

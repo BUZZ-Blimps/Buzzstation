@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Platform } from 'react-native';
 
 // SocketIO
-import { socket } from './Constants'; // Importing the SocketIO instance
+import { socket } from './Constants';
 
 // IOS
 const isIOS = Platform.OS === 'ios';

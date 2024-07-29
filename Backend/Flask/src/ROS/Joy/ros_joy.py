@@ -10,6 +10,8 @@ To-Do:
 
 from Packages.packages import Joy, socketio
 
+enable_ros_joy = False
+
 def init_ros_joy(basestation_node):
     #Subscribe to joystick topic
     basestation_node.joy_sub = basestation_node.create_subscription(Joy, "/Basestation/joy", joy_callback, 1)
@@ -58,7 +60,7 @@ def joy_callback(msg):
         basestation_node.joy_state.axes[1] = msg.axes[1]
         # self.get_logger().info('Left joystick U/D')
 
-    # 2: L trigger
+    # 2: Left Trigger
     if msg.axes[2] != basestation_node.joy_state.axes[2]:
         if basestation_node.joy_state.axes[2] > 0.5 and msg.axes[2] < -0.5:
             #Pressed down
@@ -70,7 +72,7 @@ def joy_callback(msg):
             #basestation_node.update_auto_panic()
             basestation_node.joy_state.axes[2] = msg.axes[2]
 
-    # 5: R trigger
+    # 5: Right Trigger
     if msg.axes[5] != basestation_node.joy_state.axes[5]:
         if basestation_node.joy_state.axes[5] > 0.5 and msg.axes[5] < -0.5:
             #Left trigger pressed down

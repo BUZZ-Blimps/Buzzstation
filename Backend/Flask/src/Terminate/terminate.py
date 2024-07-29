@@ -18,30 +18,33 @@ current_pid = os.getpid()
 
 # Terminate Code
 def terminate(sig, frame):
+    from ROS.ros import basestation_node
 
     # Destroy Basestation Node
-    print('\nDestroying Basestation Node...')
-    global node
+    print('\nDestroying Basestation Node...\n')
     try:
-        node.destroy_node()
+        basestation_node.destroy_node()
     except rclpy.handle.InvalidHandle as e:
-        pass
+        print('\nError: Failed Destroying Basestation Node\n')
 
     # Shutdown Rclpy
+    print('Shutting down Rclpy...\n')
     try:
-        rclpy.shutdown()
+        if rclpy.ok():
+            rclpy.shutdown()
     except Exception as e:
-        pass
+        print('\nError: Failed Shutting Down Rclpy\n')
 
-    # Close Barometer Serial Port
-    for blimp in blimps:
-        try:
-            blimps[blimp].parent_node.barometer.close()
-        except:
-            pass
+    # Kill the Main Script
+    pid = find_script_by_env_var('UNIQUE_ID', 'buzzstation')
+    if pid:
+        os.kill(int(pid), signal.SIGINT)
+
+    # Emit to Frontend
+    socketio.emit('update_names', '')
 
     # Kill PID
-    print('\nTerminating Program...\n')
+    print('Terminating Program...\n')
     try:
         os.kill(current_pid, sig.SIGTERM)
     except AttributeError:
@@ -49,3 +52,27 @@ def terminate(sig, frame):
     
     # If all else fails...
     subprocess("kill -9 " + str(current_pid))
+
+    print('Failed Termination.\n')
+
+def find_script_by_env_var(env_var_name, env_var_value):
+    try:
+        result = subprocess.run(['ps', 'aux'], stdout=subprocess.PIPE)
+        processes = result.stdout.decode().split('\n')
+        
+        for process in processes:
+            pid = process.split()[1]
+            try:
+                env_vars = open(f'/proc/{pid}/environ').read()
+                if env_var_name in env_vars and env_var_value in env_vars:
+                    # Testing
+                    #print(f'\nScript found with PID: {pid}')
+                    return pid
+            except Exception as e:
+                pass
+
+        # Testing
+        #print('Script not found')
+        return None
+    except Exception as e:
+        print(f'Error: {e}')

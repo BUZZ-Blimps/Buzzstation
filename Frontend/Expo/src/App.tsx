@@ -173,14 +173,12 @@ export default function App() {
       <SafeAreaView style={styles.mainContainer}>
 
         <SafeAreaView style={styles.blimpContainer}>
+
           {/* Blimps */}
           <BlimpsContainer />
+
         </SafeAreaView>
 
-        {/* <SafeAreaView style={[
-          styles.buttonContainer,
-          { top: isFullScreen ? '29%' : (Platform.OS === 'android' || Platform.OS === 'ios' ? '35%' : '37%') }
-        ]}> */}
         <SafeAreaView style={styles.buttonContainer}>
 
           {/* Goal Color Button */}

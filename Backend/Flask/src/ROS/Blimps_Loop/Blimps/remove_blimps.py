@@ -4,6 +4,8 @@
 Description:
 
 """
+from Packages.packages import socketio, redis_client, json
+from SocketIO.socketio import name_button_colors
 
 # Logger
 from rclpy.logging import get_logger
@@ -18,8 +20,18 @@ def remove_timeout_blimps(basestation_node, timeout_blimp_names):
 
 def remove_blimp(basestation_node, blimp):
     logger.info(str('Detected timeout of Blimp: ' + blimp.name))
+
+    if blimp.name in name_button_colors:
+        # Remove Blimp Name and UserID from Dictionary
+        del name_button_colors[blimp.name]
+
+        # Store Blimp Button Colors to Redis
+        redis_client.set('name_button_colors', json.dumps(name_button_colors))
+
+        # Make Blimp Name Button Green for all users
+        socketio.emit('toggle_name_button_color', { 'userID': 'none', 'name': blimp.name})
     
-    # To-Do: Destroy Blimp Subscribers and Publishers
+    # Destroy Blimp Subscribers and Publishers
     blimp.destroy_subscribers()
     blimp.destroy_publishers()
     

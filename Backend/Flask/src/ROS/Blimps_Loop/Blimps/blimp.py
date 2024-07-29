@@ -107,6 +107,9 @@ class Blimp:
         # Z Velocity
         self.z_velocity = None
 
+        # Vision
+        self.vision = True # Default: True (Initialize Blimp Vision on Startup)
+
         # Last Log Message
         self.log = None
 
