@@ -24,11 +24,7 @@ A React Native app to send commands and receive data to/from blimps using ROS 2
 ### Backend
 
 Necessary Features
-- Finish Controller Functionality
 - Any corresponding frontend functionality
-
-"Nice to Have" Features
-- Backend virtual joystick usage
 
 ### Frontend
 
@@ -47,8 +43,7 @@ Necessary Features
 - Add Vision ON/OFF button functionality (To start vision code on blimps)
 
 Bugs
-- Fix Multi-Controller issue of when a device or browser closes and the blimp name button stays red (Add a timeout to check for the device using the UUID)
-- Fix button spacing on all platforms/devices (Make buttons resize based on screen dimensions)
+- Test and if necessary, fix button spacing on all platforms/devices (Make buttons resize based on screen dimensions)
 
 ## Ideas
 
@@ -77,3 +72,4 @@ Bugs
 
 ### Suggestions
 - Use a Steam Deck or mobile device to control blimps instead of an Xbox controller
+- Add a streaming page for blimp livestreams, but be aware of potential performance issues for Buzzstation if done inefficiently
