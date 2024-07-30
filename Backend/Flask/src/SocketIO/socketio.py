@@ -14,7 +14,6 @@ To-Do:
 
 # Imports
 from Packages.packages import *
-from Terminate.terminate import terminate
 from ROS.Blimps_Loop.Blimps.blimp_names import blimp_names_order
 
 # Blimp Name Button Colors
@@ -33,6 +32,28 @@ def handle_connect():
 
     # Get Values upon Connection
     get_redis_values()
+
+# User Connection to Backend
+@socketio.on('inactive_user')
+def inactive_user(userID):
+    from ROS.ros import basestation_node
+
+    # Testing
+    #logger.info('User Inactive')
+
+    # Disconnect from any selected blimps for User ID
+    for name in basestation_node.current_blimp_names:
+        if name in name_button_colors:
+            if name_button_colors[name] == userID:
+
+                # Remove Blimp Name and UserID from Dictionary
+                del name_button_colors[name]
+
+                # Make Blimp Name Button Green for all users
+                socketio.emit('toggle_name_button_color', { 'userID': 'none', 'name': name})
+
+                # Store Blimp Button Colors to Redis
+                redis_client.set('name_button_colors', json.dumps(name_button_colors))
 
 # Get Blimp Motor Command
 @socketio.on('motor_command')
