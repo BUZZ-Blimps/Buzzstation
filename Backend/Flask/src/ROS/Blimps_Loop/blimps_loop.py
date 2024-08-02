@@ -10,7 +10,7 @@ Sends and recieves blimp data over ROS.
 # Imports
 from Packages.packages import socketio
 from ..ros import basestation_node, redis_client
-from .Blimps.update_blimp_lists import alive_blimps, new_blimps, timeout_blimps, reorder_blimp_names
+from .Blimps.update_blimp_names import alive_blimps, new_blimps, timeout_blimps, reorder_blimp_names
 from .Blimps.update_blimp_data import update_component_for_all_blimps, update_blimp_component_color, update_blimp_component_value
 from .Blimps.add_blimps import add_new_blimps
 from .Blimps.remove_blimps import remove_timeout_blimps

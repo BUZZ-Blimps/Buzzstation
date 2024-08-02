@@ -19,43 +19,48 @@ export const useModes = () => {
     const [modeColors, setModeColors] = useState<{ [key: string]: string }>({});
   
     useEffect(() => {
-        // Event handler for 'update_button_color'
-        const handleUpdateButtonColor = (val: { [key: string]: string }) => {
-            const receivedName: string = val['name'];
-            const receivedButtonKey: string = val['key'];
-            const receivedButtonColor: string = val['color'];
 
-            let newColor = '#E11C1C'; // Default color 
-            if (receivedButtonColor === 'red') {
-              newColor = '#E11C1C';
-            } else if (receivedButtonColor === 'green') {
-              newColor = 'green';
-            }
+      // Event handler for 'update_button_color'
+      const handleUpdateButtonColor = (val: { [key: string]: string }) => {
+          const receivedName: string = val['name'];
+          const receivedButtonKey: string = val['key'];
+          const receivedButtonColor: string = val['color'];
 
-            if (receivedButtonKey === 'mode') {
-                // Update modeColors with the new color for the specific blimp
-                setModeColors(prevModeColors => ({
-                    ...prevModeColors,
-                    [receivedName]: newColor,
-                }));
+          let newColor = '#E11C1C'; // Default color 
+          if (receivedButtonColor === 'red') {
+            newColor = '#E11C1C';
+          } else if (receivedButtonColor === 'green') {
+            newColor = 'green';
+          }
 
-                // Testing
-                //console.log(`${receivedButtonKey} for ${receivedName} changed to ${receivedButtonColor}`);
-            }
-        };
+          if (receivedButtonKey === 'mode') {
+              // Update modeColors with the new color for the specific blimp
+              setModeColors(prevModeColors => ({
+                  ...prevModeColors,
+                  [receivedName]: newColor,
+              }));
 
-        // Listen for 'update_button_color' events
-        socket.on('update_button_color', handleUpdateButtonColor);
+              // Testing
+              //console.log(`${receivedButtonKey} for ${receivedName} changed to ${receivedButtonColor}`);
+          }
+      };
 
-        // Cleanup to remove the listener when the component is unmounted
-        return () => {
-            socket.off('update_button_color', handleUpdateButtonColor);
-        };
+      // Listen for 'update_button_color' events
+      socket.on('update_button_color', handleUpdateButtonColor);
+
+      // Cleanup to remove the listener when the component is unmounted
+      return () => {
+          socket.off('update_button_color', handleUpdateButtonColor);
+      };
+
     }, []);
 
     const handleModeClick = (name: string) => {
+
         const val = { name: name, key: 'mode'};
+        
         socket.emit('toggle_blimp_button_color', val);
+
     };
 
     const modeButtonStyle = StyleSheet.create({

@@ -3,11 +3,11 @@
     "name": "Buzzstation",
     "slug": "Buzzstation",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "landscape",
     "icon": "./assets/favicon.png",
     "userInterfaceStyle": "dark mode",
     "splash": {
-      "image": "./assets/buzz_blimps_logo.png",
+      "image": "./assets/loading_screen.png",
       "resizeMode": "contain",
       "backgroundColor": "#000000"
     },

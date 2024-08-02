@@ -6,8 +6,17 @@ import React, { useEffect, useState, Dispatch, SetStateAction } from 'react';
 // React Native 
 import { View, SafeAreaView, Image, Text, TouchableOpacity, StyleSheet, Platform, Dimensions } from 'react-native';
 
-// Expo
-import * as ScreenOrientation from 'expo-screen-orientation';
+// Expo Packages
+import * as Updates from 'expo-updates';
+
+// IOS
+const isIOS = Platform.OS === 'ios';
+
+// Android
+const isAndroid = Platform.OS === 'android';
+
+// Web
+const isWeb = Platform.OS === 'web';
 
 // Components
 import BlimpsContainer from './BlimpsContainer';
@@ -16,36 +25,11 @@ import Controller from './Controller';
 
 // Functions
 import { useTargetButtonColor } from './TargetButtonColor'; 
-import { useAllMode } from './AllMode'; 
-
-// IOS
-const isIOS = Platform.OS === 'ios';
-
-// Android
-const isAndroid = Platform.OS === 'android';
-
-// Lock the screen orientation to landscape mode on mobile platforms
-function lockOrientation() {
-  if (isAndroid || isIOS) {
-    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
-  }
-}
-
-// Helper function to toggle fullscreen on web
-function toggleFullScreen(setIsFullScreen: Dispatch<SetStateAction<boolean>>) {
-  if (document.fullscreenElement) {
-    document.exitFullscreen().then(() => setIsFullScreen(false));
-  } else {
-    document.documentElement.requestFullscreen().then(() => setIsFullScreen(true));
-  }
-}
+import { useAllMode } from './AllMode';
 
 export default function App() {
 
-  useEffect(() => {
-    lockOrientation();
-  }, []);
-
+  // Fullscreen State
   const [isFullScreen, setIsFullScreen] = useState(false);
 
   // Handle logo press
@@ -53,7 +37,18 @@ export default function App() {
     if (Platform.OS === 'web') {
       toggleFullScreen(setIsFullScreen);
     } else {
-      console.log('Logo pressed');
+
+      // Testing
+      //console.log('Logo pressed');
+
+      // Immediately reload the React Native Bundle
+      async function reloadApp () {
+        await Updates.reloadAsync();
+
+      }
+
+      reloadApp();
+      
     }
   };
 
@@ -85,6 +80,7 @@ export default function App() {
           handleClick: handleAllManualClick 
         } = useAllMode('#E11C1C', 'all_manual');
 
+  // UI
   return (
     <SafeAreaView style={styles.container}>
 
@@ -228,6 +224,15 @@ export default function App() {
     </SafeAreaView>
   );
 };
+
+// Toggle Fullscreen on the Web
+function toggleFullScreen(setIsFullScreen: Dispatch<SetStateAction<boolean>>) {
+  if (document.fullscreenElement) {
+    document.exitFullscreen().then(() => setIsFullScreen(false));
+  } else {
+    document.documentElement.requestFullscreen().then(() => setIsFullScreen(true));
+  }
+}
 
 const styles = StyleSheet.create({
   container: {

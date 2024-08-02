@@ -19,6 +19,7 @@ export const useStates = () => {
     const [stateValues, setStateValues] = useState<{ [key: string]: string }>({});
   
     useEffect(() => {
+
         // Event handler for 'update_button_valuer'
         const handleUpdateButtonValue = (val: { [key: string]: string }) => {
             const receivedName: string = val['name'];
@@ -42,9 +43,9 @@ export const useStates = () => {
 
             let newValue = 'None'; // Default color 
             if (receivedValue === '0') {
-              newValue = 'Searching';
+            newValue = 'Searching';
             } else if (receivedValue === '1') {
-              newValue = 'Approaching';
+            newValue = 'Approaching';
             } else if (receivedValue === '2') {
                 newValue = 'Catching';
             } else if (receivedValue === '3') {
@@ -85,6 +86,7 @@ export const useStates = () => {
         return () => {
             socket.off('update_button_value', handleUpdateButtonValue);
         };
+
     }, []);
 
     const stateButtonStyle = StyleSheet.create({

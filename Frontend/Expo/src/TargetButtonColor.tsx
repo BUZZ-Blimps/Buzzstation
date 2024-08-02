@@ -21,9 +21,11 @@ interface ButtonColorState {
 }
 
 export const useTargetButtonColor = (defaultColor: string, buttonKey: string): ButtonColorState => {
+
     const [buttonColor, setButtonColor] = useState<string>(defaultColor);
   
     useEffect(() => {
+
       // Event handler for 'update_button_color'
       const handleUpdateButtonColor = (val: { [key: string]: string }) => {
         const receivedName: string = val['name'];
@@ -57,14 +59,20 @@ export const useTargetButtonColor = (defaultColor: string, buttonKey: string): B
       return () => {
         socket.off('update_button_color', handleUpdateButtonColor);
       };
+
     }, [buttonKey]);
   
     const handleClick = (buttonKey: string) => {
-        if (buttonKey !== 'None') {
-            socket.emit('toggle_all_blimps_button_color', buttonKey);
-            // Testing
-            //console.log(buttonKey + " button clicked!");
-        }
+
+      if (buttonKey !== 'None') {
+
+        socket.emit('toggle_all_blimps_button_color', buttonKey);
+
+        // Testing
+        //console.log(buttonKey + " button clicked!");
+
+      }
+
     };
   
     const TargetButtonStyle = StyleSheet.create({

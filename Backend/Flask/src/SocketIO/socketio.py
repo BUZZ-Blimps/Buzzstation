@@ -568,7 +568,6 @@ def init_redis_values():
     # Set to Default Value when Server Starts
     redis_client.set('goal_color', 0) # 0: Orange, 1: Yellow
     redis_client.set('enemy_color', 0) # 0: Blue, 1: Red
-    redis_client.set('all_mode', 0) # 0: False, 1: True
     redis_client.set('current_names', '') # Empty on Start
     redis_client.set('name_button_colors', '{}') # Empty on Start
 

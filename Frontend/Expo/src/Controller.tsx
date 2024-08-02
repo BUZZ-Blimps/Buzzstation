@@ -4,7 +4,7 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 
 // React Native
-import { View, TouchableOpacity, StyleSheet, Platform, ViewStyle, TextStyle, DevSettings } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Platform, ViewStyle, TextStyle } from 'react-native';
 
 // React Native Animations
 import Animated, { Easing, useSharedValue, withTiming, useAnimatedStyle } from 'react-native-reanimated';
@@ -41,6 +41,7 @@ interface ButtonProps {
 }
 
 const Controller: React.FC<ButtonProps> = ({ blimpName, buttonKey, buttonColor, buttonStyle, onPress }) => {
+
     // Dot Values
     const leftDotX = useSharedValue(50);
     const leftDotY = useSharedValue(50);
@@ -70,7 +71,9 @@ const Controller: React.FC<ButtonProps> = ({ blimpName, buttonKey, buttonColor, 
 
     // Update Buttons
     const updateButtons = useCallback((gamepad: Gamepad) => {
+
       const newButtonStates: { [key: string]: boolean } = {};
+
       gamepad.buttons.forEach((button, index) => {
         newButtonStates[`button${index}`] = button.pressed;
       });
@@ -185,39 +188,33 @@ const Controller: React.FC<ButtonProps> = ({ blimpName, buttonKey, buttonColor, 
   // Reload Page
   useEffect(() => {
 
-    const reloadPageHandler = (receivedUserID: string) => {
+      const reloadPageHandler = (receivedUserID: string) => {
 
-      // Testing
-      //console.log('Reload page event received from user:', receivedUserID);
-      //console.log('Current user:', userIDRef.current);
-      
-      if (isWeb) {
+        // Testing
+        //console.log('Reload page event received from user:', receivedUserID);
+        //console.log('Current user:', userIDRef.current);
+        
+        if (isWeb) {
 
-        if (userIDRef.current === receivedUserID) {
-          // Reload the webpage for the specified user
-          window.location.reload();
-        }
-
-      } else {
-
-        // To-Do: Reload the app on native platforms
-        if (DevSettings && DevSettings.reload) {
           if (userIDRef.current === receivedUserID) {
-            DevSettings.reload();
+            // Reload the webpage for the specified user
+            window.location.reload();
           }
+
         } else {
-          console.log('DevSettings.reload() is not available');
+
+          // To-Do: Reload the app on native platforms
+
         }
+      };
 
-      }
-    };
+      socket.on('reload_page', reloadPageHandler);
 
-    socket.on('reload_page', reloadPageHandler);
+      return () => {
+        socket.off('reload_page', reloadPageHandler);
+        socket.disconnect();
+      };
 
-    return () => {
-      socket.off('reload_page', reloadPageHandler);
-      socket.disconnect();
-    };
   }, []);
 
   return (
@@ -304,4 +301,4 @@ const styles = StyleSheet.create({
   },
 });
   
-  export default Controller;
+export default Controller;

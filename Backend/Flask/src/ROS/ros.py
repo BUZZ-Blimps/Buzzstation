@@ -70,7 +70,6 @@ class Basestation(Node):
         # Global Values
         self.goal_color = bool(int(self.redis_client.get('goal_color').decode('utf-8')))
         self.enemy_color = bool(int(self.redis_client.get('enemy_color').decode('utf-8')))
-        self.all_mode = bool(int(self.redis_client.get('all_mode').decode('utf-8')))
 
     def create_blimps_loop(self):
         # Heartbeat Subscriptions
