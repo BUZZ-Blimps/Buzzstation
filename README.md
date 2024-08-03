@@ -43,7 +43,3 @@ A React Native app to send commands and receive data to/from blimps using ROS 2
 <p align="center">
 <em>Figure 4. Controls Schematic</em>
 </p>
-
-### Suggestions
-- Use a Steam Deck or mobile device to control blimps instead of an Xbox controller
-- Add a streaming page for blimp livestreams, but be aware of potential performance issues for Buzzstation if done inefficiently
