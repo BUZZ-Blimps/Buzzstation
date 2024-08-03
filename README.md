@@ -1,7 +1,7 @@
 # Buzzstation
 
 ## Description 
-A React Native app to send commands and receive data to/from blimps using ROS 2
+A React Native app to send commands and receive data to/from blimps using ROS 2.
 
 **Note:** This app is not yet complete. It is still in the developmental stage and has only been tested with fake blimps.
 
