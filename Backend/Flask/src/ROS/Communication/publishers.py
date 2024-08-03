@@ -74,3 +74,9 @@ def publish_calibrate_barometer(blimp):
     msg = Bool()
     msg.data = blimp.calibrate_barometer
     blimp.pub_calibrate_barometer.publish(msg)
+
+def publish_vision(blimp):
+    # Publish vision value to the ROS topic
+    msg = Bool()
+    msg.data = blimp.vision
+    blimp.pub_vision.publish(msg)

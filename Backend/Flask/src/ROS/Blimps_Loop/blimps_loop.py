@@ -49,6 +49,12 @@ def update_blimp_values(current_blimps):
         # Mode
         update_blimp_component_color(current_blimps[name], 'mode', 'red', 'green')
 
+        # Calibrate
+        #update_blimp_component_color(current_blimps[name], 'mode', 'red', 'green')
+
+        # Vision
+        update_blimp_component_color(current_blimps[name], 'vision', 'green', 'red')
+
 def update_blimps():
 
     # Alive Blimp Names

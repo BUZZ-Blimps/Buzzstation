@@ -22,6 +22,12 @@ import { useStates } from './States'; // Import the useModes hook
 // Modes
 import { useModes } from './Modes'; // Import the useModes hook
 
+// Calibrate
+//import { useCalibrate } from './Calibrate'; // Import the useVision hook
+
+// Vision
+import { useVision } from './Vision'; // Import the useVision hook
+
 const BlimpsContainer: React.FC = () => {
   // Names
   const { names, nameColors, nameButtonStyle, handleNameClick } = useNames();
@@ -36,7 +42,7 @@ const BlimpsContainer: React.FC = () => {
   // ...
 
   // Visions
-  // ...
+  const { visionColors, visionButtonStyle, handleVisionClick } = useVision();
 
   return (
     <View style={styles.container}>
@@ -53,7 +59,6 @@ const BlimpsContainer: React.FC = () => {
             button: {
                 ...modeButtonStyle.button,
                 marginTop: -10,
-                //borderColor: 'white',
             },
           }}
           onPress={() => null}
@@ -69,7 +74,6 @@ const BlimpsContainer: React.FC = () => {
             button: {
                 ...stateButtonStyle.button,
                 marginTop: -10,
-                //borderColor: 'white',
             },
           }}
           onPress={() => null}
@@ -85,7 +89,6 @@ const BlimpsContainer: React.FC = () => {
             button: {
                 ...modeButtonStyle.button,
                 marginTop: -10,
-                //borderColor: 'white',
             },
           }}
           onPress={() => null}
@@ -102,7 +105,6 @@ const BlimpsContainer: React.FC = () => {
                 ...modeButtonStyle.button,
                 marginTop: -10,
                 width: 130, // Example new width
-                //borderColor: 'white',
             },
           }}
           onPress={() => null}
@@ -118,7 +120,6 @@ const BlimpsContainer: React.FC = () => {
             button: {
                 ...modeButtonStyle.button,
                 marginTop: -10,
-                //borderColor: 'white',
             },
           }}
           onPress={() => null}
@@ -158,7 +159,7 @@ const BlimpsContainer: React.FC = () => {
               <Button 
                   blimpName={name} // Blimp Name
                   buttonKey='mode' // Type of Button
-                  buttonColor={modeColors[name] || 'red'} // Button Color
+                  buttonColor={modeColors[name] || 'red'} // Button Color (Default: Red)
                   buttonText={modeColors[name] === 'green' ? 'Auto' : 'Manual'} // Text Seen on Button
                   buttonStyle={modeButtonStyle} // Button Style
                   onPress={() => handleModeClick(name)} // On Press Function
@@ -186,10 +187,10 @@ const BlimpsContainer: React.FC = () => {
               <Button 
                   blimpName={name} // Blimp Name
                   buttonKey='vision' // Type of Button
-                  buttonColor='green' // Button Color
-                  buttonText='On' // Text Seen on Button
-                  buttonStyle={modeButtonStyle} // Button Style
-                  onPress={() => null} // On Press Function
+                  buttonColor={visionColors[name] || 'green'} // Button Color (Default: Green)
+                  buttonText={visionColors[name] === 'green' ? 'On' : 'Off'} // Text Seen on Button
+                  buttonStyle={visionButtonStyle} // Button Style
+                  onPress={() => handleVisionClick(name)} // On Press Function
               />
             </View>
           </View>

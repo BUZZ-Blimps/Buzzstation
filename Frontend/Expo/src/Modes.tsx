@@ -1,8 +1,8 @@
 // Modes.tsx
 
 // React and React Native
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Platform } from 'react-native';
+import { useState, useEffect } from 'react';
+import { StyleSheet, Platform } from 'react-native';
 
 // SocketIO
 import { socket } from './Constants';

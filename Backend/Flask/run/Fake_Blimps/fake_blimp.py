@@ -1,8 +1,14 @@
+# Fake Blimp
+
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Bool, String, Int64, Float64, Float64MultiArray
 import sys
 import random
+import time
+
+global vision_timeout_test
+vision_timeout_test=False
 
 class Blimp(Node):
     def __init__(self, name):
@@ -12,6 +18,9 @@ class Blimp(Node):
 
         # State Machine
         self.state_machine = 0
+
+        # Vision
+        self.vision = True
 
         # Define Fake Blimp's name
         self.node_name = str(name)
@@ -38,6 +47,7 @@ class Blimp(Node):
             self.pub_state_machine = self.create_publisher(Bool, 'state_machine', 10)
 
         # Miscellaneous
+        self.pub_vision = self.create_publisher(Bool, 'vision', 10)
         self.pub_height = self.create_publisher(Float64, 'height', 10)
         self.pub_z_velocity = self.create_publisher(Float64, 'z_velocity', 10)
         self.pub_log = self.create_publisher(String, 'log', 10)
@@ -60,13 +70,20 @@ class Blimp(Node):
 
         # Both Catching and Attacking Blimps
         topic_mode = "mode"
+        topic_vision = "vision"
         topic_motor_commands = "motor_commands"
         topic_barometer = "barometer"
         topic_calibrate_barometer = "calibrate_barometer"
         self.sub_mode = self.create_subscription(Bool, topic_mode, self.mode_callback, 10)
+        self.sub_vision = self.create_subscription(Bool, topic_vision, self.vision_callback, 10)
         self.sub_motor_commands = self.create_subscription(Float64MultiArray, topic_motor_commands, self.motor_callback, 10)
         self.sub_barometer = self.create_subscription(Float64, topic_barometer, self.barometer_callback, 10)
         self.sub_calibrate_barometer = self.create_subscription(Bool, topic_calibrate_barometer, self.calibrate_barometer_callback, 10)
+
+        # For Testing:
+        # Initialize time tracking for vision updates
+        self.last_vision_update_time = time.time()
+        self.vision_update_interval = 10  # seconds
 
         # State Machine
         main_loop_period = 1  # seconds
@@ -78,6 +95,23 @@ class Blimp(Node):
     # Publishers #
 
     def main_loop(self):
+
+        if self.vision == False:
+             # If Vision Code Stops Running, Restart it Automatically Here
+             # Put Here
+             self.vision = True
+             self.publish_vision()
+
+        # For Testing:
+        global vision_timeout_test
+        if vision_timeout_test == True:
+             current_time = time.time()
+             # Update vision every 10 seconds
+             if current_time - self.last_vision_update_time >= self.vision_update_interval:
+                 self.vision = random.choice([True, False])
+                 self.publish_vision()
+                 self.last_vision_update_time = current_time
+
         # Publish Heartbeat #
         self.heartbeat = True
         self.publish_heartbeat()
@@ -109,6 +143,11 @@ class Blimp(Node):
         msg.data = self.state_machine
         self.pub_state_machine.publish(msg)
 
+    def publish_vision(self):
+        msg = Bool()
+        msg.data = self.vision
+        self.pub_vision.publish(msg)
+
     def data_loop(self):
         height = 10*random.random()
         z_velocity = 5*random.random()
@@ -130,6 +169,15 @@ class Blimp(Node):
         self.pub_log.publish(log_msg)
 
         self.get_logger().info(log_msg.data)
+
+    def vision_callback(self, msg):
+        log_msg = String()
+        log_msg.data = 'Vision set to {}'.format(msg.data)
+        self.pub_log.publish(log_msg)
+
+        self.get_logger().info(log_msg.data)
+
+        self.vision = msg.data
 
     def goal_callback(self, msg):
         log_msg = String()

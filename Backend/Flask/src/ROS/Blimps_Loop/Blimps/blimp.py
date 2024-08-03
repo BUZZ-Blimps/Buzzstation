@@ -107,7 +107,7 @@ class Blimp:
         # Z Velocity
         self.z_velocity = None
 
-        # Vision
+        # Vision (False: Off, True: On)
         self.vision = True # Default: True (Initialize Blimp Vision on Startup)
 
         # Last Log Message
@@ -130,6 +130,7 @@ class Blimp:
             'type': str(self.type),
             'state_machine': str(self.state_machine),
             'mode': str(self.mode),
+            'vision': str(self.vision),
             'motor_commands': str(self.motor_commands),
             'barometer': str(self.barometer),
             'calibrate_barometer': str(self.calibrate_barometer),
@@ -141,9 +142,9 @@ class Blimp:
         # Catching blimp
         if not self.type:
             catching_dict = {
-                'goal_color': str(self.goal_color),
                 'catching': str(self.catching),
                 'shooting': str(self.shooting),
+                'goal_color': str(self.goal_color),
             }
             base_dict.update(catching_dict)
         # Attacking blimp
@@ -229,6 +230,7 @@ class Blimp:
 
         # Both Catching and Attack Blimps
         self.pub_mode = self.create_pub('mode', 'Bool')
+        self.pub_vision = self.create_pub('vision', 'Bool')
         self.pub_motor_commands = self.create_pub('motor_commands', 'Float64MultiArray')
         self.pub_barometer = self.create_pub('barometer', 'Bool')
         self.pub_calibrate_barometer = self.create_pub('calibrate_barometer', 'Bool')
@@ -287,6 +289,7 @@ class Blimp:
 
         # Both Catching and Attack Blimps
         self.destroy_pub('pub_mode')
+        self.destroy_pub('pub_vision')
         self.destroy_pub('pub_motor_commands')
         self.destroy_pub('pub_barometer')
         self.destroy_pub('pub_calibrate_barometer')
@@ -310,6 +313,8 @@ class Blimp:
             # State Machine
             self.sub_state_machine = self.create_sub('state_machine', 'Bool')
 
+        # Vision
+        self.sub_vision = self.create_sub('vision', 'Bool')
 
     def create_sub(self, key, data_type):
         if key == 'state_machine':
@@ -317,6 +322,9 @@ class Blimp:
                 sub = self.basestation_node.create_subscription(Bool, f'{self.name}/{key}', self.state_machine_callback, 10)
             elif data_type == 'Int64':
                 sub = self.basestation_node.create_subscription(Int64, f'{self.name}/{key}', self.state_machine_callback, 10)
+        elif key == 'vision':
+            if data_type == 'Bool':
+                sub = self.basestation_node.create_subscription(Bool, f'{self.name}/{key}', self.vision_callback, 10)
         return sub
 
     def destroy_subscribers(self):
@@ -332,6 +340,9 @@ class Blimp:
             # State Machine
             self.destroy_sub('sub_state_machine')
 
+        # Vision
+        self.destroy_sub('sub_vision')
+
         # Destroy Heartbeat Subscriber and Remove from Heartbeat Subscriber Dictionary
         self.basestation_node.destroy_subscription(self.basestation_node.heartbeat_subs[self.name])
         del self.basestation_node.heartbeat_subs[self.name]
@@ -339,5 +350,10 @@ class Blimp:
     def destroy_sub(self, key):
         self.basestation_node.destroy_subscription(getattr(self, key))
 
+    # Blimp Subscriber Callbacks
+
     def state_machine_callback(self, msg):
         self.state_machine = msg.data
+
+    def vision_callback(self, msg):
+        self.vision = msg.data

@@ -92,7 +92,7 @@ def get_blimp_button_release(val):
         # Reload Page / Toggle or Activate the currently selected button on the screen
         socketio.emit('reload_page', userID)
     
-    # B (To-Do: Individual Vision Toggle)
+    # B
     elif button == 'button1':
         if hasattr(basestation_node.current_blimps[name], 'vision'):
 
@@ -141,10 +141,10 @@ def get_blimp_button_release(val):
         # All Auto
         [setattr(basestation_node.current_blimps[name], 'mode', True) for name in basestation_node.current_blimps]
     
-    # View (To-Do: Turn on All Vision)
+    # View
     elif button == 'button8':
         # Turn on All Vision
-        pass
+        [setattr(basestation_node.current_blimps[name], 'vision', True) for name in basestation_node.current_blimps]
 
     # Menu (To-Do: Open Sidebar Menu)
     elif button == 'button9':
@@ -313,10 +313,10 @@ def get_nonblimp_button_release(val):
         # All Auto
         [setattr(basestation_node.current_blimps[name], 'mode', True) for name in basestation_node.current_blimps]
     
-    # View (To-Do: Turn on All Vision)
+    # View
     elif button == 'button8':
         # Turn on All Vision
-        pass
+        [setattr(basestation_node.current_blimps[name], 'vision', True) for name in basestation_node.current_blimps]
 
     # Menu (To-Do: Open Sidebar Menu)
     elif button == 'button9':
@@ -540,6 +540,21 @@ def get_mode_button_colors():
             else:
                 socketio.emit('update_button_color', {'name': name, 'key': 'mode', 'color': 'red'})
 
+# Get Vision for Each Blimp
+def get_vision_button_colors():
+
+    # Get Current Blimp Names from Redis
+    current_names = redis_client.get('current_names').decode("utf-8")
+
+    for name in current_names.split(','):
+        if redis_client.hget(str('blimp:' + name), 'vision') is not None:
+            current_component_color = redis_client.hget(str('blimp:' + name), 'vision').decode('utf-8')
+            # Send Update to Frontend
+            if str(current_component_color) == 'True':
+                socketio.emit('update_button_color', {'name': name, 'key': 'vision', 'color': 'green'})
+            else:
+                socketio.emit('update_button_color', {'name': name, 'key': 'vision', 'color': 'red'})
+
 # Get Redis Values and Sends to Frontend UI
 def get_redis_values():
 
@@ -553,6 +568,12 @@ def get_redis_values():
 
     # Mode Button Colors
     get_mode_button_colors()
+
+    # Calibrate Button Colors
+    #get_calibrate_button_colors()
+
+    # Vision Button Colors
+    get_vision_button_colors()
 
     # Goal Color Button (Default: Orange, Nondefault: Yellow)
     get_button_color('none', 'goal_color', 'orange', 'yellow')

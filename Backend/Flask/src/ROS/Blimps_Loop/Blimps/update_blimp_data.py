@@ -31,7 +31,18 @@ def update_blimp_component_color(blimp, component, default_color, nondefault_col
             if str(blimp_component_value) != str(current_value):
 
                 # Get Color
-                color = default_color if not blimp_component_value else nondefault_color
+                if component == 'vision':
+                    # Default Value is True
+                    color = default_color if blimp_component_value else nondefault_color
+                    if color == 'green':
+                        # To-Do: Startup Blimp Vision Code
+                        logger.info('Restarting Vision for ' + blimp.name)
+                    else:
+                        # To-Do: Stop Blimp Vision Code
+                        logger.info('Stopping Vision for ' + blimp.name)
+                else:
+                    # Default Value is False
+                    color = default_color if not blimp_component_value else nondefault_color
 
                 # Update Frontend
                 socketio.emit('update_button_color', {'name': blimp.name, 'key': component, 'color': color})
@@ -63,7 +74,7 @@ def update_blimp_component_value(blimp, component):
                 # Update Frontend
                 socketio.emit('update_button_value', {'name': blimp.name, 'key': component, 'value': current_value})
                 
-        elif component is 'state_machine':
+        elif component == 'state_machine':
             
             # Sets Component Color to Default at Start of Program
             socketio.emit('update_button_color', {'name': blimp.name, 'key': component, 'value': 'None'})
