@@ -41,5 +41,5 @@ A React Native app to send commands and receive data to/from blimps using ROS 2
 <img src="https://github.com/awilwayco/Buzzstation/assets/56363833/43eaec0d-e121-4890-a705-e21683139139" />
 </p>
 <p align="center">
-<em>Figure 4. Controls Schematic</em>
+<em>Figure 4. Default Controls Schematic</em>
 </p>
