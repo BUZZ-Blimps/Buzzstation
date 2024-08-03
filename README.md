@@ -19,9 +19,7 @@ A React Native app to send commands and receive data to/from blimps using ROS 2.
 
 - A device with the Ubuntu 22.04 Operating System (https://ubuntu.com/tutorials/install-ubuntu-desktop#1-overview)
 
-## Ideas
-
-### Schematics
+## Schematics
 
 <p align="center">
 <img src="https://github.com/SWAMP-Blimps/Buzzstation/assets/56363833/e6a9dfd9-489b-472e-a24c-880bda73f7cc" />
