@@ -9,7 +9,7 @@ A React Native app to send commands and receive data to/from blimps using ROS 2
 <img src="https://github.com/user-attachments/assets/ab131e69-8f9c-4a88-977d-7e1ce25869a3" />
 </p>
 <p align="center">
-<em>Figure 1. Basestation UI</em>
+<em>Figure 1. Buzzstation UI</em>
 </p>
 <p align="center">
 <em>Multi-Controller Functionality: The green blimp names indicate blimps not under control, blue indicates the blimp the device currently controls, and red indicates blimps being controlled by other devices. Each device can only control a single blimp at a time. To unselect a blimp, press the blue button to change it back to green. </em>
