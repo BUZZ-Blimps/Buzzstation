@@ -19,32 +19,6 @@ A React Native app to send commands and receive data to/from blimps using ROS 2
 
 - A device with the Ubuntu 22.04 Operating System (https://ubuntu.com/tutorials/install-ubuntu-desktop#1-overview)
 
-## To-Do
-
-### Backend
-
-Necessary Features
-- Any corresponding frontend functionality
-
-### Frontend
-
-Necessary Features
-- Finish adding Controller functionality for web and app users
-- Add Calibrate button functionality (with height value)
-- Add Barometer Integration
-
-"Nice to Have" Features
-- Add Sidebar Menu
-- Add Logs Page
-- Add Tuning Page
-- Dropdown Menu for State Machine
-- Select and deselect visible blimps on Main Page
-- Add Virtual Joysticks for the app and test performance and functionality when multiple blimps are being controlled
-- Add Vision ON/OFF button functionality (To start vision code on blimps)
-
-Bugs
-- Test and if necessary, fix button spacing on all platforms/devices (Make buttons resize based on screen dimensions)
-
 ## Ideas
 
 ### Schematics
