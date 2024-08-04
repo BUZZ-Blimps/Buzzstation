@@ -14,7 +14,7 @@ const isIOS = Platform.OS === 'ios';
 const isAndroid = Platform.OS === 'android';
 
 export const useModes = () => {
-  
+
     // Store Mode Button Colors
     const [modeColors, setModeColors] = useState<{ [key: string]: string }>({});
   

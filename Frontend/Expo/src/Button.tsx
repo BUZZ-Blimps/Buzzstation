@@ -28,10 +28,12 @@ return (
         onPress={onPress}
         role='button'
         accessible={true}
-        android_disableSound={true}
-        android_ripple={{ color: 'transparent' }}
+        android_disableSound={true} // Not Tested Yet (Not sure if this is needed)
+        android_ripple={{ color: 'transparent' }} // Not Tested Yet (Not sure if this is needed)
     >
-      <Text selectable={false} style={buttonStyle.buttonText}>{buttonText}</Text>
+      <Text style={[buttonStyle.buttonText, { userSelect: 'none' }]}>
+        {buttonText}
+      </Text>
     </Pressable>
   );
 };

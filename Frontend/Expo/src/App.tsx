@@ -1,10 +1,10 @@
 // React Native Main File //
 
 // React
-import React, { useEffect, useState, Dispatch, SetStateAction } from 'react';
+import React, { useState, Dispatch, SetStateAction } from 'react';
 
 // React Native 
-import { View, SafeAreaView, Image, Text, TouchableOpacity, StyleSheet, Platform, Dimensions } from 'react-native';
+import { View, SafeAreaView, Image, Text, Pressable, StyleSheet, Platform, Dimensions } from 'react-native';
 
 // Expo Packages
 import * as Updates from 'expo-updates';
@@ -28,6 +28,9 @@ import { useTargetButtonColor } from './TargetButtonColor';
 import { useAllMode } from './AllMode';
 
 export default function App() {
+
+  // Disable Style Warning
+  disableStyleWarning();
 
   // Fullscreen State
   const [isFullScreen, setIsFullScreen] = useState(false);
@@ -130,15 +133,16 @@ export default function App() {
           onPress={() => null}
         />
 
-        <TouchableOpacity onPress={handleLogoPress}>
+        <Pressable onPress={handleLogoPress}>
 
           {/* Buzz Blimps Logo */}
           <Image 
             source={require('./assets/buzz_blimps_logo.png')} 
+            resizeMode='contain'
             style={Platform.OS === 'ios' || Platform.OS === 'android' ? styles.imageHalfSize : styles.image} 
           />
 
-        </TouchableOpacity>
+        </Pressable>
 
         {/* Barometer Button */}
         <Button 
@@ -234,6 +238,20 @@ function toggleFullScreen(setIsFullScreen: Dispatch<SetStateAction<boolean>>) {
   }
 }
 
+// Disable Style Warning
+function disableStyleWarning() {
+  const originalWarn = console.warn;
+
+  console.warn = (message, ...args) => {
+    if (message.includes('"textShadow*" style props are deprecated. Use "textShadow".')) {
+      // Suppress the specific warning
+      return;
+    }
+    // Call the original console.warn for other messages
+    originalWarn(message, ...args);
+  };
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -261,11 +279,9 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   image: {
-    resizeMode: 'contain',
   },
   imageHalfSize: {
     width: 624/2.6, // Half width
     height: 150/2.6, // Half height
-    resizeMode: 'contain',
   },
 });

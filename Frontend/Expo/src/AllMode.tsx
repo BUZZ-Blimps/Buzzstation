@@ -1,8 +1,7 @@
 // AllMode.tsx
 
 // React and React Native
-import { useState, useEffect } from 'react';
-import { View, StyleSheet, Platform } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 
 // SocketIO
 import { socket } from './Constants'; // Importing the SocketIO instance
@@ -87,8 +86,8 @@ export const useAllMode = (defaultColor: string, buttonKey: string): ButtonColor
         fontWeight: 'bold',
         color: 'white', // Text color
         fontSize: 15, // Text size
-        textAlign: 'center', // Center the text
-        textAlignVertical: 'center',
+        textAlign: 'center', // Center the text horizontally
+        verticalAlign: 'middle', // Center the text vertically
         textShadowColor: 'black', // Outline color
         textShadowOffset: { width: 0, height: 0 }, // Direction of the shadow
         textShadowRadius: isAndroid || isIOS ? 2 : 2.5, // Spread of the shadow

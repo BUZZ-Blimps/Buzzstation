@@ -4,7 +4,7 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 
 // React Native
-import { View, TouchableOpacity, StyleSheet, Platform, ViewStyle, TextStyle } from 'react-native';
+import { View, Pressable, StyleSheet, Platform, ViewStyle, TextStyle } from 'react-native';
 
 // React Native Animations
 import Animated, { Easing, useSharedValue, withTiming, useAnimatedStyle } from 'react-native-reanimated';
@@ -218,7 +218,7 @@ const Controller: React.FC<ButtonProps> = ({ blimpName, buttonKey, buttonColor, 
   }, []);
 
   return (
-    <TouchableOpacity style={[styles.button, buttonStyle.button]} onPress={onPress}>
+    <Pressable style={[styles.button, buttonStyle.button]} onPress={onPress}>
       <View style={styles.gridContainer}>
         {/* Left Grid */}
         <View style={styles.grid}>
@@ -235,7 +235,7 @@ const Controller: React.FC<ButtonProps> = ({ blimpName, buttonKey, buttonColor, 
           <View style={styles.yAxis} />
         </View>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
