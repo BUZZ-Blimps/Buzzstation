@@ -14,6 +14,7 @@ To-Do:
 # Flask Packages
 from flask import Flask, render_template, request, Response, jsonify
 from flask_socketio import SocketIO, send
+from flask_cors import CORS
 
 # Redis Package
 import redis
@@ -49,6 +50,7 @@ import traceback
 
 # Initialize Flask App and SocketIO
 app = Flask('Backend Server')
+CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Connect to Redis server

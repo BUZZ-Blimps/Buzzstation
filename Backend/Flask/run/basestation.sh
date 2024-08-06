@@ -1,7 +1,7 @@
 #!/bin/bash
 
 IP=$(hostname -I | awk '{print $1}')
-URL="http://$IP:5000"
+URL="https://$IP:5000"
 
 echo ""
 echo "Basestation Starting..."

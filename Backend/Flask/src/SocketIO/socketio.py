@@ -601,9 +601,9 @@ def start_backend_server(host, port):
 
     # Start App at the specified IP and port
     try:
-        socketio.run(app, host=host, port=port)
+        socketio.run(app, host=host, port=port, ssl_context='adhoc')
     except:
         try:
-            socketio.run(app, allow_unsafe_werkzeug=True, host=host, port=port)
+            socketio.run(app, allow_unsafe_werkzeug=True, host=host, port=port, ssl_context='adhoc')
         except:
             pass

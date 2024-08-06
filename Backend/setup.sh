@@ -8,6 +8,8 @@ PIP_VERSION="23.2"
 PACKAGES=(
     "--ignore-installed blinker flask==2.3.2"
     "flask-socketio==5.2.0"
+    "flask-cors==4.0.1"
+    "pyopenssl==24.2.1"
     "pyserial==3.5"
     "numpy==1.21.5"
     "redis==5.0.3"

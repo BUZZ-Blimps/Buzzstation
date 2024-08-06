@@ -5,7 +5,7 @@ import io from 'socket.io-client';
 
 // URL
 // To-Do: Eventually will be a Static IP
-export const url = 'http://192.168.7.198:5000'
+export const url = 'https://192.168.7.198:5000'
 
 // Websocket
 export const socket = io(url);
