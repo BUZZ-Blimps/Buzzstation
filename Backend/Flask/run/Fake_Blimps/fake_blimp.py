@@ -19,6 +19,9 @@ class Blimp(Node):
         # State Machine
         self.state_machine = 0
 
+        # Barometer Reading
+        self.barometer_reading = None
+
         # Vision
         self.vision = True
 
@@ -26,7 +29,7 @@ class Blimp(Node):
         self.node_name = str(name)
 
         # Init node
-        super().__init__(self.node_name, namespace=self.node_name)
+        super().__init__(self.node_name)
 
         # Allowed Names
         self.catching_blimp_names = ['BurnCream', 'SillyAh', 'Turbo', 'GameChamber', 'FiveGuys', 'SuperBeef']
@@ -38,42 +41,42 @@ class Blimp(Node):
         # Publishers #
 
         # Heartbeat
-        self.pub_heartbeat = self.create_publisher(Bool, 'heartbeat', 10)
+        self.pub_heartbeat = self.create_publisher(Bool, self.node_name + '/' + 'heartbeat', 10)
 
         # State Machine
         if self.name in self.catching_blimp_names:
-            self.pub_state_machine = self.create_publisher(Int64, 'state_machine', 10)
+            self.pub_state_machine = self.create_publisher(Int64, self.node_name + '/' + 'state_machine', 10)
         elif self.name in self.attack_blimp_names:
-            self.pub_state_machine = self.create_publisher(Bool, 'state_machine', 10)
+            self.pub_state_machine = self.create_publisher(Bool, self.node_name + '/' + 'state_machine', 10)
 
         # Miscellaneous
-        self.pub_vision = self.create_publisher(Bool, 'vision', 10)
-        self.pub_height = self.create_publisher(Float64, 'height', 10)
-        self.pub_z_velocity = self.create_publisher(Float64, 'z_velocity', 10)
-        self.pub_log = self.create_publisher(String, 'log', 10)
+        self.pub_vision = self.create_publisher(Bool, self.node_name + '/' + 'vision', 10)
+        self.pub_height = self.create_publisher(Float64, self.node_name + '/' + 'height', 10)
+        self.pub_z_velocity = self.create_publisher(Float64, self.node_name + '/' + 'z_velocity', 10)
+        self.pub_log = self.create_publisher(String, self.node_name + '/' + 'log', 10)
 
         # Subscribers #
 
         # Catching Blimps
         if self.name in self.catching_blimp_names:
-            topic_goal_color = "goal_color"
-            topic_catching = "catching"
-            topic_shooting = "shooting"
+            topic_goal_color = self.node_name + '/' + 'goal_color'
+            topic_catching = self.node_name + '/' + 'catching'
+            topic_shooting = self.node_name + '/' + 'shooting'
             self.sub_goal_color = self.create_subscription(Bool, topic_goal_color, self.goal_callback, 10)
             self.sub_catching = self.create_subscription(Bool, topic_catching, self.catch_callback, 10)
             self.sub_shooting = self.create_subscription(Bool, topic_shooting, self.shoot_callback, 10)
 
         # Attacking Blimps
         if self.name in self.attack_blimp_names:
-            topic_enemy_color = "enemy_color"
+            topic_enemy_color = self.node_name + '/' + 'enemy_color'
             self.sub_enemy_color = self.create_subscription(Bool, topic_enemy_color, self.enemy_callback, 10)
 
         # Both Catching and Attacking Blimps
-        topic_mode = "mode"
-        topic_vision = "vision"
-        topic_motor_commands = "motor_commands"
-        topic_barometer = "barometer"
-        topic_calibrate_barometer = "calibrate_barometer"
+        topic_mode = self.node_name + '/' + 'mode'
+        topic_vision = self.node_name + '/' + 'vision'
+        topic_motor_commands = self.node_name + '/' + 'motor_commands'
+        topic_barometer = 'Barometer/reading'
+        topic_calibrate_barometer = self.node_name + '/' + 'calibrate_barometer'
         self.sub_mode = self.create_subscription(Bool, topic_mode, self.mode_callback, 10)
         self.sub_vision = self.create_subscription(Bool, topic_vision, self.vision_callback, 10)
         self.sub_motor_commands = self.create_subscription(Float64MultiArray, topic_motor_commands, self.motor_callback, 10)
@@ -208,7 +211,7 @@ class Blimp(Node):
         self.pub_log.publish(log_msg)
 
     def barometer_callback(self, msg):
-        pass
+        self.barometer_reading = msg.data
 
     def calibrate_barometer_callback(self, msg):
         log_msg = String()

@@ -95,9 +95,6 @@ class Blimp:
         # Motor Commands
         self.motor_commands = [float(0.0), float(0.0), float(0.0), float(0.0)]
 
-        # Barometer Value
-        self.barometer = 99668.2 # Competition Default Value
-
         # Calibrate Barometer
         self.calibrate_barometer = False
 
@@ -132,7 +129,6 @@ class Blimp:
             'mode': str(self.mode),
             'vision': str(self.vision),
             'motor_commands': str(self.motor_commands),
-            'barometer': str(self.barometer),
             'calibrate_barometer': str(self.calibrate_barometer),
             'height': str(self.height),
             'z_velocity': str(self.z_velocity),
@@ -232,7 +228,6 @@ class Blimp:
         self.pub_mode = self.create_pub('mode', 'Bool')
         self.pub_vision = self.create_pub('vision', 'Bool')
         self.pub_motor_commands = self.create_pub('motor_commands', 'Float64MultiArray')
-        self.pub_barometer = self.create_pub('barometer', 'Bool')
         self.pub_calibrate_barometer = self.create_pub('calibrate_barometer', 'Bool')
 
     def create_pub(self, key, data_type):
@@ -291,7 +286,6 @@ class Blimp:
         self.destroy_pub('pub_mode')
         self.destroy_pub('pub_vision')
         self.destroy_pub('pub_motor_commands')
-        self.destroy_pub('pub_barometer')
         self.destroy_pub('pub_calibrate_barometer')
 
     def destroy_pub(self, key):

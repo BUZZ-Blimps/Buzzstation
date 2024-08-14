@@ -79,7 +79,7 @@ class Basestation(Node):
         self.heartbeat_timeout = 4.0
 
         # Blimps Loop Speed
-        self.blimps_loop_speed = 5 # Depends on CPU Speed (Future To-Do: Optimize Frontend/UI to run main loop faster)
+        self.blimps_loop_speed = 5 # (Hz) Depends on CPU Speed
         
         # Blimps Loop Period
         blimps_loop_period = 1.0/self.blimps_loop_speed
@@ -92,7 +92,32 @@ class Basestation(Node):
         
         # Create Blimps Loop Timer
         from .Blimps_Loop.blimps_loop import blimps_loop
-        self.timer = self.create_timer(blimps_loop_period, blimps_loop)
+        self.blimps_timer = self.create_timer(blimps_loop_period, blimps_loop)
+
+        # Faking Barometer Serial Port Connection
+        self.fake_barometer = False # Default: False
+
+        # Barometer Publisher
+        self.pub_barometer = self.create_publisher(Float64, 'Barometer/reading', 10)
+
+        # Barometer Serial Port
+        self.barometer_serial = None
+
+        # Barometer Reading
+        self.barometer_reading = 99668.2 # Competition Default Value: 99668.2
+
+        # Barometer Loop Speed
+        self.barometer_loop_speed = 5 # (Hz) Depends on CPU Speed
+
+        # Barometer Loop Period
+        barometer_timer_period = 1.0/self.barometer_loop_speed
+
+        # Create Barometer Loop Timer
+        from .Barometer_Loop.barometer_loop import barometer_loop, fake_barometer_loop
+        if not self.fake_barometer:
+            self.barometer_timer = self.create_timer(barometer_timer_period, barometer_loop)
+        else:
+            self.barometer_timer = self.create_timer(barometer_timer_period, fake_barometer_loop)
 
 # ROS 2 Thread
 def ros_node():

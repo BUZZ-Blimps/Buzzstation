@@ -26,6 +26,7 @@ import Controller from './Controller';
 // Functions
 import { useTargetButtonColor } from './TargetButtonColor'; 
 import { useAllMode } from './AllMode';
+import { useBarometer } from './Barometer';
 
 export default function App() {
 
@@ -47,7 +48,6 @@ export default function App() {
       // Immediately reload the React Native Bundle
       async function reloadApp () {
         await Updates.reloadAsync();
-
       }
 
       reloadApp();
@@ -82,6 +82,14 @@ export default function App() {
           AllModeButtonStyle: AllManualButtonStyle, 
           handleClick: handleAllManualClick 
         } = useAllMode('#E11C1C', 'all_manual');
+
+  // Barometer
+  const { 
+          BarometerButtonStyle: BarometerButtonStyle,
+          buttonColor: barometerButtonColor,
+          buttonText: barometerButtonText,
+          handleClick: handleBarometerClick
+        } = useBarometer('#E11C1C', 'Barometer: Disconnected');
 
   // UI
   return (
@@ -148,24 +156,10 @@ export default function App() {
         <Button 
           blimpName='none' // Blimp Name
           buttonKey='barometer' // Type of Button
-          buttonColor='#E11C1C' // Button Color
-          buttonText='Barometer: Disconnected' // Text Seen on Button
-          buttonStyle={{
-            ...goalColorButtonStyle,
-            button: {
-                ...goalColorButtonStyle.button,
-                width: 235,
-                height: isAndroid || isIOS ? 50 : 100,
-                marginVertical: 0,
-                marginTop: 5,
-                marginLeft: isAndroid || isIOS ? 20 : 20,
-            },
-            buttonText: {
-              ...goalColorButtonStyle.buttonText,
-              fontSize: isAndroid || isIOS ? 17 : 18,
-            }
-          }}
-          onPress={() => null} // On Press Function
+          buttonColor={barometerButtonColor} // Button Color
+          buttonText={barometerButtonText} // Text Seen on Button
+          buttonStyle={BarometerButtonStyle}
+          onPress={handleBarometerClick} // On Press Function
         />
 
       </SafeAreaView>

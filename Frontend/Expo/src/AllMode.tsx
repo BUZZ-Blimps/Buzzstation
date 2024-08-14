@@ -15,12 +15,12 @@ const isAndroid = Platform.OS === 'android';
 // Modes
 import { useModes } from './Modes'; // Import the useModes hook
 
-interface ButtonColorState {
+interface Button {
     AllModeButtonStyle: any; // Replace 'any' with your actual style type if possible
     handleClick: (buttonKey: string) => void;
 }
 
-export const useAllMode = (defaultColor: string, buttonKey: string): ButtonColorState => {
+export const useAllMode = (defaultColor: string, buttonKey: string): Button => {
     // Modes
     const { modeColors } = useModes();
   

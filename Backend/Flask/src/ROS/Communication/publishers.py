@@ -21,6 +21,14 @@ def publish_generic(publish_function_name, blimp):
         # Call the function with the blimp argument
         publish_function(blimp)
 
+# Barometer Publisher
+
+def publish_barometer(basestation_node):
+    # Publish barometer value to the ROS topic
+    msg = Float64()
+    msg.data = basestation_node.barometer_reading
+    basestation_node.pub_barometer.publish(msg)
+
 # Catching Blimp Publishers #
 
 def publish_goal_color(blimp):
@@ -62,12 +70,6 @@ def publish_motor_commands(blimp):
     msg = Float64MultiArray()
     msg.data = blimp.motor_commands
     blimp.pub_motor_commands.publish(msg)
-
-def publish_barometer(blimp):
-    # Publish barometer value to the ROS topic
-    msg = Float64()
-    msg.data = float(blimp.barometer)
-    blimp.pub_barometer.publish(msg)
 
 def publish_calibrate_barometer(blimp):
     # Publish calibrate barometer value to the ROS topic (Only true for one message)
