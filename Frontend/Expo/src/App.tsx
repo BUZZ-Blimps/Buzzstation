@@ -1,7 +1,7 @@
 // React Native Main File //
 
 // React
-import React, { useState, Dispatch, SetStateAction } from 'react';
+import React, { useState, useEffect, Dispatch, SetStateAction } from 'react';
 
 // React Native 
 import { View, SafeAreaView, Image, Text, Pressable, StyleSheet, Platform, Dimensions } from 'react-native';
@@ -237,7 +237,7 @@ function disableStyleWarning() {
   const originalWarn = console.warn;
 
   console.warn = (message, ...args) => {
-    if (message.includes('"textShadow*" style props are deprecated. Use "textShadow".')) {
+    if (typeof message === 'string' && message.includes('"textShadow*" style props are deprecated. Use "textShadow".')) {
       // Suppress the specific warning
       return;
     }

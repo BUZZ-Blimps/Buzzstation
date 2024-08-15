@@ -49,8 +49,11 @@ def update_blimp_values(current_blimps):
         # Mode
         update_blimp_component_color(current_blimps[name], 'mode', 'red', 'green')
 
-        # Calibrate
-        #update_blimp_component_color(current_blimps[name], 'mode', 'red', 'green')
+        # Height
+        update_blimp_component_value(current_blimps[name], 'height')
+
+        # Calibrate (*Note: Only turns green once unless Barometer disconnects*)
+        #update_blimp_component_color(current_blimps[name], 'calibrate', 'red', 'green')
 
         # Vision
         update_blimp_component_color(current_blimps[name], 'vision', 'green', 'red')

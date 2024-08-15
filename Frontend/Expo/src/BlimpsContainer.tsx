@@ -23,7 +23,7 @@ import { useStates } from './States'; // Import the useModes hook
 import { useModes } from './Modes'; // Import the useModes hook
 
 // Calibrate
-//import { useCalibrate } from './Calibrate'; // Import the useVision hook
+import { useCalibrate } from './Calibrate'; // Import the useCalibrate hook
 
 // Vision
 import { useVision } from './Vision'; // Import the useVision hook
@@ -36,10 +36,10 @@ const BlimpsContainer: React.FC = () => {
   const { stateValues, stateButtonStyle } = useStates();
 
   // Modes
-  const { modeColors, modeButtonStyle, handleModeClick } = useModes();
+  const { modeButtonColors, modeButtonStyle, handleModeClick } = useModes();
 
   // Calibrations
-  // ...
+  const { calibrateButtonColors, calibrateButtonTexts, CalibrateButton, handleCalibrateClick } = useCalibrate();
 
   // Visions
   const { visionColors, visionButtonStyle, handleVisionClick } = useVision();
@@ -48,6 +48,7 @@ const BlimpsContainer: React.FC = () => {
     <View style={styles.container}>
       {/* Row of 5 Column Header */}
       <View style={styles.buttonRow}>
+        
         {/* Blimps Header */}
         <Button
           blimpName='none'
@@ -63,6 +64,7 @@ const BlimpsContainer: React.FC = () => {
           }}
           onPress={() => null}
         />
+
         {/* State Header */}
         <Button
           blimpName='none'
@@ -78,6 +80,7 @@ const BlimpsContainer: React.FC = () => {
           }}
           onPress={() => null}
         />
+
         {/* Mode Header */}
         <Button
           blimpName='none'
@@ -93,6 +96,7 @@ const BlimpsContainer: React.FC = () => {
           }}
           onPress={() => null}
         />
+
         {/* Calibrate Header */}
         <Button
           blimpName='none'
@@ -104,11 +108,12 @@ const BlimpsContainer: React.FC = () => {
             button: {
                 ...modeButtonStyle.button,
                 marginTop: -10,
-                width: 130, // Example new width
+                width: 130,
             },
           }}
           onPress={() => null}
         />
+
         {/* Vision Header */}
         <Button
           blimpName='none'
@@ -145,7 +150,6 @@ const BlimpsContainer: React.FC = () => {
               />
 
               {/* State Dropdown */}
-              {/* Placeholder Button Here: */}
               <Button 
                   blimpName={name} // Blimp Name
                   buttonKey='state' // Type of Button
@@ -159,31 +163,22 @@ const BlimpsContainer: React.FC = () => {
               <Button 
                   blimpName={name} // Blimp Name
                   buttonKey='mode' // Type of Button
-                  buttonColor={modeColors[name] || 'red'} // Button Color (Default: Red)
-                  buttonText={modeColors[name] === 'green' ? 'Auto' : 'Manual'} // Text Seen on Button
+                  buttonColor={modeButtonColors[name] || '#E11C1C'} // Button Color (Default: Red)
+                  buttonText={modeButtonColors[name] === 'green' ? 'Auto' : 'Manual'} // Text Seen on Button
                   buttonStyle={modeButtonStyle} // Button Style
                   onPress={() => handleModeClick(name)} // On Press Function
               />
 
               {/* Calibrate Button */}
-              {/* Placeholder Button Here: */}
-              <Button 
-                  blimpName={name} // Blimp Name
-                  buttonKey='calibrate' // Type of Button
-                  buttonColor='#E11C1C' // Button Color
-                  buttonText='Height: 0.00m' // Text Seen on Button
-                  buttonStyle={{
-                    ...modeButtonStyle,
-                    button: {
-                        ...modeButtonStyle.button,
-                        width: 130, // Example new width
-                    },
-                  }}
-                  onPress={() => null} // On Press Function
+              <CalibrateButton
+                blimpName={name}
+                buttonKey='calibrate'
+                buttonColor={calibrateButtonColors[name] || '#E11C1C'}
+                buttonText={calibrateButtonTexts[name] || 'Height: None'}
+                onPress={() => handleCalibrateClick(name)}
               />
 
               {/* Vision Button */}
-              {/* Placeholder Button Here: */}
               <Button 
                   blimpName={name} // Blimp Name
                   buttonKey='vision' // Type of Button
@@ -193,6 +188,7 @@ const BlimpsContainer: React.FC = () => {
                   onPress={() => handleVisionClick(name)} // On Press Function
               />
             </View>
+            
           </View>
         ))
       ) : (
@@ -207,7 +203,7 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
     alignItems: 'center',
-    //backgroundColor: 'black', // Use for testing of columns
+    //backgroundColor: 'white', // Use for testing of columns
   },
   buttonRow: {
     flexDirection: 'row', // Arrange buttons in a row

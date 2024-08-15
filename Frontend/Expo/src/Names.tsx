@@ -96,20 +96,6 @@ export const useNames = () => {
 
     }, [userID]);
 
-    // Handle Inactive Users
-    // userManager.checkUserInactivity(String(userID));
-
-    // //Get and Store User ID's
-    // useEffect(() => {
-    //   const initializeUser = async () => {
-    //     const id = await userManager.getOrCreateUserId();
-    //     setUserId(id);
-    //   };
-  
-    //   initializeUser();
-  
-    // }, [userID]);
-
     const nameButtonStyle = StyleSheet.create({
       button: {
         width: 110,

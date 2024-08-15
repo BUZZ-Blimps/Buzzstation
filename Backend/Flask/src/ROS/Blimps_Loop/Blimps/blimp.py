@@ -307,8 +307,17 @@ class Blimp:
             # State Machine
             self.sub_state_machine = self.create_sub('state_machine', 'Bool')
 
+        # Height
+        self.sub_height = self.create_sub('height', 'Float64')
+
+        # Z-Velocity
+        self.sub_z_velocity = self.create_sub('z_velocity', 'Float64')
+
         # Vision
         self.sub_vision = self.create_sub('vision', 'Bool')
+
+        # Log
+        self.sub_log = self.create_sub('log', 'String')
 
     def create_sub(self, key, data_type):
         if key == 'state_machine':
@@ -316,9 +325,18 @@ class Blimp:
                 sub = self.basestation_node.create_subscription(Bool, f'{self.name}/{key}', self.state_machine_callback, 10)
             elif data_type == 'Int64':
                 sub = self.basestation_node.create_subscription(Int64, f'{self.name}/{key}', self.state_machine_callback, 10)
+        elif key == 'height':
+            if data_type == 'Float64':
+                sub = self.basestation_node.create_subscription(Float64, f'{self.name}/{key}', self.height_callback, 10)
+        elif key == 'z_velocity':
+            if data_type == 'Float64':
+                sub = self.basestation_node.create_subscription(Float64, f'{self.name}/{key}', self.z_velocity_callback, 10)
         elif key == 'vision':
             if data_type == 'Bool':
                 sub = self.basestation_node.create_subscription(Bool, f'{self.name}/{key}', self.vision_callback, 10)
+        elif key == 'log':
+            if data_type == 'String':
+                sub = self.basestation_node.create_subscription(String, f'{self.name}/{key}', self.log_callback, 10)
         return sub
 
     def destroy_subscribers(self):
@@ -334,8 +352,17 @@ class Blimp:
             # State Machine
             self.destroy_sub('sub_state_machine')
 
+        # Height
+        self.destroy_sub('sub_height')
+
+        # Z-Velocity
+        self.destroy_sub('sub_z_velocity')
+
         # Vision
         self.destroy_sub('sub_vision')
+
+        # Log
+        self.destroy_sub('sub_log')
 
         # Destroy Heartbeat Subscriber and Remove from Heartbeat Subscriber Dictionary
         self.basestation_node.destroy_subscription(self.basestation_node.heartbeat_subs[self.name])
@@ -349,5 +376,16 @@ class Blimp:
     def state_machine_callback(self, msg):
         self.state_machine = msg.data
 
+    def height_callback(self, msg):
+        self.height = round(msg.data, 2)
+        self.height = str(f"{self.height:.2f}") + 'm'
+
+    def z_velocity_callback(self, msg):
+        self.z_velocity = round(msg.data, 2)
+        self.z_velocity = str(f"{self.z_velocity:.2f}") + 'm/s'
+
     def vision_callback(self, msg):
         self.vision = msg.data
+
+    def log_callback(self, msg):
+        self.log = msg.data

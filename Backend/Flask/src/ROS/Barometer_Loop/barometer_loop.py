@@ -70,6 +70,7 @@ def barometer_loop():
             publish_barometer(basestation_node)
 
         else:
+            
             socketio.emit('update_barometer_button_color', 'red')
 
 # Fake Barometer Timer Loop

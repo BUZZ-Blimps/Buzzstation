@@ -77,7 +77,15 @@ def update_blimp_component_value(blimp, component):
         elif component == 'state_machine':
             
             # Sets Component Color to Default at Start of Program
+            # Note: Not sure if correct
             socketio.emit('update_button_color', {'name': blimp.name, 'key': component, 'value': 'None'})
+
+        elif component == 'height':
+            
+            # Sets Component Color to Default at Start of Program
+            # Note: Not sure if correct
+            socketio.emit('update_button_color', {'name': blimp.name, 'key': component, 'value': 'None'})
+            socketio.emit('update_button_value', {'name': blimp.name, 'key': component, 'value': 'None'})
 
 # Generic Function for updating the color of a ROS topic's UI component for all blimps (Global Value i.e. Goal Color, Enemy Color)
 def update_component_for_all_blimps(basestation_node, component, default_color, nondefault_color):

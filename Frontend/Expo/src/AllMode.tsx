@@ -22,18 +22,18 @@ interface Button {
 
 export const useAllMode = (defaultColor: string, buttonKey: string): Button => {
     // Modes
-    const { modeColors } = useModes();
+    const { modeButtonColors } = useModes();
   
     const handleClick = (buttonKey: string) => {
         if (buttonKey === 'all_auto') {
 
-            // Iterate through the modeColors dictionary
-            for (const name in modeColors) {
+            // Iterate through the modeButtonColors dictionary
+            for (const name in modeButtonColors) {
 
-                if (modeColors.hasOwnProperty(name)) {
+                if (modeButtonColors.hasOwnProperty(name)) {
 
                     // Testing
-                    //console.log(`Mode for ${name}: ${modeColors[name]}`);
+                    //console.log(`Mode for ${name}: ${modeButtonColors[name]}`);
                     // Optionally, you can call handleModeClick or any other function here
                     
                     const val = { name: name, key: 'mode', value: 1};
@@ -48,13 +48,13 @@ export const useAllMode = (defaultColor: string, buttonKey: string): Button => {
             //console.log(buttonKey + " button clicked!");
 
         } else if (buttonKey === 'all_manual') {
-            // Iterate through the modeColors dictionary
-            for (const name in modeColors) {
+            // Iterate through the modeButtonColors dictionary
+            for (const name in modeButtonColors) {
 
-                if (modeColors.hasOwnProperty(name)) {
+                if (modeButtonColors.hasOwnProperty(name)) {
 
                     // Testing
-                    //console.log(`Mode for ${name}: ${modeColors[name]}`);
+                    //console.log(`Mode for ${name}: ${modeButtonColors[name]}`);
                     // Optionally, you can call handleModeClick or any other function here
                     
                     const val = { name: name, key: 'mode', value: 0};

@@ -16,7 +16,7 @@ const isAndroid = Platform.OS === 'android';
 export const useModes = () => {
 
     // Store Mode Button Colors
-    const [modeColors, setModeColors] = useState<{ [key: string]: string }>({});
+    const [modeButtonColors, setModeButtonColors] = useState<{ [key: string]: string }>({});
   
     useEffect(() => {
 
@@ -35,8 +35,8 @@ export const useModes = () => {
 
           if (receivedButtonKey === 'mode') {
               // Update modeColors with the new color for the specific blimp
-              setModeColors(prevModeColors => ({
-                  ...prevModeColors,
+              setModeButtonColors(prevModeButtonColors => ({
+                  ...prevModeButtonColors,
                   [receivedName]: newColor,
               }));
 
@@ -87,7 +87,7 @@ export const useModes = () => {
     });
   
     return {
-      modeColors,
+      modeButtonColors,
       modeButtonStyle,
       handleModeClick,
     };

@@ -92,7 +92,7 @@ class Blimp(Node):
         main_loop_period = 1  # seconds
         self.main_loop_timer = self.create_timer(main_loop_period, self.main_loop)
 
-        data_timer_period = 1/20.0  # seconds
+        data_timer_period = 1  # seconds
         self.data_loop_timer = self.create_timer(data_timer_period, self.data_loop)
 
     # Publishers #
@@ -152,7 +152,9 @@ class Blimp(Node):
         self.pub_vision.publish(msg)
 
     def data_loop(self):
-        height = 10*random.random()
+        height = 30 * random.random() - 15
+        #height = 20 * random.random() - 10
+        #height = 10 * random.random()
         z_velocity = 5*random.random()
 
         height_msg = Float64()
@@ -205,10 +207,14 @@ class Blimp(Node):
         log_msg.data = 'Catch set to {}'.format(msg.data)
         self.pub_log.publish(log_msg)
 
+        self.get_logger().info(log_msg.data)
+
     def shoot_callback(self, msg):
         log_msg = String()
         log_msg.data = 'Shoot set to {}'.format(msg.data)
         self.pub_log.publish(log_msg)
+
+        self.get_logger().info(log_msg.data)
 
     def barometer_callback(self, msg):
         self.barometer_reading = msg.data
@@ -218,6 +224,8 @@ class Blimp(Node):
         log_msg.data = 'Calibrate set to {}'.format(msg.data)
 
         self.pub_log.publish(log_msg)
+
+        self.get_logger().info(log_msg.data)
 
 def main(args=None):
     rclpy.init(args=args)

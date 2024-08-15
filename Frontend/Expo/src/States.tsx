@@ -20,7 +20,7 @@ export const useStates = () => {
   
     useEffect(() => {
 
-        // Event handler for 'update_button_valuer'
+        // Event handler for 'update_button_value'
         const handleUpdateButtonValue = (val: { [key: string]: string }) => {
             const receivedName: string = val['name'];
             const receivedButtonKey: string = val['key'];
@@ -68,7 +68,7 @@ export const useStates = () => {
             
 
             if (receivedButtonKey === 'state_machine') {
-                // Update modeColors with the new color for the specific blimp
+                // Update State Values with the new value for the specific blimp
                 setStateValues(prevStateValues => ({
                     ...prevStateValues,
                     [receivedName]: newValue,
