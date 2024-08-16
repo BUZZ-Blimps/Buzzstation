@@ -9,6 +9,9 @@ import { View, SafeAreaView, Image, Text, Pressable, StyleSheet, Platform, Dimen
 // Expo Packages
 import * as Updates from 'expo-updates';
 
+// SocketIO
+import { socket } from './Constants';
+
 // IOS
 const isIOS = Platform.OS === 'ios';
 
@@ -27,11 +30,15 @@ import Controller from './Controller';
 import { useTargetButtonColor } from './TargetButtonColor'; 
 import { useAllMode } from './AllMode';
 import { useBarometer } from './Barometer';
+import { getUserID } from './UserManager';
 
 export default function App() {
 
   // Disable Style Warning
   disableStyleWarning();
+
+  // User ID
+  const { userID } = getUserID();
 
   // Fullscreen State
   const [isFullScreen, setIsFullScreen] = useState(false);
@@ -51,6 +58,13 @@ export default function App() {
       }
 
       reloadApp();
+
+      if (userID) {
+
+        // Inactive User (Reload)
+        socket.emit('inactive_user', userID);
+
+      }
       
     }
   };

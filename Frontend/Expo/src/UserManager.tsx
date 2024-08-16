@@ -2,7 +2,7 @@
 
 // React and React Native
 import { useEffect, useState, useRef } from 'react';
-import { Platform } from 'react-native';
+import { AppState, Platform } from 'react-native';
 
 // SocketIO
 import { socket } from './Constants';
@@ -44,7 +44,7 @@ export const getUserID = () => {
         getOrCreateUserId();
     }, []);
 
-    // Inactive Users
+    // Inactive Users (Web)
     const hiddenTimeRef = useRef<NodeJS.Timeout | null>(null);
     useEffect(() => {
         if (isWeb) {
@@ -105,6 +105,34 @@ export const getUserID = () => {
                 }
             };
         }
+    }, [userID]);
+
+    // Inactive Users (App)
+    useEffect(() => {
+        const handleAppStateChange = (nextAppState: string) => {
+            if (nextAppState === 'background' || nextAppState === 'inactive') {
+              // The app is going to the background or is inactive
+              // Testing
+              //console.log('App has moved to the background or inactive state');
+
+              if (userID) {
+
+                // Inactive User (Disconnection)
+                socket.emit('inactive_user', userID);
+
+              }
+
+            } else if (nextAppState === 'active') {
+              // Testing
+              //console.log('App is in the foreground');
+            }
+        };
+
+        const appStateSubscription = AppState.addEventListener('change', handleAppStateChange);
+
+        return () => {
+            appStateSubscription.remove(); // Correct way to remove the listener
+        };
     }, [userID]);
 
     return { userID };
