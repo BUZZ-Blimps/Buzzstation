@@ -109,12 +109,8 @@ def get_blimp_button_release(val):
     # Y (To-Do: Individual Calibrate)
     elif button == 'button3':
         # Calibrate Height of Specific Blimp Name
-        pass
-        # if hasattr(basestation_node.current_blimps[name], 'calibrate_barometer'):
-
-        #     # Set the Value of the Calibrate Barometer to True
-        #     basestation_node.current_blimps[name].calibrate_barometer = not basestation_node.current_blimps[name].calibrate_barometer
-    
+        toggle_blimp_calibrate_button_color(name)
+        
     # Left Bumper (LB)
     elif button == 'button4':
         if hasattr(basestation_node.current_blimps[name], 'catching'):
@@ -458,6 +454,36 @@ def set_blimp_button_value(val):
         # Change the Value of the Key for the Specific Blimp Name
         setattr(basestation_node.current_blimps[name], key, value)
 
+# Set Calibrate Barometer for Blimp to True
+@socketio.on('toggle_blimp_calibrate_button_color')
+def toggle_blimp_calibrate_button_color(name):
+    from ROS.ros import basestation_node
+    from ROS.Communication.publishers import publish_generic
+
+    if basestation_node.barometer_serial != None or basestation_node.fake_barometer == True:
+
+        if hasattr(basestation_node.current_blimps[name], 'calibrate_barometer'):
+
+            # Set Calibrate Barometer to True
+            setattr(basestation_node.current_blimps[name], 'calibrate_barometer', True)
+
+            # Set Calibrated to True
+            setattr(basestation_node.current_blimps[name], 'calibrated', True)
+            
+            # Update Frontend
+            socketio.emit('update_button_color', {'name': name, 'key': 'calibrate_barometer', 'color': 'green'})
+
+            if basestation_node.current_blimps[name].calibrate_barometer:
+                
+                # Publish over ROS
+                publish_generic('publish_calibrate_barometer', basestation_node.current_blimps[name])
+
+                # Set Calibrate Barometer to False
+                setattr(basestation_node.current_blimps[name], 'calibrate_barometer', False)
+
+                # Publish over ROS
+                publish_generic('publish_calibrate_barometer', basestation_node.current_blimps[name])
+
 # Changing Buttons with 3 Colors
 @socketio.on('toggle_name_button')
 def toggle_name_button(val):
@@ -525,7 +551,7 @@ def get_name_button_colors():
              # Make Blimp Button Green for all users
             socketio.emit('toggle_name_button_color', { 'userID': 'none', 'name': name})
 
-# Get Mode for Each Blimp
+# Get Mode Button Color for Each Blimp
 def get_mode_button_colors():
 
     # Get Current Blimp Names from Redis
@@ -540,7 +566,22 @@ def get_mode_button_colors():
             else:
                 socketio.emit('update_button_color', {'name': name, 'key': 'mode', 'color': 'red'})
 
-# Get Vision for Each Blimp
+# Get Calibrate Button Color for Each Blimp
+def get_calibrate_button_colors():
+
+    # Get Current Blimp Names from Redis
+    current_names = redis_client.get('current_names').decode("utf-8")
+
+    for name in current_names.split(','):
+        if redis_client.hget(str('blimp:' + name), 'calibrated') is not None:
+            current_component_color = redis_client.hget(str('blimp:' + name), 'calibrated').decode('utf-8')
+            # Send Update to Frontend
+            if str(current_component_color) == 'True':
+                socketio.emit('update_button_color', {'name': name, 'key': 'calibrate_barometer', 'color': 'green'})
+            else:
+                socketio.emit('update_button_color', {'name': name, 'key': 'calibrate_barometer', 'color': 'red'})
+
+# Get Vision Button Color for Each Blimp
 def get_vision_button_colors():
 
     # Get Current Blimp Names from Redis
@@ -555,6 +596,18 @@ def get_vision_button_colors():
             else:
                 socketio.emit('update_button_color', {'name': name, 'key': 'vision', 'color': 'red'})
 
+# Get Component Values for Each Blimp
+def get_button_values(component):
+
+    # Get Current Blimp Names from Redis
+    current_names = redis_client.get('current_names').decode("utf-8")
+
+    for name in current_names.split(','):
+        if redis_client.hget(str('blimp:' + name), component) is not None:
+            current_component_value = redis_client.hget(str('blimp:' + name), component).decode('utf-8')
+            # Send Update to Frontend
+            socketio.emit('update_button_value', {'name': name, 'key': component, 'value': current_component_value})
+
 # Get Redis Values and Sends to Frontend UI
 def get_redis_values():
 
@@ -566,11 +619,17 @@ def get_redis_values():
     # Name Button Colors
     get_name_button_colors()
 
+    # State Machine Values
+    get_button_values('state_machine')
+
     # Mode Button Colors
     get_mode_button_colors()
 
     # Calibrate Button Colors
-    #get_calibrate_button_colors()
+    get_calibrate_button_colors()
+
+    # Height Values
+    get_button_values('height')
 
     # Vision Button Colors
     get_vision_button_colors()

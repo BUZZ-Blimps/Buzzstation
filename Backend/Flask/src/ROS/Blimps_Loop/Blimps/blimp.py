@@ -98,6 +98,9 @@ class Blimp:
         # Calibrate Barometer
         self.calibrate_barometer = False
 
+        # Calibrated
+        self.calibrated = False
+
         # Height
         self.height = None
 
@@ -130,6 +133,7 @@ class Blimp:
             'vision': str(self.vision),
             'motor_commands': str(self.motor_commands),
             'calibrate_barometer': str(self.calibrate_barometer),
+            'calibrated': str(self.calibrated),
             'height': str(self.height),
             'z_velocity': str(self.z_velocity),
             'log': str(self.log),

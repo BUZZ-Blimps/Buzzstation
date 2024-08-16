@@ -6,6 +6,7 @@ Description:
 """
 
 # Imports
+from Packages.packages import socketio
 from .blimp import Blimp
 from .blimp_type import is_attack_blimp
 from ...Communication.publishers import publish_generic
@@ -38,3 +39,6 @@ def add_new_blimps(basestation_node, new_blimp_names):
             publish_generic('publish_vision', new_blimp)
             # To-Do: Startup Blimp Vision Code
             # Put Here
+
+            # Set Calibrate to False
+            socketio.emit('update_button_color', {'name': new_blimp.name, 'key': 'calibrate_barometer', 'color': 'red'})

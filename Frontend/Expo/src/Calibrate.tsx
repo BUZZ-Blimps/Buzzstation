@@ -39,7 +39,7 @@ export const useCalibrate = () => {
         newColor = 'green';
       }
 
-      if (receivedButtonKey === 'calibrate') {
+      if (receivedButtonKey === 'calibrate_barometer') {
         // Update calibrateColors with the new color for the specific blimp
         setButtonColors(prevButtonColors => ({
           ...prevButtonColors,
@@ -92,8 +92,7 @@ export const useCalibrate = () => {
   }, []);
 
   const handleCalibrateClick = (name: string) => {
-    const val = { name: name, key: 'calibrate' };
-    socket.emit('toggle_blimp_button_color', val);
+    socket.emit('toggle_blimp_calibrate_button_color', name);
   };
 
   return {

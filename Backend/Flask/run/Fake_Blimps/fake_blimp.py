@@ -152,19 +152,19 @@ class Blimp(Node):
         self.pub_vision.publish(msg)
 
     def data_loop(self):
-        height = 30 * random.random() - 15
-        #height = 20 * random.random() - 10
-        #height = 10 * random.random()
-        z_velocity = 5*random.random()
+        self.height = 30 * random.random() - 15
+        #self.height = 20 * random.random() - 10
+        #self.height = 10 * random.random()
+        self.z_velocity = 5*random.random()
 
-        height_msg = Float64()
-        height_msg.data = height
+        self.height_msg = Float64()
+        self.height_msg.data = self.height
 
-        z_velocity_msg = Float64()
-        z_velocity_msg.data = z_velocity
+        self.z_velocity_msg = Float64()
+        self.z_velocity_msg.data = self.z_velocity
 
-        self.pub_height.publish(height_msg)
-        self.pub_z_velocity.publish(z_velocity_msg)
+        self.pub_height.publish(self.height_msg)
+        self.pub_z_velocity.publish(self.z_velocity_msg)
 
     # Subscribers #
 
@@ -222,6 +222,12 @@ class Blimp(Node):
     def calibrate_barometer_callback(self, msg):
         log_msg = String()
         log_msg.data = 'Calibrate set to {}'.format(msg.data)
+
+        # Fake Calibration
+        self.height = 0.00
+        self.height_msg = Float64()
+        self.height_msg.data = self.height
+        self.pub_height.publish(self.height_msg)
 
         self.pub_log.publish(log_msg)
 
