@@ -3,6 +3,8 @@
 """
 Description:
 
+Adds a new blimp not in the current blimps list and creates a new blimp object.
+
 """
 
 # Imports

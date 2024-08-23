@@ -3,7 +3,10 @@
 """
 Description:
 
+ROS Joy polls for controller input for the device running this backend program.
+
 To-Do:
+
 - Latch and Save Motor Command Data to Redis
 
 """

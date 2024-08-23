@@ -5,10 +5,6 @@ Description:
 
 Top level File for finding packages used in this program.
 
-To-Do:
-
-- Separate into separate files
-
 """
 
 # Flask Packages
@@ -36,13 +32,13 @@ from cv_bridge import CvBridge
 import cv2
 
 # Other Packages
+from time import time
+import numpy as np
 import threading
-import time
 import sys
 import signal
 import os
 import serial
-import numpy as np
 import subprocess
 import json # Currently not used (Potential future use)
 import traceback

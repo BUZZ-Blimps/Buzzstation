@@ -8,7 +8,7 @@ Data is sent to the Frontend Server to update every device's UI.
 
 To-Do:
 
-- Separate this file into more files (senders.py, recievers.py, ...)
+- Separate this file into more files (senders.py, recievers.py, ...) (Maybe be even more specific for files and create new directories possibly?)
 
 """
 
@@ -646,8 +646,11 @@ def get_redis_values():
 def init_redis_values():
 
     # Set to Default Value when Server Starts
+
+    # To-Do: Read from and write to a text file that saves most recently used goal and enemy colors and saves to redis at begginning of program
     redis_client.set('goal_color', 0) # 0: Orange, 1: Yellow
     redis_client.set('enemy_color', 0) # 0: Blue, 1: Red
+
     redis_client.set('barometer', 99878.99) # Default Barometer Value
     redis_client.set('current_names', '') # Empty on Start
     redis_client.set('name_button_colors', '{}') # Empty on Start

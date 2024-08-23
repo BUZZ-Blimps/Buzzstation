@@ -3,16 +3,21 @@
 """
 Description:
 
+- Update the blimp list by checking for alive blimps.
+- Removes timeout blimps
+- Adds new blimps
+
 """
 
 # Imports
 from Packages.packages import *
-from time import time
 from .blimp_names import blimp_names_order
 
 # Logger
 from rclpy.logging import get_logger
 logger = get_logger('Basestation')
+
+# Main Functions #
 
 # Check for alive blimps with heartbeat data available
 def alive_blimps(basestation_node):
@@ -69,6 +74,8 @@ def reorder_blimp_names(current_blimp_names):
     )
     
     return reordered_list
+
+# Helper Functions #
 
 # Helper function to find common values in two lists
 # Returns a list of common values

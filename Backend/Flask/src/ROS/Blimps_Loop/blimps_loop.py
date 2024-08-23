@@ -32,14 +32,15 @@ def blimps_loop():
     update_blimps()
 
 def update_global_values():
+
     # Goal Color (Default: Orange, Nondefault: Yellow)
     update_component_for_all_blimps(basestation_node, 'goal_color', 'orange', 'yellow') 
 
     # Enemy Color (Default: Blue, Nondefault: Red)
     update_component_for_all_blimps(basestation_node, 'enemy_color', 'blue', 'red')
 
-# To-Do: Finish this function
 def update_blimp_values(current_blimps):
+    
     # Update Individual Blimp Values
     for name in current_blimps:
         

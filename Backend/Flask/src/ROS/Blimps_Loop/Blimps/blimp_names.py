@@ -3,7 +3,7 @@
 """
 Description:
 
-Allowed blimp names are stored here.
+Allowed blimp names and the blimp names order are stored here.
 
 """
 

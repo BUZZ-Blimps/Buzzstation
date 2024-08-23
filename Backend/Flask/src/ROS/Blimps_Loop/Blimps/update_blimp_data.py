@@ -3,6 +3,8 @@
 """
 Description:
 
+Update component colors or values for an individual blimp or all blimps.
+
 """
 
 # Imports
@@ -12,6 +14,8 @@ from ...Communication.publishers import publish_generic
 # Logger
 from rclpy.logging import get_logger
 logger = get_logger('Basestation')
+
+# Individual Blimp #
 
 # Generic Function for updating the color of a ROS topic's UI component for a Blimp's component
 def update_blimp_component_color(blimp, component, default_color, nondefault_color):
@@ -54,7 +58,7 @@ def update_blimp_component_color(blimp, component, default_color, nondefault_col
             # Sets Component Color to Default at Start of Program
             socketio.emit('update_button_color', {'name': blimp.name, 'key': component, 'color': default_color})
 
-# Generic Function for updating the color of a ROS topic's UI component for a Blimp's component
+# Generic Function for updating the value of a ROS topic's UI component for a Blimp's component
 def update_blimp_component_value(blimp, component):
     if hasattr(blimp, component):
 
@@ -84,6 +88,8 @@ def update_blimp_component_value(blimp, component):
             # Sets Component Color and Value to Default at Start of Program
             socketio.emit('update_button_color', {'name': blimp.name, 'key': component, 'color': 'red'})
             socketio.emit('update_button_value', {'name': blimp.name, 'key': component, 'value': 'None'})
+
+# All Blimps #
 
 # Generic Function for updating the color of a ROS topic's UI component for all blimps (Global Value i.e. Goal Color, Enemy Color)
 def update_component_for_all_blimps(basestation_node, component, default_color, nondefault_color):
