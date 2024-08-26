@@ -96,7 +96,7 @@ class Basestation(Node):
         self.blimps_timer = self.create_timer(blimps_loop_period, blimps_loop)
 
         # Faking Barometer Serial Port Connection
-        self.fake_barometer = False # Default: False
+        self.fake_barometer = False # Default: False (To-Do: Read from a yaml file or make a button on frontend UI)
 
         # Barometer Publisher
         self.pub_barometer = self.create_publisher(Float64, 'Barometer/reading', 10)

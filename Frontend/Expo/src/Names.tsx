@@ -38,7 +38,7 @@ export const useNames = () => {
           socket.emit('toggle_name_button', { userID: userID, name: name });
 
           // Testing
-          //console.log('Blimp ${name} pressed by ${userID}');
+          //console.log('Blimp ' + name + ' pressed by ' + userID);
 
         }
       }

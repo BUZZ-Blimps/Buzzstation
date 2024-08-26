@@ -32,16 +32,17 @@ from cv_bridge import CvBridge
 import cv2
 
 # Other Packages
-from time import time
-import numpy as np
-import threading
-import sys
-import signal
-import os
-import serial
-import subprocess
-import json # Currently not used (Potential future use)
-import traceback
+from time import time # used
+import numpy as np # used
+import atexit
+import sys # used
+import signal # used
+import os # used
+import serial # used
+import json # used
+import threading # not used
+import subprocess # not used
+import traceback # not used
 
 # Initialize Flask App and SocketIO
 app = Flask('Backend Server')
@@ -49,7 +50,3 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Connect to Redis server
 redis_client = redis.StrictRedis(host='localhost', port=6379, db=0)
-
-# Blimps
-global blimps
-blimps = {}

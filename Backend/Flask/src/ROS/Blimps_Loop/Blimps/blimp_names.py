@@ -5,6 +5,10 @@ Description:
 
 Allowed blimp names and the blimp names order are stored here.
 
+To-Do:
+
+- Use a yaml file to read allowed catching and attack blimp names
+
 """
 
 # Allowed Catching Blimps

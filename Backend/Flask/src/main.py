@@ -32,12 +32,15 @@ File Description:
 """
 
 # Imports
-from Terminate.terminate import terminate, signal
+from Terminate.terminate import terminate, cleanup, signal, sys, atexit
+from SocketIO.Senders.redis import init_redis_values
 from ROS.ros import start_ros
-from SocketIO.socketio import init_redis_values, start_backend_server, sys
-
+from SocketIO.socketio import start_backend_server
 
 if __name__ == '__main__':
+
+    # Register cleanup function
+    atexit.register(cleanup)
 
     # Terminate if Ctrl+C Caught
     signal.signal(signal.SIGINT, terminate)
