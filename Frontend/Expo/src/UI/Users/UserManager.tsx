@@ -4,17 +4,8 @@
 import { useEffect, useState, useRef } from 'react';
 import { AppState, Platform } from 'react-native';
 
-// SocketIO
-import { socket } from './Constants';
-
-// IOS
-const isIOS = Platform.OS === 'ios';
-
-// Android
-const isAndroid = Platform.OS === 'android';
-
-// Web
-const isWeb = Platform.OS === 'web';
+// Constants
+import { socket, isIOS, isAndroid, isWeb} from '../Constants/Constants';
 
 // Unique User ID
 import uuid from 'react-native-uuid'; 
@@ -24,29 +15,40 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const getUserID = () => {
 
-    // Set User ID
+    // User ID
     const [userID, setUser] = useState<String | null>(null);
+
+    // Set User ID
     useEffect(() => {
+
         const getOrCreateUserId = async () => {
-        let storedUUID = await AsyncStorage.getItem('userUUID');
-        if (!storedUUID) {
-            // If no UUID is found, create a new one and store it
-            const newUUID = String(uuid.v4());
-            await AsyncStorage.setItem('userUUID', newUUID);
-            storedUUID = newUUID;
-        }
-        // Add User
-        if (storedUUID !== null) {
-            setUser(storedUUID);
-        }
+
+            let storedUUID = await AsyncStorage.getItem('userUUID');
+
+            if (!storedUUID) {
+                // If no UUID is found, create a new one and store it
+                const newUUID = String(uuid.v4());
+                await AsyncStorage.setItem('userUUID', newUUID);
+                storedUUID = newUUID;
+            }
+
+            // Add User
+            if (storedUUID !== null) {
+                setUser(storedUUID);
+            }
+
         };
 
         getOrCreateUserId();
+
     }, []);
 
+    // User Inactivity Timer
+    const userInactivityTimer = useRef<NodeJS.Timeout | null>(null);
+
     // Inactive Users (Web)
-    const hiddenTimeRef = useRef<NodeJS.Timeout | null>(null);
     useEffect(() => {
+
         if (isWeb) {
 
             const handleVisibilityChange = () => {
@@ -57,14 +59,15 @@ export const getUserID = () => {
                     // Testing
                     // console.log('Page is visible for ${user?.ID}');
                     
-                    // Clear the hidden timer if page becomes visible
-                    if (hiddenTimeRef.current) {
-                        clearTimeout(hiddenTimeRef.current);
-                        hiddenTimeRef.current = null;
+                    // Clear the user inactivity timer if page becomes visible
+                    if (userInactivityTimer.current) {
+                        clearTimeout(userInactivityTimer.current);
+                        userInactivityTimer.current = null;
                     }
+
                 } else {
                     // Set a timer to check if the page remains hidden for more than 30 seconds
-                    hiddenTimeRef.current = setTimeout(() => {
+                    userInactivityTimer.current = setTimeout(() => {
                         
                         // Testing
                         // console.log('Page has been hidden for more than 30 seconds for ${user?.ID}');
@@ -100,18 +103,22 @@ export const getUserID = () => {
                 document.removeEventListener('visibilitychange', handleVisibilityChange);
                 window.removeEventListener('beforeunload', handleBeforeUnload);
 
-                if (hiddenTimeRef.current) {
-                    clearTimeout(hiddenTimeRef.current);
+                if (userInactivityTimer.current) {
+                    clearTimeout(userInactivityTimer.current);
                 }
             };
         }
+
     }, [userID]);
 
     // Inactive Users (App)
     useEffect(() => {
+
         const handleAppStateChange = (nextAppState: string) => {
+
+            // The app is going to the background or is inactive
             if (nextAppState === 'background' || nextAppState === 'inactive') {
-              // The app is going to the background or is inactive
+
               // Testing
               //console.log('App has moved to the background or inactive state');
 
@@ -123,8 +130,10 @@ export const getUserID = () => {
               }
 
             } else if (nextAppState === 'active') {
+
               // Testing
               //console.log('App is in the foreground');
+
             }
         };
 
@@ -133,6 +142,7 @@ export const getUserID = () => {
         return () => {
             appStateSubscription.remove(); // Correct way to remove the listener
         };
+
     }, [userID]);
 
     return { userID };

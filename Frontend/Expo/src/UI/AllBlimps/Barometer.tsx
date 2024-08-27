@@ -4,21 +4,17 @@
 import { useState, useEffect } from 'react';
 import { StyleSheet, Platform } from 'react-native';
 
-// SocketIO
-import { socket } from './Constants'; // Importing the SocketIO instance
+// Constants
+import { socket, isIOS, isAndroid, isWeb} from '../Constants/Constants';
+
+// Float Data Type
 import { Float } from 'react-native/Libraries/Types/CodegenTypes';
 
-// IOS
-const isIOS = Platform.OS === 'ios';
-
-// Android
-const isAndroid = Platform.OS === 'android';
-
 interface Button {
-    BarometerButtonStyle: any; // Replace 'any' with your actual style type if possible
-    buttonColor: string;
-    buttonText: string;
-    handleClick: () => void;
+  BarometerButtonStyle: any;
+  buttonColor: string;
+  buttonText: string;
+  handleClick: () => void;
 }
 
 export const useBarometer = (defaultColor: string, defaultText: string): Button => {
@@ -32,50 +28,51 @@ export const useBarometer = (defaultColor: string, defaultText: string): Button 
     // Get Barometer Reading
     useEffect(() => {
 
-        const barometerHandler = (receivedBarometerReading: Float | String) => {
-            let barometerReading = receivedBarometerReading;
-            let newButtonText = 'Barometer: ' + String(barometerReading);
-            setButtonText(newButtonText);
-        };
+      const barometerHandler = (receivedBarometerReading: Float | String) => {
+        let barometerReading = receivedBarometerReading;
+        let newButtonText = 'Barometer: ' + String(barometerReading);
+        setButtonText(newButtonText);
+      };
 
-        socket.on('barometer_reading', barometerHandler);
+      socket.on('barometer_reading', barometerHandler);
 
-        return () => {
+      return () => {
         socket.off('barometer_reading', barometerHandler);
         socket.disconnect();
-        };
+      };
 
     }, []);
 
     // Get Barometer Button Color
     useEffect(() => {
 
-        // Event handler for 'update_barometer_button_color'
-        const handleUpdateBarometerButtonColor = (buttonColor: string) => {
+      // Event handler for 'update_barometer_button_color'
+      const handleUpdateBarometerButtonColor = (buttonColor: string) => {
 
-          const receivedButtonColor: string = buttonColor;
-  
-          let newColor = defaultColor; // Default color
+        const receivedButtonColor: string = buttonColor;
 
-          if (receivedButtonColor === 'green') {
-            newColor = 'green';
-          } else if (receivedButtonColor === 'red') {
-            newColor = '#E11C1C';
-          }
+        let newColor = defaultColor; // Default color
+
+        if (receivedButtonColor === 'green') {
+          newColor = 'green';
+        } else if (receivedButtonColor === 'red') {
+          newColor = '#E11C1C';
+        }
+
+        setButtonColor(newColor);
+      };
   
-          setButtonColor(newColor);
-        };
-    
-        // Listen for 'update_button_color' events
-        socket.on('update_barometer_button_color', handleUpdateBarometerButtonColor);
-    
-        // Cleanup to remove the listener when the component is unmounted
-        return () => {
-          socket.off('update_barometer_button_color', handleUpdateBarometerButtonColor);
-        };
+      // Listen for 'update_button_color' events
+      socket.on('update_barometer_button_color', handleUpdateBarometerButtonColor);
+  
+      // Cleanup to remove the listener when the component is unmounted
+      return () => {
+        socket.off('update_barometer_button_color', handleUpdateBarometerButtonColor);
+      };
   
     }, []);
     
+    // Barometer Button Click
     const handleClick = () => {
 
         // Testing
@@ -83,6 +80,7 @@ export const useBarometer = (defaultColor: string, defaultText: string): Button 
 
     };
   
+    // Barometer Button Style
     const BarometerButtonStyle = StyleSheet.create({
       button: {
         width: 235,
@@ -114,4 +112,5 @@ export const useBarometer = (defaultColor: string, defaultText: string): Button 
       buttonText,
       handleClick,
     };
+
 };

@@ -2,47 +2,44 @@
 
 // React and React Native
 import { useState, useEffect } from 'react';
-import { StyleSheet, Platform } from 'react-native';
+import { StyleSheet } from 'react-native';
 
-// SocketIO
-import { socket } from './Constants';
-
-// IOS
-const isIOS = Platform.OS === 'ios';
-
-// Android
-const isAndroid = Platform.OS === 'android';
+// Constants
+import { socket, isIOS, isAndroid, isWeb} from '../../Constants/Constants';
 
 export const useVision = () => {
   
-    // Store Vision Button Colors
+    // Vision Button Colors
     const [visionColors, setVisionColors] = useState<{ [key: string]: string }>({});
   
+    // Update Vision Button Color
     useEffect(() => {
 
       // Event handler for 'update_button_color'
       const handleUpdateButtonColor = (val: { [key: string]: string }) => {
-          const receivedName: string = val['name'];
-          const receivedButtonKey: string = val['key'];
-          const receivedButtonColor: string = val['color'];
 
-          let newColor = '#E11C1C'; // Default color 
-          if (receivedButtonColor === 'red') {
-            newColor = '#E11C1C';
-          } else if (receivedButtonColor === 'green') {
-            newColor = 'green';
-          }
+        const receivedName: string = val['name'];
+        const receivedButtonKey: string = val['key'];
+        const receivedButtonColor: string = val['color'];
 
-          if (receivedButtonKey === 'vision') {
-              // Update visionColors with the new color for the specific blimp
-              setVisionColors(prevVisionColors => ({
-                  ...prevVisionColors,
-                  [receivedName]: newColor,
-              }));
+        let newColor = '#E11C1C'; // Default color 
+        if (receivedButtonColor === 'red') {
+          newColor = '#E11C1C';
+        } else if (receivedButtonColor === 'green') {
+          newColor = 'green';
+        }
 
-              // Testing
-              //console.log(`${receivedButtonKey} for ${receivedName} changed to ${receivedButtonColor}`);
-          }
+        if (receivedButtonKey === 'vision') {
+          // Update visionColors with the new color for the specific blimp
+          setVisionColors(prevVisionColors => ({
+              ...prevVisionColors,
+              [receivedName]: newColor,
+          }));
+
+          // Testing
+          //console.log(`${receivedButtonKey} for ${receivedName} changed to ${receivedButtonColor}`);
+        }
+
       };
 
       // Listen for 'update_button_color' events
@@ -55,14 +52,16 @@ export const useVision = () => {
 
     }, []);
 
+    // Vision Button Click
     const handleVisionClick = (name: string) => {
 
-        const val = { name: name, key: 'vision'};
-        
-        socket.emit('toggle_blimp_button_color', val);
+      const val = { name: name, key: 'vision'};
+      
+      socket.emit('toggle_blimp_button_color', val);
 
     };
 
+    // Vision Button Style
     const visionButtonStyle = StyleSheet.create({
       button: {
         width: 110,
@@ -91,4 +90,5 @@ export const useVision = () => {
       visionButtonStyle,
       handleVisionClick,
     };
+
 };

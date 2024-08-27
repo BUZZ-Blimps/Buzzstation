@@ -1,29 +1,25 @@
 // AllMode.tsx
 
 // React and React Native
-import { StyleSheet, Platform } from 'react-native';
+import { StyleSheet } from 'react-native';
 
-// SocketIO
-import { socket } from './Constants'; // Importing the SocketIO instance
-
-// IOS
-const isIOS = Platform.OS === 'ios';
-
-// Android
-const isAndroid = Platform.OS === 'android';
+// Constants
+import { socket, isIOS, isAndroid, isWeb} from '../Constants/Constants';
 
 // Modes
-import { useModes } from './Modes'; // Import the useModes hook
+import { useModes } from '../Blimps/Components/Modes';
 
 interface Button {
-    AllModeButtonStyle: any; // Replace 'any' with your actual style type if possible
+    AllModeButtonStyle: any;
     handleClick: (buttonKey: string) => void;
 }
 
 export const useAllMode = (defaultColor: string, buttonKey: string): Button => {
+
     // Modes
     const { modeButtonColors } = useModes();
   
+    // All Mode Button Click
     const handleClick = (buttonKey: string) => {
         if (buttonKey === 'all_auto') {
 
@@ -71,6 +67,7 @@ export const useAllMode = (defaultColor: string, buttonKey: string): Button => {
         }
     };
   
+    // All Mode Button Style
     const AllModeButtonStyle = StyleSheet.create({
       button: {
         width: 100,
@@ -98,4 +95,5 @@ export const useAllMode = (defaultColor: string, buttonKey: string): Button => {
       AllModeButtonStyle,
       handleClick,
     };
+
 };

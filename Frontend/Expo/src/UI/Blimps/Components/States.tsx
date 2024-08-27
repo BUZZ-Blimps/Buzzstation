@@ -2,22 +2,17 @@
 
 // React and React Native
 import { useState, useEffect } from 'react';
-import { StyleSheet, Platform } from 'react-native';
+import { StyleSheet } from 'react-native';
 
-// SocketIO
-import { socket } from './Constants';
-
-// IOS
-const isIOS = Platform.OS === 'ios';
-
-// Android
-const isAndroid = Platform.OS === 'android';
+// Constants
+import { socket, isIOS, isAndroid, isWeb} from '../../Constants/Constants';
 
 export const useStates = () => {
   
-    // Store Mode Button Colors
+    // State Button Text Values
     const [stateValues, setStateValues] = useState<{ [key: string]: string }>({});
   
+    // Update State Button Text Value
     useEffect(() => {
 
         // Event handler for 'update_button_value'
@@ -77,6 +72,7 @@ export const useStates = () => {
                 // Testing
                 //console.log(`${receivedButtonKey} for ${receivedName} changed to ${receivedValue}`);
             }
+
         };
 
         // Listen for 'update_button_color' events
@@ -89,6 +85,7 @@ export const useStates = () => {
 
     }, []);
 
+    // State Button Style
     const stateButtonStyle = StyleSheet.create({
       button: {
         width: 140,
@@ -116,4 +113,5 @@ export const useStates = () => {
       stateValues,
       stateButtonStyle,
     };
+
 };

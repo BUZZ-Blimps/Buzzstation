@@ -1,4 +1,4 @@
-// React Native Main File //
+// Main File //
 
 // React
 import React, { useState, useEffect, Dispatch, SetStateAction } from 'react';
@@ -9,39 +9,30 @@ import { View, SafeAreaView, Image, Text, Pressable, StyleSheet, Platform, Dimen
 // Expo Packages
 import * as Updates from 'expo-updates';
 
-// SocketIO
-import { socket } from './Constants';
-
-// IOS
-const isIOS = Platform.OS === 'ios';
-
-// Android
-const isAndroid = Platform.OS === 'android';
-
-// Web
-const isWeb = Platform.OS === 'web';
+// Constants
+import { socket, isIOS, isAndroid, isWeb } from './UI/Constants/Constants';
 
 // Components
-import BlimpsContainer from './BlimpsContainer';
-import Button from './Button';
-import Controller from './Controller';
+import Button from './UI/Components/Button';
+import BlimpsContainer from './UI/Blimps/BlimpsContainer';
+import Controller from './UI/Controller/Controller';
 
 // Functions
-import { useTargetButtonColor } from './TargetButtonColor'; 
-import { useAllMode } from './AllMode';
-import { useBarometer } from './Barometer';
-import { getUserID } from './UserManager';
+import { getUserID } from './UI/Users/UserManager';
+import { useBarometer } from './UI/AllBlimps/Barometer';
+import { useTargetButtonColor } from './UI/AllBlimps/TargetButtonColor'; 
+import { useAllMode } from './UI/AllBlimps/AllMode';
 
 export default function App() {
 
   // Disable Style Warning
   disableStyleWarning();
 
-  // User ID
-  const { userID } = getUserID();
-
   // Fullscreen State
   const [isFullScreen, setIsFullScreen] = useState(false);
+
+  // User ID
+  const { userID } = getUserID();
 
   // Handle logo press
   const handleLogoPress = () => {
@@ -69,7 +60,15 @@ export default function App() {
     }
   };
 
-  // All Blimps Buttons: Used for Goal Color, Enemy Color, All Auto, All Manual //
+  // All Blimps Buttons: Used for Barometer, Goal Color, Enemy Color, All Auto, All Manual //
+
+  // Barometer
+  const { 
+          BarometerButtonStyle: BarometerButtonStyle,
+          buttonColor: barometerButtonColor,
+          buttonText: barometerButtonText,
+          handleClick: handleBarometerClick
+        } = useBarometer('#E11C1C', 'Barometer: Disconnected');
 
   // Goal Color
   const { 
@@ -96,14 +95,6 @@ export default function App() {
           AllModeButtonStyle: AllManualButtonStyle, 
           handleClick: handleAllManualClick 
         } = useAllMode('#E11C1C', 'all_manual');
-
-  // Barometer
-  const { 
-          BarometerButtonStyle: BarometerButtonStyle,
-          buttonColor: barometerButtonColor,
-          buttonText: barometerButtonText,
-          handleClick: handleBarometerClick
-        } = useBarometer('#E11C1C', 'Barometer: Disconnected');
 
   // UI
   return (
@@ -180,6 +171,7 @@ export default function App() {
 
       <SafeAreaView style={styles.mainContainer}>
 
+        {/* Blimp Container */}
         <SafeAreaView style={styles.blimpContainer}>
 
           {/* Blimps */}
@@ -187,6 +179,8 @@ export default function App() {
 
         </SafeAreaView>
 
+        {/* To-Do: Make it's own file */}
+        {/* All Blimp Buttons Container */}
         <SafeAreaView style={styles.buttonContainer}>
 
           {/* Goal Color Button */}
@@ -229,22 +223,14 @@ export default function App() {
               onPress={() => handleAllManualClick('all_manual')} // On Press Function
           />
 
-          </SafeAreaView>
-
         </SafeAreaView>
+
+      </SafeAreaView>
 
     </SafeAreaView>
   );
-};
 
-// Toggle Fullscreen on the Web
-function toggleFullScreen(setIsFullScreen: Dispatch<SetStateAction<boolean>>) {
-  if (document.fullscreenElement) {
-    document.exitFullscreen().then(() => setIsFullScreen(false));
-  } else {
-    document.documentElement.requestFullscreen().then(() => setIsFullScreen(true));
-  }
-}
+};
 
 // Disable Style Warning
 function disableStyleWarning() {
@@ -260,6 +246,16 @@ function disableStyleWarning() {
   };
 }
 
+// Toggle Fullscreen on the Web
+function toggleFullScreen(setIsFullScreen: Dispatch<SetStateAction<boolean>>) {
+  if (document.fullscreenElement) {
+    document.exitFullscreen().then(() => setIsFullScreen(false));
+  } else {
+    document.documentElement.requestFullscreen().then(() => setIsFullScreen(true));
+  }
+}
+
+// Container and Image Styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,

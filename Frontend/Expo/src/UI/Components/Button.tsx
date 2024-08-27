@@ -22,7 +22,7 @@ interface ButtonProps {
 
 const Button: React.FC<ButtonProps> = ({ blimpName, buttonKey, buttonColor, buttonText, buttonStyle, onPress }) => {
 
-return (
+  return (
     <Pressable 
         style={[buttonStyle.button, { backgroundColor: buttonColor }]}
         onPress={onPress}
@@ -30,12 +30,13 @@ return (
         accessible={true}
         android_disableSound={true} // Not Tested Yet (Not sure if this is needed)
         android_ripple={{ color: 'transparent' }} // Not Tested Yet (Not sure if this is needed)
-    >
+      >
       <Text style={[buttonStyle.buttonText, { userSelect: 'none' }]}>
         {buttonText}
       </Text>
     </Pressable>
   );
+
 };
 
 export default Button;

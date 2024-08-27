@@ -4,25 +4,21 @@
 import { useState, useEffect } from 'react';
 import { StyleSheet, Platform } from 'react-native';
 
-// SocketIO
-import { socket } from './Constants'; // Importing the SocketIO instance
+// Constants
+import { socket, isIOS, isAndroid, isWeb} from '../Constants/Constants';
 
-// IOS
-const isIOS = Platform.OS === 'ios';
-
-// Android
-const isAndroid = Platform.OS === 'android';
-
-interface ButtonColorState {
-    TargetButtonStyle: any; // Replace 'any' with your actual style type if possible
-    buttonColor: string;
-    handleClick: (buttonKey: string) => void;
+interface Button {
+  TargetButtonStyle: any;
+  buttonColor: string;
+  handleClick: (buttonKey: string) => void;
 }
 
-export const useTargetButtonColor = (defaultColor: string, buttonKey: string): ButtonColorState => {
+export const useTargetButtonColor = (defaultColor: string, buttonKey: string): Button => {
 
+    // Button Color
     const [buttonColor, setButtonColor] = useState<string>(defaultColor);
   
+    // Update Button Color
     useEffect(() => {
 
       // Event handler for 'update_button_color'
@@ -43,11 +39,11 @@ export const useTargetButtonColor = (defaultColor: string, buttonKey: string): B
         }
 
         if (receivedName === 'none') {
-            if (receivedButtonKey === buttonKey) {
-                setButtonColor(newColor);
-                // Testing
-                //console.log(buttonKey + " changed to " + receivedButtonColor);
-            }
+          if (receivedButtonKey === buttonKey) {
+            setButtonColor(newColor);
+            // Testing
+            //console.log(buttonKey + " changed to " + receivedButtonColor);
+          }
         }
       };
   
@@ -61,6 +57,7 @@ export const useTargetButtonColor = (defaultColor: string, buttonKey: string): B
 
     }, [buttonKey]);
   
+    // Target Button Click
     const handleClick = (buttonKey: string) => {
 
       if (buttonKey !== 'None') {
@@ -74,6 +71,7 @@ export const useTargetButtonColor = (defaultColor: string, buttonKey: string): B
 
     };
   
+    // Target Button Style
     const TargetButtonStyle = StyleSheet.create({
       button: {
         width: 100,
@@ -86,14 +84,14 @@ export const useTargetButtonColor = (defaultColor: string, buttonKey: string): B
         borderColor: 'black',
       },
       buttonText: {
-          fontWeight: 'bold',
-          color: 'white', // Text color
-          fontSize: 18, // Text size
-          textAlign: 'center', // Center the text horizontally
-          verticalAlign: 'middle', // Center the text vertically
-          textShadowColor: 'black', // Outline color
-          textShadowOffset: { width: 0, height: 0 }, // Direction of the shadow
-          textShadowRadius: isAndroid || isIOS ? 2 : 2.5, // Spread of the shadow
+        fontWeight: 'bold',
+        color: 'white', // Text color
+        fontSize: 18, // Text size
+        textAlign: 'center', // Center the text horizontally
+        verticalAlign: 'middle', // Center the text vertically
+        textShadowColor: 'black', // Outline color
+        textShadowOffset: { width: 0, height: 0 }, // Direction of the shadow
+        textShadowRadius: isAndroid || isIOS ? 2 : 2.5, // Spread of the shadow
       },
     }); 
   
@@ -102,4 +100,5 @@ export const useTargetButtonColor = (defaultColor: string, buttonKey: string): B
       buttonColor,
       handleClick,
     };
+
 };

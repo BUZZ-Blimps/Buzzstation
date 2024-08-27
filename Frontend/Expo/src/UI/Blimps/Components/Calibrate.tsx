@@ -2,29 +2,23 @@
 
 // React and React Native
 import { useState, useEffect } from 'react';
-import { StyleSheet, Platform, Text, View, Pressable } from 'react-native';
+import { StyleSheet, Text, View, Pressable } from 'react-native';
 
-// SocketIO
-import { socket } from './Constants';
-
-// IOS
-const isIOS = Platform.OS === 'ios';
-
-// Android
-const isAndroid = Platform.OS === 'android';
+// Constants
+import { socket, isIOS, isAndroid, isWeb} from '../../Constants/Constants';
 
 // Disable Style Warning
 disableStyleWarning();
 
 export const useCalibrate = () => {
     
-  // Store Calibrate Button Colors
+  // Calibrate Button Colors
   const [calibrateButtonColors, setButtonColors] = useState<{ [key: string]: string }>({});
   
-  // Button Text
+  // Calibrate Button Texts
   const [calibrateButtonTexts, setButtonTexts] = useState<{ [key: string]: string }>({});
 
-  // Calibrate Button Color
+  // Update Calibrate Button Color
   useEffect(() => {
     // Event handler for 'update_button_color'
     const handleUpdateButtonColor = (val: { [key: string]: string }) => {
@@ -61,7 +55,7 @@ export const useCalibrate = () => {
 
   }, []);
 
-  // Get Blimp Height
+  // Update Blimp Height
   useEffect(() => {
     // Event handler for 'update_button_value'
     const handleUpdateButtonValue = (val: { [key: string]: string }) => {
@@ -91,6 +85,7 @@ export const useCalibrate = () => {
 
   }, []);
 
+  // Handle Calibrate Click
   const handleCalibrateClick = (name: string) => {
     socket.emit('toggle_blimp_calibrate_button_color', name);
   };
@@ -101,47 +96,8 @@ export const useCalibrate = () => {
     CalibrateButton,
     handleCalibrateClick,
   };
-};
 
-// Define styles
-const styles = StyleSheet.create({
-    button: {
-      width: 130, // Fixed width for button container to fit the maximum text width
-      height: 40,
-      padding: isAndroid || isIOS ? 9 : 7, // Center Text Vertically
-      borderRadius: 5,
-      borderWidth: 2,
-      borderColor: 'black',
-      marginHorizontal: 5, // Space between buttons
-      justifyContent: 'center',
-      alignItems: 'center',
-      flexDirection: 'row', // Align items in a row
-      flexWrap: 'wrap', // Wrap text if needed
-    },
-    textContainer: {
-      width: '100%', // Fill available width
-      flexDirection: 'row', // Align items in a row
-      justifyContent: 'center', // Center text horizontally
-      alignItems: 'center', // Center text vertically
-    },
-    buttonText: {
-      fontWeight: 'bold',
-      color: 'white', // Text color
-      fontSize: isAndroid || isIOS ? 14.25 : 14.25, // Text size
-      textAlign: 'center', // Center the text
-      textShadowColor: 'black', // Outline color
-      textShadowOffset: { width: 1, height: 1 }, // Direction of the shadow
-      textShadowRadius: isAndroid || isIOS ? 0.1 : 1, // Spread of the shadow
-      fontFamily: 'Arial',
-    },
-    buttonTextLabel: {
-      marginRight: 0, // Small margin to space out label from value
-    },
-    buttonTextValue: {
-      width: 55, // Fixed width for value to ensure consistency
-      //textAlign: 'right', // Align value text to the right
-    },
-});
+};
   
 interface CalibrateButtonProps {
     blimpName: string; // Name of the blimp
@@ -152,44 +108,85 @@ interface CalibrateButtonProps {
 }
   
 const CalibrateButton: React.FC<CalibrateButtonProps> = ({ blimpName, buttonColor, buttonText, onPress }) => {
-    const [label, value] = buttonText.split('Height:');
 
-    // Ensure the value part always has the correct format
-    const formattedValue = value ? value.trim().padStart(6, ' ') : '      '; // Add padding for alignment
+  // Button Text Label and Value
+  const [label, value] = buttonText.split('Height:');
 
-    disableStyleWarning();
+  // Ensure the value part always has the correct format
+  const formattedValue = value ? value.trim().padStart(6, ' ') : '      '; // Add padding for alignment
 
-    return (
-        <Pressable
+  return (
+    <Pressable
         style={[styles.button, { backgroundColor: buttonColor }]}
         onPress={onPress}
         role='button'
         accessible={true}
         android_disableSound={true} // Optional: Test if needed
         android_ripple={{ color: 'transparent' }} // Optional: Test if needed
-        >
-        <View style={styles.textContainer}>
-            <Text style={[styles.buttonText, styles.buttonTextLabel, , { userSelect: 'none' }]}>
-            Height:
-            </Text>
-            <Text style={[styles.buttonText, styles.buttonTextValue, { userSelect: 'none' }]}>
-            {formattedValue}
-            </Text>
-        </View>
-        </Pressable>
-    );
+      >
+      <View style={styles.textContainer}>
+          <Text style={[styles.buttonText, styles.buttonTextLabel, , { userSelect: 'none' }]}>
+          Height:
+          </Text>
+          <Text style={[styles.buttonText, styles.buttonTextValue, { userSelect: 'none' }]}>
+          {formattedValue}
+          </Text>
+      </View>
+    </Pressable>
+  );
+
 };
+
+// Calibrate Button Style
+const styles = StyleSheet.create({
+  button: {
+    width: 130, // Fixed width for button container to fit the maximum text width
+    height: 40,
+    padding: isAndroid || isIOS ? 9 : 7, // Center Text Vertically
+    borderRadius: 5,
+    borderWidth: 2,
+    borderColor: 'black',
+    marginHorizontal: 5, // Space between buttons
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row', // Align items in a row
+    flexWrap: 'wrap', // Wrap text if needed
+  },
+  textContainer: {
+    width: '100%', // Fill available width
+    flexDirection: 'row', // Align items in a row
+    justifyContent: 'center', // Center text horizontally
+    alignItems: 'center', // Center text vertically
+  },
+  buttonText: {
+    fontWeight: 'bold',
+    color: 'white', // Text color
+    fontSize: isAndroid || isIOS ? 14.25 : 14.25, // Text size
+    textAlign: 'center', // Center the text
+    textShadowColor: 'black', // Outline color
+    textShadowOffset: { width: 1, height: 1 }, // Direction of the shadow
+    textShadowRadius: isAndroid || isIOS ? 0.1 : 1, // Spread of the shadow
+    fontFamily: 'Arial',
+  },
+  buttonTextLabel: {
+    marginRight: 0, // Small margin to space out label from value
+  },
+  buttonTextValue: {
+    width: 55, // Fixed width for value to ensure consistency
+    //textAlign: 'right', // Align value text to the right
+  },
+});
 
 // Disable Style Warning
 function disableStyleWarning() {
-    const originalWarn = console.warn;
-  
-    console.warn = (message, ...args) => {
-      if (typeof message === 'string' && message.includes('"textShadow*" style props are deprecated. Use "textShadow".')) {
-        // Suppress the specific warning
-        return;
-      }
-      // Call the original console.warn for other messages
-      originalWarn(message, ...args);
-    };
+  const originalWarn = console.warn;
+
+  console.warn = (message, ...args) => {
+    if (typeof message === 'string' && message.includes('"textShadow*" style props are deprecated. Use "textShadow".')) {
+      // Suppress the specific warning
+      return;
+    }
+    // Call the original console.warn for other messages
+    originalWarn(message, ...args);
+  };
 }

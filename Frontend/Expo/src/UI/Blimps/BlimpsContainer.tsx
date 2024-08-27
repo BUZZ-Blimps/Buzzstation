@@ -2,33 +2,31 @@
 
 // React and React Native
 import React from 'react';
-import { View, StyleSheet, Platform } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
-// IOS
-const isIOS = Platform.OS === 'ios';
-
-// Android
-const isAndroid = Platform.OS === 'android';
+// Constants
+import { socket, isIOS, isAndroid, isWeb} from '../Constants/Constants';
 
 // Button Component
-import Button from './Button';
+import Button from '../Components/Button';
 
 // Names
-import { useNames } from './Names'; // Import the useNames hook
+import { useNames } from './Components/Names'; // Import the useNames hook
 
 // States
-import { useStates } from './States'; // Import the useModes hook
+import { useStates } from './Components/States'; // Import the useModes hook
 
 // Modes
-import { useModes } from './Modes'; // Import the useModes hook
+import { useModes } from './Components/Modes'; // Import the useModes hook
 
 // Calibrate
-import { useCalibrate } from './Calibrate'; // Import the useCalibrate hook
+import { useCalibrate } from './Components/Calibrate'; // Import the useCalibrate hook
 
 // Vision
-import { useVision } from './Vision'; // Import the useVision hook
+import { useVision } from './Components/Vision'; // Import the useVision hook
 
 const BlimpsContainer: React.FC = () => {
+
   // Names
   const { names, nameColors, nameButtonStyle, handleNameClick } = useNames();
 
@@ -141,32 +139,32 @@ const BlimpsContainer: React.FC = () => {
 
               {/* Name Button */}
               <Button 
-                  blimpName={name} // Blimp Name
-                  buttonKey='name' // Type of Button
-                  buttonColor={nameColors[name] || 'green'} // Button Color
-                  buttonText={name} // Text Seen on Button
-                  buttonStyle={nameButtonStyle} // Button Style
-                  onPress={() => handleNameClick(name)} // On Press Function
+                blimpName={name} // Blimp Name
+                buttonKey='name' // Type of Button
+                buttonColor={nameColors[name] || 'green'} // Button Color
+                buttonText={name} // Text Seen on Button
+                buttonStyle={nameButtonStyle} // Button Style
+                onPress={() => handleNameClick(name)} // On Press Function
               />
 
               {/* State Dropdown */}
               <Button 
-                  blimpName={name} // Blimp Name
-                  buttonKey='state' // Type of Button
-                  buttonColor='grey' // Button Color
-                  buttonText={stateValues[name] || 'None'} // Text Seen on Button
-                  buttonStyle={stateButtonStyle} // Button Style
-                  onPress={() => null} // On Press Function
+                blimpName={name} // Blimp Name
+                buttonKey='state' // Type of Button
+                buttonColor='grey' // Button Color
+                buttonText={stateValues[name] || 'None'} // Text Seen on Button
+                buttonStyle={stateButtonStyle} // Button Style
+                onPress={() => null} // On Press Function
               />
 
               {/* Mode Button */}
               <Button 
-                  blimpName={name} // Blimp Name
-                  buttonKey='mode' // Type of Button
-                  buttonColor={modeButtonColors[name] || '#E11C1C'} // Button Color (Default: Red)
-                  buttonText={modeButtonColors[name] === 'green' ? 'Auto' : 'Manual'} // Text Seen on Button
-                  buttonStyle={modeButtonStyle} // Button Style
-                  onPress={() => handleModeClick(name)} // On Press Function
+                blimpName={name} // Blimp Name
+                buttonKey='mode' // Type of Button
+                buttonColor={modeButtonColors[name] || '#E11C1C'} // Button Color (Default: Red)
+                buttonText={modeButtonColors[name] === 'green' ? 'Auto' : 'Manual'} // Text Seen on Button
+                buttonStyle={modeButtonStyle} // Button Style
+                onPress={() => handleModeClick(name)} // On Press Function
               />
 
               {/* Calibrate Button */}
@@ -180,12 +178,12 @@ const BlimpsContainer: React.FC = () => {
 
               {/* Vision Button */}
               <Button 
-                  blimpName={name} // Blimp Name
-                  buttonKey='vision' // Type of Button
-                  buttonColor={visionColors[name] || 'green'} // Button Color (Default: Green)
-                  buttonText={visionColors[name] === 'green' ? 'On' : 'Off'} // Text Seen on Button
-                  buttonStyle={visionButtonStyle} // Button Style
-                  onPress={() => handleVisionClick(name)} // On Press Function
+                blimpName={name} // Blimp Name
+                buttonKey='vision' // Type of Button
+                buttonColor={visionColors[name] || 'green'} // Button Color (Default: Green)
+                buttonText={visionColors[name] === 'green' ? 'On' : 'Off'} // Text Seen on Button
+                buttonStyle={visionButtonStyle} // Button Style
+                onPress={() => handleVisionClick(name)} // On Press Function
               />
             </View>
             
@@ -197,8 +195,10 @@ const BlimpsContainer: React.FC = () => {
       )}
     </View>
   );
+
 };
 
+// Blimps Container and Button Row Styles
 const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
