@@ -24,7 +24,7 @@ def barometer_loop():
             basestation_node.get_logger().info('BAROMETER CONNECTED')
 
             # Emit Barometer Button Color to Frontend
-            socketio.emit('update_barometer_button_color', 'green')
+            #socketio.emit('update_barometer_button_color', 'green')
 
         except Exception as e:
 
@@ -35,6 +35,9 @@ def barometer_loop():
 
                 basestation_node.barometer_serial = serial.Serial('/dev/ttyACM1', 115200)
                 basestation_node.get_logger().info('BAROMETER CONNECTED')
+
+                # Emit Barometer Button Color to Frontend
+                #socketio.emit('update_barometer_button_color', 'green')
 
             except Exception as e:
 
@@ -54,23 +57,34 @@ def barometer_loop():
     else:
 
         # Read Barometer Data if Available
-        if basestation_node.barometer_serial.in_waiting:
+        try:
+            if basestation_node.barometer_serial.in_waiting:
 
-            # Read a line of data from the serial port
-            basestation_node.barometer_reading = float(basestation_node.barometer_serial.readline().decode('utf-8'))
-            basestation_node.barometer_serial.flushInput()
+                # Read a line of data from the serial port
+                basestation_node.barometer_reading = float(basestation_node.barometer_serial.readline().decode('utf-8'))
+                basestation_node.barometer_serial.flushInput()
 
-            # Add Barometer Value to Redis
-            redis_client.set('barometer', basestation_node.barometer_reading)
+                # Add Barometer Value to Redis
+                redis_client.set('barometer', basestation_node.barometer_reading)
 
-            # Emit Barometer Reading to Frontend
-            socketio.emit('barometer_reading', basestation_node.barometer_reading)
+                # Emit Barometer Reading to Frontend
+                socketio.emit('update_barometer_button_color', 'green')
+                socketio.emit('barometer_reading', basestation_node.barometer_reading)
 
-            # Publish to ROS
-            publish_barometer(basestation_node)
+                # Publish to ROS
+                publish_barometer(basestation_node)
 
-        else:
-            
+            else:
+
+                basestation_node.barometer_serial = None
+                
+                socketio.emit('update_barometer_button_color', 'red')
+
+        except:
+            #basestation_node.get_logger().info('BAROMETER DISCONNECTED')
+
+            basestation_node.barometer_serial = None
+                
             socketio.emit('update_barometer_button_color', 'red')
 
 # Fake Barometer Timer Loop
