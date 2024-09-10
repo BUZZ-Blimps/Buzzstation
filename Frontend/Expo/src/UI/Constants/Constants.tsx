@@ -5,7 +5,7 @@
 import io from 'socket.io-client';
 
 // URL // To-Do: Eventually will be a Static IP where Backend Program Runs, Also add URL to a yaml file
-export const url = 'http://192.168.0.202:5000'
+export const url = 'http://192.168.7.243:5000'
 
 // Websocket
 export const socket = io(url);

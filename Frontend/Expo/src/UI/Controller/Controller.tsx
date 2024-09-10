@@ -93,6 +93,11 @@ const Controller: React.FC<ButtonProps> = ({ blimpName, buttonKey, buttonColor, 
 
               // Increase Count
               count++;
+
+              // Toggle Overlay Image
+              if (val['button'] === 'button8') {
+                onPress();
+              }
             }
           }
 
@@ -102,6 +107,11 @@ const Controller: React.FC<ButtonProps> = ({ blimpName, buttonKey, buttonColor, 
             val['button'] = key;
             val['userID'] = String(userID);
             socket.emit('nonblimp_button', val);
+
+            // Toggle Overlay Image
+            if (val['button'] === 'button8') {
+              onPress();
+            }
           }
 
         }

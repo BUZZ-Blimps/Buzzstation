@@ -28,11 +28,19 @@ export default function App() {
   // Disable Style Warning
   disableStyleWarning();
 
+  // User ID
+  const { userID } = getUserID();
+
   // Fullscreen State
   const [isFullScreen, setIsFullScreen] = useState(false);
 
-  // User ID
-  const { userID } = getUserID();
+  // Overlay Image
+  const [isOverlayImage, setOverlayImage] = useState(false);
+
+  // Handle Overlay Image
+  const handleOverlayImage = () => {
+    toggleOverlayImage(setOverlayImage);
+  };
 
   // Handle logo press
   const handleLogoPress = () => {
@@ -143,7 +151,7 @@ export default function App() {
             marginRight: 20,
             borderColor: 'white',
           }}
-          onPress={() => null}
+          onPress={() => handleOverlayImage()}
         />
 
         <Pressable onPress={handleLogoPress}>
@@ -164,7 +172,7 @@ export default function App() {
           buttonColor={barometerButtonColor} // Button Color
           buttonText={barometerButtonText} // Text Seen on Button
           buttonStyle={BarometerButtonStyle}
-          onPress={handleBarometerClick} // On Press Function
+          onPress={() => handleBarometerClick()} // On Press Function
         />
 
       </SafeAreaView>
@@ -227,6 +235,15 @@ export default function App() {
 
       </SafeAreaView>
 
+      {/* Controller Mapping Overlay Image */}
+      {isOverlayImage && (
+        <Image
+          source={require('./assets/controller_mapping.png')} // Replace with your image path
+          style={styles.overlayImage} // style
+          resizeMode="contain" // Ensure the image maintains its aspect ratio
+        />
+      )}
+
     </SafeAreaView>
   );
 
@@ -253,6 +270,10 @@ function toggleFullScreen(setIsFullScreen: Dispatch<SetStateAction<boolean>>) {
   } else {
     document.documentElement.requestFullscreen().then(() => setIsFullScreen(true));
   }
+}
+
+function toggleOverlayImage(setOverlayImage: Dispatch<SetStateAction<boolean>>) {
+  setOverlayImage(prevState => !prevState);
 }
 
 // Container and Image Styles
@@ -287,5 +308,15 @@ const styles = StyleSheet.create({
   imageHalfSize: {
     width: 624/2.6, // Half width
     height: 150/2.6, // Half height
+  },
+  overlayImage: {
+    position: 'absolute',
+    zIndex: 1, // Put behind buttons
+    width: '100%', // Adjust width to 75% of the parent
+    height: '100%', // Adjust height to 75% of the parent
+    top: '0%', // Center vertically
+    left: isAndroid || isIOS ? '8%' : '0%', // Center horizontally
+    pointerEvents: 'none', // Make the image non-clickable
+    opacity: 0.75,
   },
 });
