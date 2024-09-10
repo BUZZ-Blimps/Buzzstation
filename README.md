@@ -3,8 +3,6 @@
 ## Description 
 A React Native app to send commands and receive data to/from blimps using ROS 2.
 
-**Note:** This app is not yet complete. It is still in the developmental stage and has only been tested with fake blimps.
-
 <p align="center">
 <img src="https://github.com/user-attachments/assets/ab131e69-8f9c-4a88-977d-7e1ce25869a3" />
 </p>
@@ -36,7 +34,8 @@ A React Native app to send commands and receive data to/from blimps using ROS 2.
 </p>
 
 <p align="center">
-<img src="https://github.com/user-attachments/assets/c5362c79-4c8b-478a-9b3d-4cadb0457a93" />
+<img src="https://github.com/user-attachments/assets/e5b998e5-0ce0-4dcd-81f1-430773a85036" />
+
 </p>
 <p align="center">
 <em>Figure 4. Default Controls</em>
