@@ -102,8 +102,7 @@ def get_blimp_button_release(val):
     
     # View
     elif button == 'button8':
-        # Turn on All Vision
-        #[setattr(basestation_node.current_blimps[name], 'vision', False) for name in basestation_node.current_blimps]
+        # Toggle Controller Mapping Overlay Image
         pass
 
     # Menu (To-Do: Open Sidebar Menu)
@@ -275,8 +274,7 @@ def get_nonblimp_button_release(val):
     
     # View
     elif button == 'button8':
-        # Turn on All Vision
-        #[setattr(basestation_node.current_blimps[name], 'vision', False) for name in basestation_node.current_blimps]
+        # Toggle Controller Mapping Overlay Image
         pass
 
     # Menu (To-Do: Open Sidebar Menu)

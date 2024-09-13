@@ -32,7 +32,8 @@ File Description:
 """
 
 # Imports
-from Terminate.terminate import terminate, cleanup, signal, sys, atexit
+from Packages.packages import check_wifi
+from Terminate.terminate import terminate, cleanup, signal, sys, os, atexit
 from SocketIO.Senders.redis import init_redis_values
 from ROS.ros import start_ros
 from SocketIO.socketio import start_backend_server
@@ -45,11 +46,18 @@ if __name__ == '__main__':
     # Terminate if Ctrl+C Caught
     signal.signal(signal.SIGINT, terminate)
 
-    # Init Redis Values
-    init_redis_values()
+    if check_wifi():
 
-    # Start ROS 2
-    start_ros()
+        # Init Redis Values
+        init_redis_values()
 
-    # Start Backend Server with current device IP on Port 5000
-    start_backend_server(sys.argv[1], 5000)
+        # Start ROS 2
+        start_ros()
+
+        # Start Backend Server with current device IP on Port 5000
+        start_backend_server(sys.argv[1], 5000)
+
+    else:
+
+        # Simulate sending the SIGINT signal to the current process
+        os.kill(os.getpid(), signal.SIGINT)

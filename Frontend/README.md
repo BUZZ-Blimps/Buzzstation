@@ -9,7 +9,7 @@
 ```bash
 source setup.sh
 ```
-2. Edit the 'Constants.tsx' file in the Expo directory for the backend server URL address (i.e. http://localhost:5000).
+2. Edit the 'Constants.tsx' file in the Expo/src/UI/Constants directory for the backend server URL address (i.e. http://localhost:5000). Use the full IP address instead of just localhost.
 
 ## Startup
 

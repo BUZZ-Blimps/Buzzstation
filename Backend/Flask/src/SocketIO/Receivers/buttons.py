@@ -116,3 +116,21 @@ def toggle_all_blimps_button_color(key):
     # Change and Set Redis Value
     button_color = not button_color
     redis_client.set(key, int(button_color))
+
+    # Update Yaml Value
+    update_yaml_value(key, int(button_color))
+
+# Update Yaml Value for the Default Values (Goal and Enemy Colors)
+def update_yaml_value(key, new_value):
+    # Step 1: Read the entire file content
+    with open('../src/Config/default_values.yaml', 'r') as file:
+        lines = file.readlines()
+
+    # Step 2: Find the line with the key and replace the value
+    with open('../src/Config/default_values.yaml', 'w') as file:
+        for line in lines:
+            # Check if the line starts with the key (ignoring spaces) and contains ':'
+            if line.strip().startswith(f"{key}:"):
+                # Replace the old value with the new value while keeping the key and colon
+                line = f"{key}: {new_value}\n"
+            file.write(line)

@@ -11,11 +11,17 @@ To-Do:
 
 """
 
+from Packages.packages import yaml
+
+# Read the YAML file
+with open('../src/Config/blimp_names.yaml', 'r') as file:
+    blimp_data = yaml.safe_load(file)
+
 # Allowed Catching Blimps
-catching_blimp_names = ['BurnCream', 'SillyAh', 'Turbo', 'GameChamber', 'FiveGuys', 'SuperBeef']
+catching_blimp_names = blimp_data.get('catching_blimp_names', [])
 
 # Allowed Attack Blimps
-attack_blimp_names = ['Yoshi', 'Luigi', 'Geoph', 'ThisGuy']
+attack_blimp_names = blimp_data.get('attacking_blimp_names', [])
 
 # Order
 blimp_names_order = catching_blimp_names + attack_blimp_names

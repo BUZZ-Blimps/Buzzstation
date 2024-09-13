@@ -27,11 +27,14 @@ def init_redis_values():
 
     # Set to Default Value when Server Starts
 
-    # To-Do: Read from and write to a text file that saves most recently used goal and enemy colors and saves to redis at begginning of program
-    redis_client.set('goal_color', 0) # 0: Orange, 1: Yellow
-    redis_client.set('enemy_color', 0) # 0: Blue, 1: Red
+    # Read the YAML file
+    with open('../src/Config/default_values.yaml', 'r') as file:
+        blimp_data = yaml.safe_load(file)
 
-    redis_client.set('barometer', 99878.99) # Default Barometer Value
+    redis_client.set('goal_color', blimp_data.get('goal_color'))
+    redis_client.set('enemy_color', blimp_data.get('enemy_color'))
+    redis_client.set('barometer', blimp_data.get('barometer'))
+    
     redis_client.set('current_names', '') # Empty on Start
     redis_client.set('name_button_colors', '{}') # Empty on Start
 

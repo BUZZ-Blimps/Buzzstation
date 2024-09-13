@@ -40,6 +40,7 @@ import signal # used
 import os # used
 import serial # used
 import json # used
+import yaml # used
 import threading # not used
 import subprocess # not used
 import traceback # not used
@@ -50,3 +51,29 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Connect to Redis server
 redis_client = redis.StrictRedis(host='localhost', port=6379, db=0)
+
+# Logger
+from rclpy.logging import get_logger
+logger = get_logger('Basestation')
+
+# Load allowed Wi-Fi networks from the YAML file
+def load_allowed_wifi_networks(file_path):
+    with open(file_path, 'r') as file:
+        data = yaml.safe_load(file)
+    return data.get('allowed_wifi_networks', [])
+
+# Check if the current Wi-Fi Network is allowed
+def check_wifi():
+    # Load allowed Wi-Fi networks
+    allowed_networks = load_allowed_wifi_networks('../src/Config/wifi_networks.yaml')
+    
+    # Get current SSID
+    output = subprocess.check_output(["iwconfig 2>/dev/null | grep 'ESSID:' | cut -d '\"' -f 2"], shell=True)
+    ssid = output.decode('utf-8').strip()
+    
+    # Check if the current SSID is in the allowed list
+    if ssid not in allowed_networks:
+        logger.info("Invalid WiFi selected! Must be on one of the allowed networks.")
+        return False
+    else:
+        return True
