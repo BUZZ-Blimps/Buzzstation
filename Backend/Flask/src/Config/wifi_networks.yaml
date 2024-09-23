@@ -1,4 +1,4 @@
-# Wi-Fi SSID #
+# Wi-Fi SSIDs #
 # Allowed Wi-Fi Networks
 allowed_wifi_networks:
   - 'COREBlimp'

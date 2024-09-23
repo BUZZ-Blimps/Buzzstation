@@ -1,5 +1,31 @@
 #!/bin/bash
 
+# Extract allowed SSIDs from Wifi_Networks.yaml using grep and sed
+ALLOWED_SSIDS=$(grep -A 10 'allowed_wifi_networks:' Flask/src/Config/wifi_networks.yaml | sed -n "s/  - '\(.*\)'/\1/p")
+
+# Get current SSID (Linux - nmcli)
+SSID=$(nmcli -t -f active,ssid dev wifi | grep '^yes' | cut -d':' -f2)
+
+# Alternatively, for macOS, you can use:
+# SSID=$(networksetup -getairportnetwork en0 | awk -F': ' '{print $2}')
+
+if [ -z "$SSID" ]; then
+  echo "Not connected to any Wi-Fi network."
+  return 1
+  exit 1
+else
+  echo "Connected to SSID: $SSID"
+fi
+
+# Check if SSID is in the allowed list
+if echo "$ALLOWED_SSIDS" | grep -q "^$SSID$"; then
+  echo "Connected to an allowed Wi-Fi network."
+else
+  echo "Not connected to an allowed Wi-Fi network. Exiting."
+  return 1
+  exit 1
+fi
+
 # Source ROS 2 Humble setup script
 source /opt/ros/humble/setup.bash
 
