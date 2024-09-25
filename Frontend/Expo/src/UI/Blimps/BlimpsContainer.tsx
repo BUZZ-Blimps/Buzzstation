@@ -28,7 +28,7 @@ import { useVision } from './Components/Vision'; // Import the useVision hook
 const BlimpsContainer: React.FC = () => {
 
   // Names
-  const { names, nameColors, nameButtonStyle, handleNameClick } = useNames();
+  const { names, nameColors, nameButtonStyle, getNormalizedHeartbeat, handleNameClick } = useNames();
 
   // States
   const { stateValues, stateButtonStyle } = useStates();
@@ -216,6 +216,7 @@ const BlimpsContainer: React.FC = () => {
                 buttonColor={nameColors[name] || 'green'} // Button Color
                 buttonText={name} // Text Seen on Button
                 buttonStyle={nameButtonStyle} // Button Style
+                buttonHeartbeat={getNormalizedHeartbeat(name)} // Pass normalized heartbeat value here
                 onPress={() => handleNameClick(name)} // On Press Function
               />
 

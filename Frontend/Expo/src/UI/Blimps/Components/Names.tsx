@@ -9,6 +9,7 @@ import { socket, isIOS, isAndroid, isWeb} from '../../Constants/Constants';
 
 // User ID's
 import { getUserID } from '../../Users/UserManager';
+import { Float } from 'react-native/Libraries/Types/CodegenTypes';
 
 export const useNames = () => {
 
@@ -20,6 +21,9 @@ export const useNames = () => {
 
   // Name Button Colors
   const [nameColors, setNameColors] = useState<{ [key: string]: string }>({});
+
+  // Name Last Hearbeats
+  const [nameLastHeartbeat, setNameLastHeartbeats] = useState<{ [key: string]: Float }>({});
 
   // Update Names
   useEffect(() => {
@@ -73,6 +77,30 @@ export const useNames = () => {
 
   }, [userID]);
 
+  // Update Name Last Heartbeats
+  useEffect(() => {
+
+    const handleNameLastHeartbeat = (val: { name: string; time_since_last_heartbeat: Float }) => {
+      const { name: receivedName, time_since_last_heartbeat: receivedLastHeartbeat } = val;
+
+      // Testing
+      // console.log(receivedName);
+      // console.log(receivedLastHeartbeat);
+
+      setNameLastHeartbeats((prevLastHeartbeats) => ({
+        ...prevLastHeartbeats,
+        [receivedName]: receivedLastHeartbeat,
+      }));
+    };
+
+    socket.on('name_time_since_last_heartbeat', handleNameLastHeartbeat);
+
+    return () => {
+      socket.off('name_time_since_last_heartbeat', handleNameLastHeartbeat);
+    };
+
+  }, [nameLastHeartbeat]);
+
   // Name Button Click
   const handleNameClick = (name: string) => {
     if (name !== 'none') {
@@ -86,6 +114,16 @@ export const useNames = () => {
       }
     }
   }
+
+  // Calculate normalized heartbeat
+  const getNormalizedHeartbeat = (name: string): number => {
+    const maxHeartbeat = 5.0;
+    const heartbeat = nameLastHeartbeat[name] || 0;
+    // console.log('Name: ' + name);
+    // console.log('Heartbeat: ' + heartbeat);
+    // console.log('Normalized: ' + Math.round((Math.min(heartbeat / maxHeartbeat, 1) + Number.EPSILON) * 100) / 100);
+    return Math.round((Math.min(heartbeat / maxHeartbeat, 1) + Number.EPSILON) * 100) / 100; // Rounded to 2 decimal places
+  };
 
   // Name Button Style
   const nameButtonStyle = StyleSheet.create({
@@ -108,6 +146,7 @@ export const useNames = () => {
       textShadowColor: 'black', // Outline color
       textShadowOffset: { width: 1, height: 1 }, // Direction of the shadow
       textShadowRadius: isAndroid || isIOS ? 0.1 : 1, // Spread of the shadow
+      userSelect: 'none',
     },
   });
 
@@ -115,6 +154,7 @@ export const useNames = () => {
     names,
     nameColors,
     nameButtonStyle,
+    getNormalizedHeartbeat,
     handleNameClick,
     userID,
   };

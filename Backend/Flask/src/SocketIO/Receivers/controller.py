@@ -31,13 +31,15 @@ def get_blimp_motor_command(val):
     axes[2] = float(axes[2])
     axes[3] = float(axes[3] * -1) # Invert
 
-    if hasattr(basestation_node.current_blimps[name], 'motor_commands'):
+    if name in basestation_node.current_blimp_names:
 
-        if basestation_node.current_blimps[name].mode is False:
+        if hasattr(basestation_node.current_blimps[name], 'motor_commands'):
 
-            # Change the Value of the Motor Commands for the Specific Blimp Name
-            setattr(basestation_node.current_blimps[name], 'motor_commands', axes)
-            publish_generic('publish_' + 'motor_commands', basestation_node.current_blimps[name])
+            if basestation_node.current_blimps[name].mode is False:
+
+                # Change the Value of the Motor Commands for the Specific Blimp Name
+                setattr(basestation_node.current_blimps[name], 'motor_commands', axes)
+                publish_generic('publish_' + 'motor_commands', basestation_node.current_blimps[name])
 
 # Get Blimp Button Release
 @socketio.on('blimp_button')
@@ -51,6 +53,9 @@ def get_blimp_button_release(val):
     name = val['name']
     button = val['button']
     userID = val['userID']
+
+    if name not in basestation_node.current_blimp_names:
+        return
 
     # A
     if button == 'button0':

@@ -21,10 +21,15 @@ logger = get_logger('Basestation')
 def add_new_blimps(basestation_node, new_blimp_names):
     for blimp_name in new_blimp_names:
         if blimp_name not in basestation_node.current_blimps:
+
+            # Create a new blimp and add to current blimps and blimp names
             new_blimp = Blimp(basestation_node, blimp_name)
             basestation_node.current_blimps[blimp_name] = new_blimp
             basestation_node.current_blimp_names.append(blimp_name)
             logger.info(str('Identified Blimp: ' + new_blimp.name))
+
+            # Send Time since Last Heartbeat to Frontend (0.0 seconds)
+            socketio.emit('name_time_since_last_heartbeat',  { 'name': new_blimp.name, 'time_since_last_heartbeat': round(0.0, 2) })
 
             # Publish Global Values to Initialize (Enemy or Goal Color)
             if is_attack_blimp(blimp_name):

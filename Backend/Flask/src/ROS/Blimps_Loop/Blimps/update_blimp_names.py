@@ -42,6 +42,14 @@ def alive_blimps(basestation_node):
         # Check if heartbeat data is available and within timeout
         current_time = time()
         time_since_last_heartbeat = current_time - blimp.last_heartbeat_time
+
+        # Testing
+        #logger.info(blimp.name)
+        #logger.info(str(round(time_since_last_heartbeat, 2)))
+
+        # Send Time since Last Heartbeat to Frontend (Usually less than a second if alive)
+        socketio.emit('name_time_since_last_heartbeat',  { 'name': blimp.name, 'time_since_last_heartbeat': round(time_since_last_heartbeat, 2) })
+
         if time_since_last_heartbeat <= basestation_node.heartbeat_timeout:
             blimp.heartbeat_data = None  # Reset heartbeat data
             alive_blimps.append(namespace)
