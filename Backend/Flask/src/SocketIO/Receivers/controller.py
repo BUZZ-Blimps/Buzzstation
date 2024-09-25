@@ -33,9 +33,11 @@ def get_blimp_motor_command(val):
 
     if hasattr(basestation_node.current_blimps[name], 'motor_commands'):
 
-        # Change the Value of the Motor Commands for the Specific Blimp Name
-        setattr(basestation_node.current_blimps[name], 'motor_commands', axes)
-        publish_generic('publish_' + 'motor_commands', basestation_node.current_blimps[name])
+        if basestation_node.current_blimps[name].mode is False:
+
+            # Change the Value of the Motor Commands for the Specific Blimp Name
+            setattr(basestation_node.current_blimps[name], 'motor_commands', axes)
+            publish_generic('publish_' + 'motor_commands', basestation_node.current_blimps[name])
 
 # Get Blimp Button Release
 @socketio.on('blimp_button')
@@ -68,8 +70,40 @@ def get_blimp_button_release(val):
 
             # Toggle the Value of the Mode to Auto for the Specific Blimp Name
             basestation_node.current_blimps[name].mode = not basestation_node.current_blimps[name].mode
+
+            # Zero out motor commands, Turn off shooting and catching if in autonomous mode
+            if basestation_node.current_blimps[name].mode is True:
+
+                if hasattr(basestation_node.current_blimps[name], 'motor_commands'):
+
+                    # Change the Value of the Motor Commands for the Specific Blimp Name
+                    setattr(basestation_node.current_blimps[name], 'motor_commands', [float(0.0), float(0.0), float(0.0), float(0.0)])
+                    publish_generic('publish_' + 'motor_commands', basestation_node.current_blimps[name])
+                
+                if hasattr(basestation_node.current_blimps[name], 'shooting'):
+
+                    if basestation_node.current_blimps[name].shooting is True:
+                        
+                        # Set Shooting to False
+                        basestation_node.current_blimps[name].shooting = False
+                        publish_generic('publish_' + 'shooting', basestation_node.current_blimps[name])
+
+                        # Toggle Shoot Icon
+                        socketio.emit('toggle_shoot_icon',  { 'name': name, 'val': basestation_node.current_blimps[name].shooting })
     
-    # Y (To-Do: Individual Calibrate)
+
+                if hasattr(basestation_node.current_blimps[name], 'catching'):
+
+                    if basestation_node.current_blimps[name].catching is True:
+                        
+                        # Set Catching to False
+                        basestation_node.current_blimps[name].catching = False
+                        publish_generic('publish_' + 'catching', basestation_node.current_blimps[name])
+
+                        # Toggle Catch Icon
+                        socketio.emit('toggle_catch_icon',  { 'name': name, 'val': basestation_node.current_blimps[name].catching })
+
+    # Y
     elif button == 'button3':
         # Calibrate Height of Specific Blimp Name
         toggle_blimp_calibrate_button_color(name)
@@ -78,17 +112,27 @@ def get_blimp_button_release(val):
     elif button == 'button4':
         if hasattr(basestation_node.current_blimps[name], 'catching'):
 
-            # Change the Value of the Catching for the Specific Blimp Name
-            basestation_node.current_blimps[name].catching = not basestation_node.current_blimps[name].catching
-            publish_generic('publish_' + 'catching', basestation_node.current_blimps[name])
+            if basestation_node.current_blimps[name].mode is False:
+
+                # Change the Value of the Catching for the Specific Blimp Name
+                basestation_node.current_blimps[name].catching = not basestation_node.current_blimps[name].catching
+                publish_generic('publish_' + 'catching', basestation_node.current_blimps[name])
+
+                # Toggle Catch Icon
+                socketio.emit('toggle_catch_icon',  { 'name': name, 'val': basestation_node.current_blimps[name].catching })
     
     # Right Bumper (RB)
     elif button == 'button5':
         if hasattr(basestation_node.current_blimps[name], 'shooting'):
 
-            # Change the Value of the Shooting for the Specific Blimp Name
-            basestation_node.current_blimps[name].shooting = not basestation_node.current_blimps[name].shooting
-            publish_generic('publish_' + 'shooting', basestation_node.current_blimps[name])
+            if basestation_node.current_blimps[name].mode is False:
+
+                # Change the Value of the Shooting for the Specific Blimp Name
+                basestation_node.current_blimps[name].shooting = not basestation_node.current_blimps[name].shooting
+                publish_generic('publish_' + 'shooting', basestation_node.current_blimps[name])
+
+                # Toggle Shoot Icon
+                socketio.emit('toggle_shoot_icon',  { 'name': name, 'val': basestation_node.current_blimps[name].shooting })
     
     # Left Trigger (LT)
     elif button == 'button6':
@@ -99,10 +143,41 @@ def get_blimp_button_release(val):
     elif button == 'button7':
         # All Auto
         [setattr(basestation_node.current_blimps[name], 'mode', True) for name in basestation_node.current_blimps]
+
+        # Zero out motor commands, Turn off shooting and catching
+        for name in basestation_node.current_blimps:
+
+            if hasattr(basestation_node.current_blimps[name], 'motor_commands'):
+
+                # Change the Value of the Motor Commands for the Specific Blimp Name
+                setattr(basestation_node.current_blimps[name], 'motor_commands', [float(0.0), float(0.0), float(0.0), float(0.0)])
+                publish_generic('publish_' + 'motor_commands', basestation_node.current_blimps[name])
+
+            if hasattr(basestation_node.current_blimps[name], 'shooting'):
+
+                if basestation_node.current_blimps[name].shooting is True:
+                    
+                    # Set Shooting to False
+                    basestation_node.current_blimps[name].shooting = False
+                    publish_generic('publish_' + 'shooting', basestation_node.current_blimps[name])
+
+                    # Toggle Shoot Icon
+                    socketio.emit('toggle_shoot_icon',  { 'name': name, 'val': basestation_node.current_blimps[name].shooting })
+
+            if hasattr(basestation_node.current_blimps[name], 'catching'):
+
+                if basestation_node.current_blimps[name].catching is True:
+                    
+                    # Set Catching to False
+                    basestation_node.current_blimps[name].catching = False
+                    publish_generic('publish_' + 'catching', basestation_node.current_blimps[name])
     
+                    # Toggle Catch Icon
+                    socketio.emit('toggle_catch_icon',  { 'name': name, 'val': basestation_node.current_blimps[name].catching })
+
     # View
     elif button == 'button8':
-        # Toggle Controller Mapping Overlay Image
+        # Toggle Controller Mapping Overlay Image (Done on Frontend)
         pass
 
     # Menu (To-Do: Open Sidebar Menu)
@@ -231,6 +306,7 @@ def get_blimp_button_release(val):
 @socketio.on('nonblimp_button')
 def get_nonblimp_button_release(val):
     from ROS.ros import basestation_node
+    from ROS.Communication.publishers import publish_generic
     from SocketIO.socketio import name_button_colors
 
     # Retrieve Key and User ID
@@ -271,10 +347,41 @@ def get_nonblimp_button_release(val):
     elif button == 'button7':
         # All Auto
         [setattr(basestation_node.current_blimps[name], 'mode', True) for name in basestation_node.current_blimps]
+
+        # Zero out motor commands, Turn off shooting and catching
+        for name in basestation_node.current_blimps:
+
+            if hasattr(basestation_node.current_blimps[name], 'motor_commands'):
+
+                # Change the Value of the Motor Commands for the Specific Blimp Name
+                setattr(basestation_node.current_blimps[name], 'motor_commands', [float(0.0), float(0.0), float(0.0), float(0.0)])
+                publish_generic('publish_' + 'motor_commands', basestation_node.current_blimps[name])
+
+            if hasattr(basestation_node.current_blimps[name], 'shooting'):
+
+                if basestation_node.current_blimps[name].shooting is True:
+                    
+                    # Set Shooting to False
+                    basestation_node.current_blimps[name].shooting = False
+                    publish_generic('publish_' + 'shooting', basestation_node.current_blimps[name])
+
+                    # Toggle Shoot Icon
+                    socketio.emit('toggle_shoot_icon',  { 'name': name, 'val': basestation_node.current_blimps[name].shooting })
+
+            if hasattr(basestation_node.current_blimps[name], 'catching'):
+
+                if basestation_node.current_blimps[name].catching is True:
+                    
+                    # Set Catching to False
+                    basestation_node.current_blimps[name].catching = False
+                    publish_generic('publish_' + 'catching', basestation_node.current_blimps[name])
     
+                    # Toggle Catch Icon
+                    socketio.emit('toggle_catch_icon',  { 'name': name, 'val': basestation_node.current_blimps[name].catching })
+
     # View
     elif button == 'button8':
-        # Toggle Controller Mapping Overlay Image
+        # Toggle Controller Mapping Overlay Image (Done on Frontend)
         pass
 
     # Menu (To-Do: Open Sidebar Menu)

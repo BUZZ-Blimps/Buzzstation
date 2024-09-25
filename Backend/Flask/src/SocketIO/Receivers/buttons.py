@@ -51,6 +51,7 @@ def toggle_name_button(val):
 @socketio.on('toggle_blimp_button_color')
 def toggle_blimp_button_color(val):
     from ROS.ros import basestation_node
+    from ROS.Communication.publishers import publish_generic
 
     # Retrieve Blimp Name and Key
     name = val['name']
@@ -60,11 +61,38 @@ def toggle_blimp_button_color(val):
 
         # Change the Value of the Key for the Specific Blimp Name
         setattr(basestation_node.current_blimps[name], key, not getattr(basestation_node.current_blimps[name], key))
+
+        if key == 'mode':
+
+            # Set Catching to False if currently True
+            if hasattr(basestation_node.current_blimps[name], 'catching'):
+
+                if basestation_node.current_blimps[name].mode is True and basestation_node.current_blimps[name].catching is True:
+
+                    # Change the Value of the Catching for the Specific Blimp Name
+                    basestation_node.current_blimps[name].catching = not basestation_node.current_blimps[name].catching
+                    publish_generic('publish_' + 'catching', basestation_node.current_blimps[name])
+
+                    # Toggle Catch Icon
+                    socketio.emit('toggle_catch_icon',  { 'name': name, 'val': basestation_node.current_blimps[name].catching })
+
+            # Set Shooting to False if currently True
+            if hasattr(basestation_node.current_blimps[name], 'shooting'):
+
+                if basestation_node.current_blimps[name].mode is True and basestation_node.current_blimps[name].shooting is True:
+
+                    # Change the Value of the Shooting for the Specific Blimp Name
+                    basestation_node.current_blimps[name].shooting = not basestation_node.current_blimps[name].shooting
+                    publish_generic('publish_' + 'shooting', basestation_node.current_blimps[name])
+
+                    # Toggle Shoot Icon
+                    socketio.emit('toggle_shoot_icon',  { 'name': name, 'val': basestation_node.current_blimps[name].shooting })
         
-# Set Blimp Button to a Specific Value
+# Set Blimp Button to a Specific Value (i.e. All Auto, All Manual)
 @socketio.on('set_blimp_button_value')
 def set_blimp_button_value(val):
     from ROS.ros import basestation_node
+    from ROS.Communication.publishers import publish_generic
 
     # Retrieve Blimp Name, Key, and Value
     name = val['name']
@@ -75,6 +103,33 @@ def set_blimp_button_value(val):
 
         # Change the Value of the Key for the Specific Blimp Name
         setattr(basestation_node.current_blimps[name], key, value)
+
+        if key == 'mode':
+
+            # Set Catching to False if currently True
+            if hasattr(basestation_node.current_blimps[name], 'catching'):
+
+                if basestation_node.current_blimps[name].mode is True and basestation_node.current_blimps[name].catching is True:
+
+                    # Change the Value of the Catching for the Specific Blimp Name
+                    basestation_node.current_blimps[name].catching = not basestation_node.current_blimps[name].catching
+                    publish_generic('publish_' + 'catching', basestation_node.current_blimps[name])
+
+                    # Toggle Catch Icon
+                    socketio.emit('toggle_catch_icon',  { 'name': name, 'val': basestation_node.current_blimps[name].catching })
+
+            # Set Shooting to False if currently True
+            if hasattr(basestation_node.current_blimps[name], 'shooting'):
+
+                if basestation_node.current_blimps[name].mode is True and basestation_node.current_blimps[name].shooting is True:
+
+                    # Change the Value of the Shooting for the Specific Blimp Name
+                    basestation_node.current_blimps[name].shooting = not basestation_node.current_blimps[name].shooting
+                    publish_generic('publish_' + 'shooting', basestation_node.current_blimps[name])
+
+                    # Toggle Shoot Icon
+                    socketio.emit('toggle_shoot_icon',  { 'name': name, 'val': basestation_node.current_blimps[name].shooting })
+        
 
 # Set Calibrate Barometer for Blimp to True
 @socketio.on('toggle_blimp_calibrate_button_color')
@@ -106,7 +161,7 @@ def toggle_blimp_calibrate_button_color(name):
                 # Publish over ROS
                 publish_generic('publish_calibrate_barometer', basestation_node.current_blimps[name])
 
-# Toggle All Blimps Buttons with Two Colors (i.e. Goal, Enemy, All Auto, All Manual)
+# Toggle All Blimps Buttons with Two Colors (i.e. Goal, Enemy)
 @socketio.on('toggle_all_blimps_button_color')
 def toggle_all_blimps_button_color(key):
 

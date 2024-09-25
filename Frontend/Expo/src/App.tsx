@@ -297,10 +297,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: '1.75%',
     marginLeft: isAndroid || isIOS ? '10%' : 100,
+    right: isAndroid || isIOS ? '4%' : '0%', // Center horizontally
   },
   buttonContainer: {
     flexDirection: 'column', // Arranges buttons horizontally
     justifyContent: 'flex-end',
+    left: isAndroid || isIOS ? '3%' : '0%',
     marginLeft: 5,
   },
   image: {

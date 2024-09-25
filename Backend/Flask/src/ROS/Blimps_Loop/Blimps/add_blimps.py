@@ -44,3 +44,7 @@ def add_new_blimps(basestation_node, new_blimp_names):
 
             # Set Calibrate to False
             socketio.emit('update_button_color', {'name': new_blimp.name, 'key': 'calibrate_barometer', 'color': 'red'})
+
+            # Set Catch and Shoot Icons to False
+            socketio.emit('toggle_catch_icon',  { 'name': new_blimp.name, 'val': False })
+            socketio.emit('toggle_shoot_icon',  { 'name': new_blimp.name, 'val': False })

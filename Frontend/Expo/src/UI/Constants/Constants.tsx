@@ -6,7 +6,7 @@
 import io from 'socket.io-client';
 
 // Backend URL
-import { url } from '../../Config/Backend_URL'
+import { url } from '../../Config/Backend_URL';
 
 // Websocket
 export const socket = io(url);

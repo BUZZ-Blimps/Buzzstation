@@ -1,8 +1,8 @@
 // BlimpsContainer.tsx
 
 // React and React Native
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, Image } from 'react-native';
 
 // Constants
 import { socket, isIOS, isAndroid, isWeb} from '../Constants/Constants';
@@ -41,6 +41,60 @@ const BlimpsContainer: React.FC = () => {
 
   // Visions
   const { visionColors, visionButtonStyle, handleVisionClick } = useVision();
+
+  // Catch Icon
+  const [isCatchIcon, setCatchIcon] = useState<{ [key: string]: boolean }>({});
+
+  // Catch Icon
+  const [isShootIcon, setShootIcon] = useState<{ [key: string]: boolean }>({});
+
+  // Toggle Catch Icon
+  useEffect(() => {
+
+    const toggleCatchIcon = (data: { name: string; val: boolean }) => {
+      const { name: receivedName, val: recievedVal } = data;
+
+      setCatchIcon((prevVals) => ({
+        ...prevVals,
+        [receivedName]: recievedVal,
+      }));
+    };
+
+    socket.on('toggle_catch_icon', toggleCatchIcon);
+
+    return () => {
+      socket.off('toggle_catch_icon', toggleCatchIcon);
+    };
+
+  }, [isCatchIcon]);
+
+  // Shoot Catch Icon
+  useEffect(() => {
+
+    const toggleShootIcon = (data: { name: string; val: boolean }) => {
+      const { name: receivedName, val: recievedVal } = data;
+
+      setShootIcon((prevVals) => ({
+        ...prevVals,
+        [receivedName]: recievedVal,
+      }));
+    };
+
+    socket.on('toggle_shoot_icon', toggleShootIcon);
+
+    return () => {
+      socket.off('toggle_shoot_icon', toggleShootIcon);
+    };
+
+  }, [isShootIcon]);
+
+  const checkCatchIcon = (name: string): boolean => {
+    return isCatchIcon[name] === true; // Returns true if the name is true, otherwise false
+  };
+
+  const checkShootIcon = (name: string): boolean => {
+    return isShootIcon[name] === true; // Returns true if the name is true, otherwise false
+  };
 
   return (
     <View style={styles.container}>
@@ -113,7 +167,7 @@ const BlimpsContainer: React.FC = () => {
         />
 
         {/* Vision Header */}
-        <Button
+        {/* <Button
           blimpName='none'
           buttonKey='none'
           buttonText='Vision'
@@ -126,7 +180,7 @@ const BlimpsContainer: React.FC = () => {
             },
           }}
           onPress={() => null}
-        />
+        /> */}
 
       </View>
       
@@ -136,6 +190,24 @@ const BlimpsContainer: React.FC = () => {
 
             {/* Main Blimp Buttons Row */}
             <View style={styles.buttonRow}>
+
+              {/* Catch Icon */}
+              {checkCatchIcon(name) && (
+                <Image
+                  source={require('../.././assets/catch_icon.png')} // Replace with your image path
+                  style={styles.icons} // style
+                  resizeMode="contain" // Ensure the image maintains its aspect ratio
+                />
+              )}
+
+              {/* Shoot Icon */}
+              {checkShootIcon(name) && (
+                <Image
+                  source={require('../.././assets/shoot_icon.png')} // Replace with your image path
+                  style={styles.icons} // style
+                  resizeMode="contain" // Ensure the image maintains its aspect ratio
+                />
+              )}
 
               {/* Name Button */}
               <Button 
@@ -177,14 +249,15 @@ const BlimpsContainer: React.FC = () => {
               />
 
               {/* Vision Button */}
-              <Button 
+              {/* <Button 
                 blimpName={name} // Blimp Name
                 buttonKey='vision' // Type of Button
                 buttonColor={visionColors[name] || 'green'} // Button Color (Default: Green)
                 buttonText={visionColors[name] === 'green' ? 'On' : 'Off'} // Text Seen on Button
                 buttonStyle={visionButtonStyle} // Button Style
                 onPress={() => handleVisionClick(name)} // On Press Function
-              />
+              /> */}
+
             </View>
             
           </View>
@@ -203,6 +276,7 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
     alignItems: 'center',
+    left: isAndroid || isIOS ? '5%' : '0%',
     //backgroundColor: 'white', // Use for testing of columns
   },
   buttonRow: {
@@ -212,6 +286,14 @@ const styles = StyleSheet.create({
     marginTop: -3,
     marginBottom: 10, // Space between rows
     marginLeft: isAndroid || isIOS ? -50 : 0,
+  },
+  icons: {
+    position: 'absolute',
+    zIndex: 1, // Put behind buttons
+    width: 500/10, // Adjust width to 75% of the parent
+    height: 500/10, // Adjust height to 75% of the parent
+    left: isAndroid || isIOS ? '-8.5%' : '-8.5%', // Center horizontally
+    pointerEvents: 'none', // Make the image non-clickable
   },
 });
 

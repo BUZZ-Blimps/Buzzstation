@@ -53,6 +53,9 @@ def get_redis_values():
     # Name Button Colors
     get_name_button_colors()
 
+    # Catch and Shoot Icons
+    get_catch_and_shoot_icons()
+
     # State Machine Values
     get_button_values('state_machine')
 
@@ -122,6 +125,32 @@ def get_name_button_colors():
         else:
              # Make Blimp Button Green for all users
             socketio.emit('toggle_name_button_color', { 'userID': 'none', 'name': name})
+
+# Get Catch and Shoot Icons
+def get_catch_and_shoot_icons():
+    
+    # Get Current Blimp Names from Redis
+    current_names = redis_client.get('current_names').decode("utf-8")
+
+    for name in current_names.split(','):
+        
+        # Catch Icon
+        if redis_client.hget(str('blimp:' + name), 'catching') is not None:
+            current_component = redis_client.hget(str('blimp:' + name), 'catching').decode('utf-8')
+            # Send Update to Frontend
+            if str(current_component) == 'True':
+                socketio.emit('toggle_catch_icon',  { 'name': name, 'val': True })
+            else:
+                socketio.emit('toggle_catch_icon',  { 'name': name, 'val': False })
+        
+        # Shoot Icon
+        if redis_client.hget(str('blimp:' + name), 'shooting') is not None:
+            current_component = redis_client.hget(str('blimp:' + name), 'shooting').decode('utf-8')
+            # Send Update to Frontend
+            if str(current_component) == 'True':
+                socketio.emit('toggle_shoot_icon',  { 'name': name, 'val': True })
+            else:
+                socketio.emit('toggle_shoot_icon',  { 'name': name, 'val': False })
 
 # Get Mode Button Color for Each Blimp
 def get_mode_button_colors():
