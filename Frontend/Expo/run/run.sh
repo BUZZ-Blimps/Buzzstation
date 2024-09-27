@@ -1,4 +1,4 @@
 #!/bin/bash
 
 cd ../src
-yarn start --tunnel --port 8080
+yarn start --no-dev --minify --tunnel --port 8080

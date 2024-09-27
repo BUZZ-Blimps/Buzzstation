@@ -20,7 +20,7 @@ fi
 if echo "$ALLOWED_SSIDS" | grep -q "^$SSID$"; then
   echo "Connected to an allowed Wi-Fi network."
 else
-  echo "Not connected to an allowed Wi-Fi network. Exiting."
+  echo "Connected to a disallowed Wi-Fi network. Exiting."
   exit 1
 fi
 

@@ -42,7 +42,7 @@ return (
         // Check if the character index is within the highlighted portion
         const isHighlighted = index < highlightLength;
         return (
-          <Text key={index} style={{ color: isHighlighted ? highlightColor : 'white' }}>
+          <Text key={index} style={{ color: isHighlighted ? highlightColor : 'white', userSelect: 'none' }}>
             {char}
           </Text>
         );

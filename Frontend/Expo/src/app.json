@@ -27,6 +27,10 @@
     "web": {
       "favicon": "./assets/favicon.png",
       "backgroundColor": "#000000"
-    }
+    },
+    "packagerOpts": {
+      "minify": true
+    },
+    "developmentClient": false
   }
 }

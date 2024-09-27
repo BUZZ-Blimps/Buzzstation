@@ -37,8 +37,8 @@ export default function App() {
   // Overlay Image
   const [isOverlayImage, setOverlayImage] = useState(false);
 
-  // Handle Overlay Image
-  const handleOverlayImage = () => {
+  // Handle Controller Display Press
+  const handleControllerDisplayPress = () => {
     toggleOverlayImage(setOverlayImage);
   };
 
@@ -151,7 +151,7 @@ export default function App() {
             marginRight: 20,
             borderColor: 'white',
           }}
-          onPress={() => handleOverlayImage()}
+          onPress={() => handleControllerDisplayPress()}
         />
 
         <Pressable onPress={handleLogoPress}>
@@ -246,7 +246,6 @@ export default function App() {
 
     </SafeAreaView>
   );
-
 };
 
 // Disable Style Warning
@@ -272,6 +271,7 @@ function toggleFullScreen(setIsFullScreen: Dispatch<SetStateAction<boolean>>) {
   }
 }
 
+// Toggle Overlay Image
 function toggleOverlayImage(setOverlayImage: Dispatch<SetStateAction<boolean>>) {
   setOverlayImage(prevState => !prevState);
 }
