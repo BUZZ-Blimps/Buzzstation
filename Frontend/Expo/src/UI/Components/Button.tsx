@@ -6,6 +6,9 @@ import React from 'react';
 // React Native
 import { Pressable, Text, TextStyle, ViewStyle, View } from 'react-native';
 
+// Constants
+import { socket, isIOS, isAndroid, isWeb} from '../Constants/Constants';
+
 interface ButtonStyle {
   button: ViewStyle; // Style for the button container
   buttonText: TextStyle; // Style for the text inside the button
@@ -29,9 +32,34 @@ const Button: React.FC<ButtonProps> = ({ blimpName, buttonKey, buttonColor, butt
   const highlightLength = percentageToHighlight > 0.20 ? Math.round(blimpName.length * percentageToHighlight) : 0; // Highlight if Blimp has not responded after 1 Second (20% of Timeout)
 
 return (
+  <>
+  {/* Toggle Button for Web */}
+  {isWeb && (
   <Pressable 
       style={[buttonStyle.button, { backgroundColor: buttonColor }]}
       onPress={onPress}
+      role='button'
+      accessible={true}
+    >
+    <Text style={buttonStyle.buttonText}>
+      {buttonText.split('').map((char, index) => {
+        // Check if the character index is within the highlighted portion
+        const isHighlighted = index < highlightLength;
+        return (
+          <Text key={index} style={{ color: isHighlighted ? highlightColor : 'white', userSelect: 'none' }}>
+            {char}
+          </Text>
+        );
+      })}
+    </Text>
+  </Pressable>
+  )}
+
+  {/* Toggle Button for App */}
+  {isAndroid || isIOS && (
+  <Pressable 
+      style={[buttonStyle.button, { backgroundColor: buttonColor }]}
+      onPressIn={onPress}
       role='button'
       accessible={true}
       android_disableSound={true}
@@ -49,6 +77,8 @@ return (
       })}
     </Text>
   </Pressable>
+  )}
+  </>
 );
 
 };
