@@ -1,7 +1,7 @@
 // Help Page //
 
 // React
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 // React Native
 import { SafeAreaView, StyleSheet, Text } from 'react-native';
@@ -27,7 +27,6 @@ const HelpPage: React.FC = () => {
   return (
     <SafeAreaView style={styles.container}>
 
-       {/* Sidebar Menu Button */}
        <SidebarMenu />
 
        <TopButtons setOverlayImage={setOverlayImage} />

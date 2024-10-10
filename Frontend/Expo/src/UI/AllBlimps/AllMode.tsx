@@ -34,7 +34,9 @@ export const useAllMode = (defaultColor: string, buttonKey: string): Button => {
                     
                     const val = { name: name, key: 'mode', value: 1};
                     
-                    socket.emit('set_blimp_button_value', val);
+                    if (socket) {
+                        socket.emit('set_blimp_button_value', val);
+                    }
 
                 }
 
@@ -55,7 +57,9 @@ export const useAllMode = (defaultColor: string, buttonKey: string): Button => {
                     
                     const val = { name: name, key: 'mode', value: 0};
                     
-                    socket.emit('set_blimp_button_value', val);
+                    if (socket) {
+                        socket.emit('set_blimp_button_value', val);
+                    }
 
                 }
 

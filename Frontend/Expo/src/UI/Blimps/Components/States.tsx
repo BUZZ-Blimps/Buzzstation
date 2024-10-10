@@ -75,15 +75,17 @@ export const useStates = () => {
 
         };
 
-        // Listen for 'update_button_color' events
-        socket.on('update_button_value', handleUpdateButtonValue);
+        if (socket) {
+            // Listen for 'update_button_color' events
+            socket.on('update_button_value', handleUpdateButtonValue);
 
-        // Cleanup to remove the listener when the component is unmounted
-        return () => {
-            socket.off('update_button_value', handleUpdateButtonValue);
-        };
+            // Cleanup to remove the listener when the component is unmounted
+            return () => {
+                socket.off('update_button_value', handleUpdateButtonValue);
+            };
+        }
 
-    }, []);
+    }, [socket]);
 
     // State Button Style
     const stateButtonStyle = StyleSheet.create({

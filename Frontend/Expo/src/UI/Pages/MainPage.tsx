@@ -28,7 +28,6 @@ const MainPage: React.FC = () => {
   return (
     <SafeAreaView style={styles.container}>
 
-       {/* Sidebar Menu Button */}
        <SidebarMenu />
 
        <TopButtons setOverlayImage={setOverlayImage} />

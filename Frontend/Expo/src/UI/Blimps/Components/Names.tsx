@@ -37,15 +37,17 @@ export const useNames = () => {
       }
     };
 
-    // Listen for 'update_names' events
-    socket.on('update_names', handleUpdateNames);
+    if (socket) {
+      // Listen for 'update_names' events
+      socket.on('update_names', handleUpdateNames);
 
-    // Cleanup to remove the listener when the component is unmounted
-    return () => {
-      socket.off('update_names', handleUpdateNames);
-    };
+      // Cleanup to remove the listener when the component is unmounted
+      return () => {
+        socket.off('update_names', handleUpdateNames);
+      };
+    }
 
-  }, []);
+  }, [socket]);
 
   // Update Name Color
   useEffect(() => {
@@ -69,13 +71,15 @@ export const useNames = () => {
       }));
     };
 
-    socket.on('toggle_name_button_color', handleToggleNameButtonColor);
+    if (socket) {
+      socket.on('toggle_name_button_color', handleToggleNameButtonColor);
 
-    return () => {
-      socket.off('toggle_name_button_color', handleToggleNameButtonColor);
-    };
+      return () => {
+        socket.off('toggle_name_button_color', handleToggleNameButtonColor);
+      };
+      }
 
-  }, [userID]);
+  }, [socket, userID]);
 
   // Update Name Last Heartbeats
   useEffect(() => {
@@ -93,20 +97,24 @@ export const useNames = () => {
       }));
     };
 
-    socket.on('name_time_since_last_heartbeat', handleNameLastHeartbeat);
+    if (socket) {
+      socket.on('name_time_since_last_heartbeat', handleNameLastHeartbeat);
 
-    return () => {
-      socket.off('name_time_since_last_heartbeat', handleNameLastHeartbeat);
-    };
+      return () => {
+        socket.off('name_time_since_last_heartbeat', handleNameLastHeartbeat);
+      };
+    }
 
-  }, [nameLastHeartbeat]);
+  }, [socket, nameLastHeartbeat]);
 
   // Name Button Click
   const handleNameClick = (name: string) => {
     if (name !== 'none') {
       if (userID) {
 
-        socket.emit('toggle_name_button', { userID: userID, name: name });
+        if (socket) {
+          socket.emit('toggle_name_button', { userID: userID, name: name });
+        }
 
         // Testing
         //console.log('Blimp ' + name + ' pressed by ' + userID);

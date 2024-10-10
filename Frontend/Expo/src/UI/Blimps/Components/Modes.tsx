@@ -40,22 +40,26 @@ export const useModes = () => {
       }
     };
 
-    // Listen for 'update_button_color' events
-    socket.on('update_button_color', handleUpdateButtonColor);
+    if (socket) {
+      // Listen for 'update_button_color' events
+      socket.on('update_button_color', handleUpdateButtonColor);
 
-    // Cleanup to remove the listener when the component is unmounted
-    return () => {
-      socket.off('update_button_color', handleUpdateButtonColor);
-    };
+      // Cleanup to remove the listener when the component is unmounted
+      return () => {
+        socket.off('update_button_color', handleUpdateButtonColor);
+      };
+    }
 
-  }, []);
+  }, [socket]);
 
   // Mode Button Click
   const handleModeClick = (name: string) => {
 
     const val = { name: name, key: 'mode'};
     
-    socket.emit('toggle_blimp_button_color', val);
+    if (socket) {
+      socket.emit('toggle_blimp_button_color', val);
+    }
 
   };
 

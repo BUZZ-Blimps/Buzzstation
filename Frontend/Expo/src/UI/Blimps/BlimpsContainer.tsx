@@ -60,13 +60,15 @@ const BlimpsContainer: React.FC = () => {
       }));
     };
 
-    socket.on('toggle_catch_icon', toggleCatchIcon);
+    if (socket) {
+      socket.on('toggle_catch_icon', toggleCatchIcon);
 
-    return () => {
-      socket.off('toggle_catch_icon', toggleCatchIcon);
-    };
+      return () => {
+        socket.off('toggle_catch_icon', toggleCatchIcon);
+      };
+    }
 
-  }, [isCatchIcon]);
+  }, [socket, isCatchIcon]);
 
   // Shoot Catch Icon
   useEffect(() => {
@@ -80,13 +82,15 @@ const BlimpsContainer: React.FC = () => {
       }));
     };
 
-    socket.on('toggle_shoot_icon', toggleShootIcon);
+    if (socket) {
+      socket.on('toggle_shoot_icon', toggleShootIcon);
 
-    return () => {
-      socket.off('toggle_shoot_icon', toggleShootIcon);
-    };
+      return () => {
+        socket.off('toggle_shoot_icon', toggleShootIcon);
+      };
+    }
 
-  }, [isShootIcon]);
+  }, [socket, isShootIcon]);
 
   const checkCatchIcon = (name: string): boolean => {
     return isCatchIcon[name] === true; // Returns true if the name is true, otherwise false

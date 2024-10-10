@@ -88,8 +88,10 @@ const Controller: React.FC<ButtonProps> = ({ blimpName, buttonKey, buttonColor, 
               val['button'] = key;
               val['userID'] = String(userID);
               
-              // Emit to Backend
-              socket.emit('blimp_button', val);
+              if (socket) {
+                // Emit to Backend
+                socket.emit('blimp_button', val);
+              }
 
               // Increase Count
               count++;
@@ -106,7 +108,10 @@ const Controller: React.FC<ButtonProps> = ({ blimpName, buttonKey, buttonColor, 
             let val: { button?: string; userID?: string} = {};
             val['button'] = key;
             val['userID'] = String(userID);
-            socket.emit('nonblimp_button', val);
+
+            if (socket) {
+              socket.emit('nonblimp_button', val);
+            }
 
             // Toggle Overlay Image
             if (val['button'] === 'button8') {
@@ -123,7 +128,7 @@ const Controller: React.FC<ButtonProps> = ({ blimpName, buttonKey, buttonColor, 
       prevButtonStatesRef.current = newButtonStates;
     }
 
-  }, [names, nameColors]);
+  }, [socket, names, nameColors]);
 
   // Update Joysticks
   const updateJoysticks = useCallback((gamepad: Gamepad) => {
@@ -151,7 +156,10 @@ const Controller: React.FC<ButtonProps> = ({ blimpName, buttonKey, buttonColor, 
           let val: { name?: string; axes?: number[] } = {};
           val['name'] = name;
           val['axes'] = clampedAxes;
-          socket.emit('motor_command', val);
+
+          if (socket) {
+            socket.emit('motor_command', val);
+          }
         }
       }
       // Animate the values
@@ -160,7 +168,7 @@ const Controller: React.FC<ButtonProps> = ({ blimpName, buttonKey, buttonColor, 
       rightDotX.value = withTiming(50 + clampedAxes[2] * 45, { duration: 0, easing: Easing.linear });
       rightDotY.value = withTiming(50 + clampedAxes[3] * 45, { duration: 0, easing: Easing.linear });
     }
-  }, [names, nameColors]);
+  }, [socket, names, nameColors]);
 
   // Controller Inputs
   useEffect(() => {
@@ -211,14 +219,15 @@ const Controller: React.FC<ButtonProps> = ({ blimpName, buttonKey, buttonColor, 
       }
     };
 
-    socket.on('reload_page', reloadPageHandler);
+    if (socket) {
+      socket.on('reload_page', reloadPageHandler);
 
-    return () => {
-      socket.off('reload_page', reloadPageHandler);
-      socket.disconnect();
-    };
+      return () => {
+        socket.off('reload_page', reloadPageHandler);
+      };
+    }
 
-  }, []);
+  }, [socket]);
 
   return (
     <Pressable style={[styles.button, buttonStyle.button]} onPress={onPress}>

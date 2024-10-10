@@ -1,4 +1,4 @@
-// BlimpButtonContainer.tsx
+// BlimpButton.tsx
 
 // React
 import React from 'react';

@@ -45,15 +45,17 @@ export const useCalibrate = () => {
       }
     };
 
-    // Listen for 'update_button_color' events
-    socket.on('update_button_color', handleUpdateButtonColor);
+    if (socket) {
+      // Listen for 'update_button_color' events
+      socket.on('update_button_color', handleUpdateButtonColor);
 
-    // Cleanup to remove the listener when the component is unmounted
-    return () => {
-      socket.off('update_button_color', handleUpdateButtonColor);
-    };
+      // Cleanup to remove the listener when the component is unmounted
+      return () => {
+        socket.off('update_button_color', handleUpdateButtonColor);
+      };
+    }
 
-  }, []);
+  }, [socket]);
 
   // Update Blimp Height
   useEffect(() => {
@@ -75,19 +77,23 @@ export const useCalibrate = () => {
       }
     };
 
-    // Listen for 'update_button_value' events
-    socket.on('update_button_value', handleUpdateButtonValue);
+    if (socket) {
+      // Listen for 'update_button_value' events
+      socket.on('update_button_value', handleUpdateButtonValue);
 
-    // Cleanup to remove the listener when the component is unmounted
-    return () => {
-      socket.off('update_button_value', handleUpdateButtonValue);
-    };
+      // Cleanup to remove the listener when the component is unmounted
+      return () => {
+        socket.off('update_button_value', handleUpdateButtonValue);
+      };
+    }
 
-  }, []);
+  }, [socket]);
 
   // Handle Calibrate Click
   const handleCalibrateClick = (name: string) => {
-    socket.emit('toggle_blimp_calibrate_button_color', name);
+    if (socket) {
+      socket.emit('toggle_blimp_calibrate_button_color', name);
+    }
   };
 
   return {
