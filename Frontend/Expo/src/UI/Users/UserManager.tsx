@@ -13,10 +13,18 @@ import uuid from 'react-native-uuid';
 // Async Storage on Device
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// Redux
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '../Redux/Store';
+import { setUserID } from '../Redux/States';
+
+
 export const getUserID = () => {
 
+    const dispatch: AppDispatch = useDispatch();
+
     // User ID
-    const [userID, setUser] = useState<String | null>(null);
+    const userID = useSelector((state: RootState) => state.app.userID);
 
     // Set User ID
     useEffect(() => {
@@ -34,14 +42,15 @@ export const getUserID = () => {
 
             // Add User
             if (storedUUID !== null) {
-                setUser(storedUUID);
+                dispatch(setUserID(storedUUID));
+                // setUser(storedUUID);
             }
 
         };
 
         getOrCreateUserId();
 
-    }, []);
+    }, [userID]);
 
     // User Inactivity Timer
     const userInactivityTimer = useRef<NodeJS.Timeout | null>(null);

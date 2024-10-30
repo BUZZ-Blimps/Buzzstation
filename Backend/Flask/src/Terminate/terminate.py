@@ -22,7 +22,7 @@ current_pid = os.getpid()
 def cleanup():
 
     # Starting Cleanup
-    print("\nPerforming cleanup...\n")
+    logger.info("Performing cleanup...\n")
 
     from SocketIO.Senders.redis import init_redis_values, get_redis_values
 
@@ -46,30 +46,30 @@ def cleanup():
     # Destroy Basestation Node
     try:
         basestation_node.destroy_node()
-        print('Basestation Node Destroyed.\n')
+        logger.info('Basestation Node Destroyed.\n')
     except rclpy.handle.InvalidHandle as e:
-        print('Error: Failed Destroying Basestation Node\n')
+        logger.info('Error: Failed Destroying Basestation Node\n')
 
     # Shutdown Rclpy
     try:
         if rclpy.ok():
             rclpy.shutdown()
-        print('Rclpy Shutdown.\n')
+        logger.info('Rclpy Shutdown.\n')
     except Exception as e:
-        print('Error: Failed Shutting Down Rclpy\n')
+        logger.info('Error: Failed Shutting Down Rclpy\n')
 
     # Close Barometer Serial Port
     try:
         basestation_node.barometer_serial.close()
-        print('Barometer Serial Port Closed.\n')
+        logger.info('Barometer Serial Port Closed.\n')
     except:
-        print('No Barometer Serial Port Found.\n')
+        logger.info('No Barometer Serial Port Found.\n')
 
     # Finished Cleanup
-    print("Cleanup complete.\n")
+    logger.info("Cleanup complete.\n")
 
     # Start Program Termination
-    print('Terminating Program...\n')
+    logger.info('Terminating Program...\n')
 
 # Terminate Code
 def terminate(sig, frame):
@@ -77,19 +77,22 @@ def terminate(sig, frame):
     # Kill the Main Script
     pid = find_script_by_env_var('UNIQUE_ID', 'buzzstation')
     if pid:
-        os.kill(int(pid), signal.SIGINT)
+        cleanup()
+        os.kill(int(pid), signal.SIGTERM)
 
-    # Kill PID
-    print('Terminating Program...\n')
+    # Kill Current PID if Cannot Terminate Main Script
+    logger.info('Failed Initial Termination.\n')
     try:
         os.kill(current_pid, sig.SIGTERM)
-    except AttributeError:
+    except:
         os.kill(current_pid, signal.SIGTERM)
     
     # If all else fails...
-    subprocess("kill -9 " + str(current_pid))
+    logger.info('Failed Secondary Termination.\n')
+    subprocess.run(["kill", "-9", str(current_pid)])
 
-    print('Failed Termination.\n')
+    # Error has occurred
+    logger.info('Failed Termination.\n')
 
 # Find script with Environment Variable Name and Value
 def find_script_by_env_var(env_var_name, env_var_value):
@@ -103,7 +106,7 @@ def find_script_by_env_var(env_var_name, env_var_value):
                 env_vars = open(f'/proc/{pid}/environ').read()
                 if env_var_name in env_vars and env_var_value in env_vars:
                     # Testing
-                    #print(f'\nScript found with PID: {pid}')
+                    #logger.info(f'\nScript found with PID: {pid}')
                     return pid
             except Exception as e:
                 pass
@@ -112,4 +115,4 @@ def find_script_by_env_var(env_var_name, env_var_value):
         #print('Script not found')
         return None
     except Exception as e:
-        print(f'Error: {e}')
+        logger.info(f'Error: {e}')

@@ -9,13 +9,17 @@ import { Image, StyleSheet } from 'react-native';
 // Constants
 import {isIOS, isAndroid, isWeb} from '../../Constants/Constants';
 
-interface OverlayImageProps {
-  isOverlayImage: boolean; // Define the type for the prop
-}
+// Redux
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../Redux/Store';
 
-const OverlayImage: React.FC<OverlayImageProps> = ({ isOverlayImage }) => {
+const OverlayImage = () => {
+
+  // Overlay Image State
+  const overlayImageState = useSelector((state: RootState) => state.app.overlayImageState);
+  
   return (
-    isOverlayImage && (
+    overlayImageState && (
       <Image
         source={require('../../../assets/controller_mapping.png')}
         style={styles.overlayImage}
@@ -29,8 +33,8 @@ const styles = StyleSheet.create({
   overlayImage: {
     position: 'absolute',
     zIndex: 1, // Put behind buttons
-    width: '100%', // Adjust width to 75% of the parent
-    height: '100%', // Adjust height to 75% of the parent
+    width: '100%', // Adjust width
+    height: '100%', // Adjust height
     top: '0%', // Center vertically
     left: isAndroid || isIOS ? '8%' : '0%', // Center horizontally
     pointerEvents: 'none', // Make the image non-clickable

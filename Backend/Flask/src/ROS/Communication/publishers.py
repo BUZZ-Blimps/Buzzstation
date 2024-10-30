@@ -68,7 +68,7 @@ def create_pub(blimp, key, data_type):
     elif data_type == 'Int64':
         pub = blimp.basestation_node.create_publisher(Int64, f'{blimp.name}/{key}', 1)
     elif data_type == 'Float64MultiArray':
-        pub = blimp.basestation_node.create_publisher(Float64MultiArray, f'{blimp.name}/{key}', 1)
+        pub = blimp.basestation_node.create_publisher(Float64MultiArray, f'{blimp.name}/{key}', blimp.basestation_node.motor_commands_qos_profile)
     else:
         pass
     return pub
@@ -180,6 +180,8 @@ def publish_mode(blimp):
 
 def publish_motor_commands(blimp):
     # Publish motor_commands value to the ROS topic
+    # Different than Blimp Class Motor Commands!
+    # Used for to Zero Out Motor Commands for Safety
     msg = Float64MultiArray()
     msg.data = blimp.motor_commands
     blimp.pub_motor_commands.publish(msg)

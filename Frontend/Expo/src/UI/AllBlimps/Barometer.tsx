@@ -10,20 +10,36 @@ import { socket, isIOS, isAndroid, isWeb} from '../Constants/Constants';
 // Float Data Type
 import { Float } from 'react-native/Libraries/Types/CodegenTypes';
 
+// Navigation
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+
+// Redux
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '../Redux/Store';
+import { setBarometerColor, setBarometerText } from '../Redux/States';
+
 interface Button {
   BarometerButtonStyle: any;
-  buttonColor: string;
-  buttonText: string;
   handleClick: () => void;
 }
 
+// Define the navigation type locally within this file
+type RootStackParamList = {
+  Buzzstation: undefined;
+  Tuning: undefined;
+  Telemetry: undefined;
+  Logs: undefined;
+  Controller: undefined;
+  Help: undefined;
+};
+
 export const useBarometer = (defaultColor: string, defaultText: string): Button => {
 
-  // Button Color
-  const [buttonColor, setButtonColor] = useState<string>(defaultColor);
+  // Redux Dispatch
+  const dispatch: AppDispatch = useDispatch();
 
-  // Button Text
-  const [buttonText, setButtonText] = useState<string>(defaultText);
+  // Use the typed navigation prop directly in the file
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   // Get Barometer Reading
   useEffect(() => {
@@ -31,7 +47,7 @@ export const useBarometer = (defaultColor: string, defaultText: string): Button 
     const barometerHandler = (receivedBarometerReading: Float | String) => {
       let barometerReading = receivedBarometerReading;
       let newButtonText = 'Barometer: ' + String(barometerReading);
-      setButtonText(newButtonText);
+      dispatch(setBarometerText(newButtonText));
     };
 
     if (socket) {
@@ -60,7 +76,7 @@ export const useBarometer = (defaultColor: string, defaultText: string): Button 
         newColor = '#E11C1C';
       }
 
-      setButtonColor(newColor);
+      dispatch(setBarometerColor(newColor));
     };
 
     if (socket) {
@@ -78,8 +94,10 @@ export const useBarometer = (defaultColor: string, defaultText: string): Button 
   // Barometer Button Click
   const handleClick = () => {
 
-      // Testing
-      //console.log('Barometer button clicked');
+
+    navigation.navigate('Telemetry');
+    // Testing
+    //console.log('Barometer button clicked');
 
   };
 
@@ -90,6 +108,7 @@ export const useBarometer = (defaultColor: string, defaultText: string): Button 
       height: isAndroid || isIOS ? 50 : 100,
       alignItems: 'center',
       justifyContent: 'center',
+      left: isAndroid || isIOS ? '75%' : '0%',
       marginVertical: 0,
       marginTop: 5,
       marginLeft: isAndroid || isIOS ? 20 : 20,
@@ -111,8 +130,6 @@ export const useBarometer = (defaultColor: string, defaultText: string): Button 
 
   return {
     BarometerButtonStyle,
-    buttonColor,
-    buttonText,
     handleClick,
   };
 

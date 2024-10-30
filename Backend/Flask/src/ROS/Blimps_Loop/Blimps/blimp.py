@@ -92,6 +92,12 @@ class Blimp:
         # Motor Commands
         self.motor_commands = [float(0.0), float(0.0), float(0.0), float(0.0)]
 
+        # Motor Commands Timer
+        self.motor_commands_timer = None
+
+        # Motor Commands Updated (Not Used Currently)
+        self.motor_commands_updated = True
+
         # Calibrate Barometer
         self.calibrate_barometer = False
 
@@ -197,3 +203,13 @@ class Blimp:
     # Log Callback
     def log_callback(self, msg):
         self.log = msg.data
+
+    # Individual Blimp Publishers #
+
+    # Publish Motor Commands
+    def publish_motor_commands(self):
+        # Publish motor_commands value to the ROS topic
+        # Frequency = 100 Hz per connected blimp
+        msg = Float64MultiArray()
+        msg.data = self.motor_commands
+        self.pub_motor_commands.publish(msg)

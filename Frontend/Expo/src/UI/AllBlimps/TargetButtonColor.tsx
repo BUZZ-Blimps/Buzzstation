@@ -7,16 +7,19 @@ import { StyleSheet, Platform } from 'react-native';
 // Constants
 import { socket, isIOS, isAndroid, isWeb} from '../Constants/Constants';
 
+// Redux
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '../Redux/Store';
+import { setGoalColor, setEnemyColor } from '../Redux/States';
+
 interface Button {
-  TargetButtonStyle: any;
-  buttonColor: string;
   handleClick: (buttonKey: string) => void;
 }
 
 export const useTargetButtonColor = (defaultColor: string, buttonKey: string): Button => {
 
-  // Button Color
-  const [buttonColor, setButtonColor] = useState<string>(defaultColor);
+  // Redux Dispatch
+  const dispatch: AppDispatch = useDispatch();
 
   // Update Button Color
   useEffect(() => {
@@ -40,7 +43,12 @@ export const useTargetButtonColor = (defaultColor: string, buttonKey: string): B
 
       if (receivedName === 'none') {
         if (receivedButtonKey === buttonKey) {
-          setButtonColor(newColor);
+          if (buttonKey === 'goal_color') {
+            dispatch(setGoalColor(newColor));
+          }
+          else if (buttonKey === 'enemy_color') {
+            dispatch(setEnemyColor(newColor));
+          }
           // Testing
           //console.log(buttonKey + " changed to " + receivedButtonColor);
         }
@@ -75,33 +83,7 @@ export const useTargetButtonColor = (defaultColor: string, buttonKey: string): B
 
   };
 
-  // Target Button Style
-  const TargetButtonStyle = StyleSheet.create({
-    button: {
-      width: 100,
-      height: 50,
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginVertical: 12,
-      borderRadius: 5,
-      borderWidth: 2,
-      borderColor: 'black',
-    },
-    buttonText: {
-      fontWeight: 'bold',
-      color: 'white', // Text color
-      fontSize: 18, // Text size
-      textAlign: 'center', // Center the text horizontally
-      verticalAlign: 'middle', // Center the text vertically
-      textShadowColor: 'black', // Outline color
-      textShadowOffset: { width: 0, height: 0 }, // Direction of the shadow
-      textShadowRadius: isAndroid || isIOS ? 2 : 2.5, // Spread of the shadow
-    },
-  }); 
-
   return {
-    TargetButtonStyle,
-    buttonColor,
     handleClick,
   };
 

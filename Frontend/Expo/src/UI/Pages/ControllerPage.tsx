@@ -1,15 +1,17 @@
 // Controller Page //
 
 // React
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 // React Native
-import { SafeAreaView, StyleSheet, Text } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, Image, ScrollView } from 'react-native';
+
+// React Navigation
+import { useFocusEffect } from '@react-navigation/native';
 
 // Components
 import SidebarMenu from './Components/SidebarMenu';
 import TopButtons from './Components/TopButtons';
-import AllBlimpsButtons from './Components/AllBlimpsButtons';
 import OverlayImage from './Components/OverlayImage';
 
 // Functions
@@ -22,28 +24,54 @@ const ControllerPage: React.FC = () => {
     
   disableStyleWarning();
 
-  const [isOverlayImage, setOverlayImage] = useState(false);
+  // Show Components
+  const [showComponents, setShowComponents] = useState(true);
+
+  // Only Mount Components on Current Page
+  useFocusEffect(
+    React.useCallback(() => {
+      // When focused, show components
+      setShowComponents(true);
+      return () => {
+        // Cleanup when navigating away
+        setShowComponents(false); // This will effectively unmount the components
+      };
+    }, [])
+  );
 
   return (
     <SafeAreaView style={styles.container}>
 
-       <SidebarMenu />
+        {showComponents && (
+        <>
+          <SidebarMenu />
 
-       <TopButtons setOverlayImage={setOverlayImage} />
+          <TopButtons />
 
-      <SafeAreaView style={styles.mainContainer}>
+          <Text style={styles.text}>
+            Controller Mapping
+          </Text>
 
-        <Text style={styles.text}>
-          Controller Page
-        </Text>
+          <ScrollView
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollContent}
+          >
 
-      </SafeAreaView>
+            <SafeAreaView style={styles.mainContainer}>
 
-      <Text style={styles.middleText}>
-          Coming Soon...
-      </Text>
+            <Image
+              source={require('../../assets/controller_mapping.png')}
+              resizeMode="contain"
+              style={styles.image}
+            />
 
-      <OverlayImage isOverlayImage={isOverlayImage} />
+            </SafeAreaView>
+
+          </ScrollView>
+
+          <OverlayImage />
+        </>
+      )}
 
     </SafeAreaView>
   );
@@ -57,28 +85,35 @@ const styles = StyleSheet.create({
   },
   mainContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'center', // Center the content horizontally
   },
   text: {
     fontWeight: 'bold',
     color: 'white', // Text color
-    fontSize: 50, // Text size
+    fontSize: isAndroid || isIOS ? 35 : 50, // Text size
     textAlign: 'center', // Center the text
     textShadowColor: 'black', // Outline color
     textShadowOffset: { width: 1, height: 1 }, // Direction of the shadow
     textShadowRadius: isAndroid || isIOS ? 0.1 : 1, // Spread of the shadow
     userSelect: 'none',
+    marginTop: isAndroid || isIOS ? -10 : -25,
+    marginBottom: isAndroid || isIOS ? '0.5%' : '0.5%',
   },
-  middleText: {
-    fontWeight: 'bold',
-    color: 'white', // Text color
-    fontSize: 50, // Text size
-    marginTop: '10%',
-    textAlign: 'center', // Center the text
-    textShadowColor: 'black', // Outline color
-    textShadowOffset: { width: 1, height: 1 }, // Direction of the shadow
-    textShadowRadius: isAndroid || isIOS ? 0.1 : 1, // Spread of the shadow
-    userSelect: 'none',
+  image: {
+    position: 'relative',
+    zIndex: 1,
+    width: isAndroid || isIOS ? 400 : 700, // Adjust width
+    height: isAndroid || isIOS ? 400 : 700, // Adjust height
+    top: isAndroid || isIOS ? '-4%' : '-7%', // Center vertically
+    pointerEvents: 'none', // Make the image non-clickable
+  },
+  scrollView: {
+    maxHeight: '100%', // Set maximum scroll height (adjust as needed)
+    width: '100%', // Adjust width as necessary
+  },
+  scrollContent: {
+    alignItems: 'center',
+    paddingTop: 5,
   },
 });
 

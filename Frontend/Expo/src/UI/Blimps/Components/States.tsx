@@ -7,11 +7,19 @@ import { StyleSheet } from 'react-native';
 // Constants
 import { socket, isIOS, isAndroid, isWeb} from '../../Constants/Constants';
 
+// Redux
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '../../Redux/Store';
+import { setStateValues } from '../../Redux/States';
+
 export const useStates = () => {
+
+    // Redux Dispatch
+    const dispatch: AppDispatch = useDispatch();
   
-    // State Button Text Values
-    const [stateValues, setStateValues] = useState<{ [key: string]: string }>({});
-  
+    // State Values
+    const stateValues = useSelector((state: RootState) => state.app.stateValues);
+
     // Update State Button Text Value
     useEffect(() => {
 
@@ -64,10 +72,7 @@ export const useStates = () => {
 
             if (receivedButtonKey === 'state_machine') {
                 // Update State Values with the new value for the specific blimp
-                setStateValues(prevStateValues => ({
-                    ...prevStateValues,
-                    [receivedName]: newValue,
-                }));
+                dispatch(setStateValues({ [receivedName]: newValue }));
 
                 // Testing
                 //console.log(`${receivedButtonKey} for ${receivedName} changed to ${receivedValue}`);
@@ -112,7 +117,6 @@ export const useStates = () => {
     });
   
     return {
-      stateValues,
       stateButtonStyle,
     };
 

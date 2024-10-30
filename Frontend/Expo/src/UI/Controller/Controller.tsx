@@ -1,262 +1,212 @@
 // Controller.tsx
 
 // React
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 
 // React Native
-import { View, Pressable, StyleSheet, Platform, ViewStyle, TextStyle } from 'react-native';
+import { View, Pressable, StyleSheet } from 'react-native';
 
 // React Native Animations
 import Animated, { Easing, useSharedValue, withTiming, useAnimatedStyle } from 'react-native-reanimated';
 
 // Constants
-import { socket, isIOS, isAndroid, isWeb} from '../Constants/Constants';
+import { socket, isIOS, isAndroid, isWeb } from '../Constants/Constants';
 
-// Names
-import { useNames } from '../Blimps/Components/Names';
+// User ID
+import { getUserID } from '../Users/UserManager';
+
+// Redux
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../Redux/Store';
+import { setSidebarMenuState } from '../Redux/States'; 
 
 // Gamepads
 import { useGamepads } from "react-gamepads";
-
-interface ButtonStyle {
-    button: ViewStyle; // Style for the button container
-    buttonText: TextStyle; // Style for the text inside the button
-}
 
 interface ButtonProps {
     blimpName: string; // Name of the blimp
     buttonKey: string; // Unique key for the button
     buttonColor: string; // Color of the button
-    buttonStyle: ButtonStyle; // Style for the button
     onPress: () => void; // Handle Click Function
 }
 
-const Controller: React.FC<ButtonProps> = ({ blimpName, buttonKey, buttonColor, buttonStyle, onPress }) => {
+const Controller: React.FC<ButtonProps> = ({ blimpName, buttonKey, buttonColor, onPress }) => {
+    const dispatch = useDispatch();
+    const sidebarMenuState = useSelector((state: RootState) => state.app.sidebarMenuState);
+    const { userID } = getUserID();
 
-  // Dot Values
-  const leftDotX = useSharedValue(50);
-  const leftDotY = useSharedValue(50);
-  const rightDotX = useSharedValue(50);
-  const rightDotY = useSharedValue(50);
+    // Dot Values
+    const leftDotX = useSharedValue(50);
+    const leftDotY = useSharedValue(50);
+    const rightDotX = useSharedValue(50);
+    const rightDotY = useSharedValue(50);
 
-  // Names, Name Colors, and UserIDs
-  const { names, nameColors, userID } = useNames();
+    // Names and Colors
+    const names = useSelector((state: RootState) => state.app.names);
+    const nameColors = useSelector((state: RootState) => state.app.nameColors);
 
-  // GamePads
-  const [gamepads, setGamepads] = useState<{ [index: number]: Gamepad }>({});
+    // Axes and Button States
+    const prevAxesRef = useRef([0, 0, 0, 0]);
+    const [buttonStates, setButtonStates] = useState<{ [key: string]: boolean }>({});
+    const prevButtonStatesRef = useRef<{ [key: string]: boolean }>({});
 
-  // First Gamepad
-  const firstGamepad = Object.values(gamepads)[0];
+    // GamePads
+    const [gamepads, setGamepads] = useState<{ [index: number]: Gamepad }>({});
+    if (isWeb) useGamepads((gamepads) => setGamepads(gamepads));
+    const firstGamepad = Object.values(gamepads)[0];
 
-  // Axes States
-  const prevAxesRef = useRef([0, 0, 0, 0]);
+    // Memoized blimp names
+    const blimpNames = useMemo(() => names.filter((name) => nameColors[name] === '#006FFF'), [names, nameColors]);
 
-  // Button States
-  const [buttonStates, setButtonStates] = useState<{ [key: string]: boolean }>({});
-  const prevButtonStatesRef = useRef<{ [key: string]: boolean }>({});
-
-  // Get Gamepads for Web
-  if (isWeb) {
-    useGamepads((gamepads) => setGamepads(gamepads));
-  }
-
-  // Update Buttons
-  const updateButtons = useCallback((gamepad: Gamepad) => {
-
-    const newButtonStates: { [key: string]: boolean } = {};
-
-    gamepad.buttons.forEach((button, index) => {
-      newButtonStates[`button${index}`] = button.pressed;
-    });
-
-    const prevButtonStates = prevButtonStatesRef.current;
-
-    let stateChanged = false;
-    for (let key in newButtonStates) {
-      if (prevButtonStates[key] !== newButtonStates[key]) {
-        stateChanged = true;
-        if (prevButtonStates[key] && !newButtonStates[key]) {
-
-          let count = 0;
-
-          // Handle the button release event here
-          for (let index = 0; index < names.length; index++) {
-            const name = names[index];
-            if (nameColors[name] === '#006FFF') {
-              let val: { name?: string; button?: string; userID?: string} = {};
-              val['name'] = name;
-              val['button'] = key;
-              val['userID'] = String(userID);
-              
-              if (socket) {
-                // Emit to Backend
-                socket.emit('blimp_button', val);
-              }
-
-              // Increase Count
-              count++;
-
-              // Toggle Overlay Image
-              if (val['button'] === 'button8') {
-                onPress();
-              }
-            }
-          }
-
-          // No Blimps Connected
-          if (count === 0) {
-            let val: { button?: string; userID?: string} = {};
-            val['button'] = key;
-            val['userID'] = String(userID);
-
-            if (socket) {
-              socket.emit('nonblimp_button', val);
-            }
-
-            // Toggle Overlay Image
-            if (val['button'] === 'button8') {
-              onPress();
-            }
-          }
-
-        }
-      }
-    }
-
-    if (stateChanged) {
-      setButtonStates(newButtonStates);
-      prevButtonStatesRef.current = newButtonStates;
-    }
-
-  }, [socket, names, nameColors]);
-
-  // Update Joysticks
-  const updateJoysticks = useCallback((gamepad: Gamepad) => {
-
-    const { axes } = gamepad;
-    const [leftStickX, leftStickY, rightStickX, rightStickY] = axes;
-
-    const deadZone = 0.1;
-    const deadZoneApplied = (value: number) => (Math.abs(value) < deadZone ? 0 : value);
-    const clampedAxes = [
-        parseFloat(deadZoneApplied(leftStickX).toFixed(2)),
-        parseFloat(deadZoneApplied(leftStickY).toFixed(2)),
-        parseFloat(deadZoneApplied(rightStickX).toFixed(2)),
-        parseFloat(deadZoneApplied(rightStickY).toFixed(2)),
-    ];
-
-    const prevAxes = prevAxesRef.current;
-    const axesChanged = !clampedAxes.every((value, index) => value === prevAxes[index]);
-
-    if (axesChanged) {
-      prevAxesRef.current = clampedAxes;
-      for (let index = 0; index < names.length; index++) {
-        const name = names[index];
-        if (nameColors[name] === '#006FFF') {
-          let val: { name?: string; axes?: number[] } = {};
-          val['name'] = name;
-          val['axes'] = clampedAxes;
-
-          if (socket) {
-            socket.emit('motor_command', val);
-          }
-        }
-      }
-      // Animate the values
-      leftDotX.value = withTiming(50 + clampedAxes[0] * 45, { duration: 0, easing: Easing.linear });
-      leftDotY.value = withTiming(50 + clampedAxes[1] * 45, { duration: 0, easing: Easing.linear });
-      rightDotX.value = withTiming(50 + clampedAxes[2] * 45, { duration: 0, easing: Easing.linear });
-      rightDotY.value = withTiming(50 + clampedAxes[3] * 45, { duration: 0, easing: Easing.linear });
-    }
-  }, [socket, names, nameColors]);
-
-  // Controller Inputs
-  useEffect(() => {
-    if (firstGamepad) {
-      updateJoysticks(firstGamepad);
-      updateButtons(firstGamepad);
-    }
-  }, [firstGamepad, updateJoysticks, updateButtons]);
-
-  // Left Dot Animation
-  const leftDotStyle = useAnimatedStyle(() => ({
-    left: leftDotX.value,
-    top: leftDotY.value,
-  }));
-
-  // Right Dot Animation
-  const rightDotStyle = useAnimatedStyle(() => ({
-    left: rightDotX.value,
-    top: rightDotY.value,
-  }));
-
-  // User ID Reference
-  const userIDRef = useRef(userID);
-  useEffect(() => {
-    userIDRef.current = userID;
-  }, [userID]);
-
-  // Reload Page
-  useEffect(() => {
-
-    const reloadPageHandler = (receivedUserID: string) => {
-
-      // Testing
-      //console.log('Reload page event received from user:', receivedUserID);
-      //console.log('Current user:', userIDRef.current);
-      
-      if (isWeb) {
-
-        if (userIDRef.current === receivedUserID) {
-          // Reload the webpage for the specified user
-          window.location.reload();
-        }
-
-      } else {
-
-        // To-Do: Reload the app on native platforms
-
-      }
+    // Helper function to emit socket events
+    const emitSocketEvent = (event: string, payload: Record<string, any>) => {
+        if (socket) socket.emit(event, payload);
     };
 
-    if (socket) {
-      socket.on('reload_page', reloadPageHandler);
+    // Update Buttons
+    const updateButtons = useCallback((gamepad: Gamepad) => {
+        const newButtonStates = gamepad.buttons.reduce((acc, button, index) => {
+            acc[`button${index}`] = button.pressed;
+            return acc;
+        }, {} as { [key: string]: boolean });
 
-      return () => {
-        socket.off('reload_page', reloadPageHandler);
+        const prevButtonStates = prevButtonStatesRef.current;
+        let stateChanged = false;
+
+        // Handle state changes
+        for (const key in newButtonStates) {
+            if (prevButtonStates[key] !== newButtonStates[key]) {
+                stateChanged = true;
+
+                if (prevButtonStates[key] && !newButtonStates[key]) {
+                    const count = blimpNames.reduce((count, name) => {
+                        const val = { name, button: key, userID: String(userID) };
+                        emitSocketEvent('blimp_button', val);
+
+                        if (val.button === 'button8') onPress();
+                        if (val.button === 'button9') dispatch(setSidebarMenuState(!sidebarMenuState));
+
+                        return count + 1;
+                    }, 0);
+
+                    // Handle non-blimp buttons if no blimps are connected
+                    if (count === 0) {
+                        const val = { button: key, userID: String(userID) };
+                        if (val.button === 'button8') onPress();
+                        if (val.button === 'button9') dispatch(setSidebarMenuState(!sidebarMenuState));
+                        emitSocketEvent('nonblimp_button', val);
+                    }
+                }
+            }
+        }
+
+        if (stateChanged) {
+            setButtonStates((prev) => ({ ...prev, ...newButtonStates }));
+            prevButtonStatesRef.current = newButtonStates;
+        }
+    }, [socket, blimpNames, userID, onPress, dispatch, sidebarMenuState]);
+
+    // Update Joysticks
+    const updateJoysticks = useCallback((gamepad: Gamepad) => {
+        const { axes } = gamepad;
+        const deadZone = 0.1;
+
+        const deadZoneApplied = (value: number) => (Math.abs(value) < deadZone ? 0 : value);
+        const clampedAxes = axes.map((axis) => parseFloat(deadZoneApplied(axis).toFixed(2)));
+
+        const prevAxes = prevAxesRef.current;
+        const axesChanged = !clampedAxes.every((value, index) => value === prevAxes[index]);
+
+        if (axesChanged) {
+            prevAxesRef.current = clampedAxes;
+            blimpNames.forEach((name) => {
+                const val = { name, axes: clampedAxes };
+                emitSocketEvent('motor_command', val);
+            });
+
+            // Animate the values
+            [leftDotX, leftDotY, rightDotX, rightDotY].forEach((dot, index) => {
+                dot.value = withTiming(50 + clampedAxes[index] * 45, { duration: 0, easing: Easing.linear });
+            });
+        }
+    }, [socket, blimpNames]);
+
+    // Joystick and Button Inputs
+    useEffect(() => {
+        if (firstGamepad) {
+            updateJoysticks(firstGamepad);
+            updateButtons(firstGamepad);
+        }
+    }, [firstGamepad, updateJoysticks, updateButtons]);
+
+    // Left Dot Animation
+    const leftDotStyle = useAnimatedStyle(() => ({
+        left: leftDotX.value,
+        top: leftDotY.value,
+    }));
+
+    // Right Dot Animation
+    const rightDotStyle = useAnimatedStyle(() => ({
+        left: rightDotX.value,
+        top: rightDotY.value,
+    }));
+
+    // User ID Reference
+    const userIDRef = useRef(userID);
+    useEffect(() => {
+        userIDRef.current = userID;
+    }, [userID]);
+
+    // Reload Page
+    useEffect(() => {
+      const reloadPageHandler = (receivedUserID: string) => {
+          if (isWeb && userIDRef.current === receivedUserID) {
+              window.location.reload();
+          }
       };
-    }
 
-  }, [socket]);
+      if (socket) {
+          socket.on('reload_page', reloadPageHandler);
+          return () => {
+              socket.off('reload_page', reloadPageHandler);
+          };
+      }
+    }, [socket]);
 
-  return (
-    <Pressable style={[styles.button, buttonStyle.button]} onPress={onPress}>
-      <View style={styles.gridContainer}>
-        {/* Left Grid */}
-        <View style={styles.grid}>
-          <View style={styles.circle} />
-          <Animated.View style={[styles.dot, leftDotStyle]} />
-          <View style={styles.xAxis} />
-          <View style={styles.yAxis} />
-        </View>
-        {/* Right Grid */}
-        <View style={[styles.grid, styles.rightGrid]}>
-          <View style={styles.circle} />
-          <Animated.View style={[styles.dot, rightDotStyle]} />
-          <View style={styles.xAxis} />
-          <View style={styles.yAxis} />
-        </View>
-      </View>
-    </Pressable>
-  );
-  
+    return (
+        <Pressable style={styles.button} onPress={onPress}>
+            <View style={styles.gridContainer}>
+                {/* Left Grid */}
+                <View style={styles.grid}>
+                    <View style={styles.circle} />
+                    <Animated.View style={[styles.dot, leftDotStyle]} />
+                    <View style={styles.xAxis} />
+                    <View style={styles.yAxis} />
+                </View>
+                {/* Right Grid */}
+                <View style={[styles.grid, styles.rightGrid]}>
+                    <View style={styles.circle} />
+                    <Animated.View style={[styles.dot, rightDotStyle]} />
+                    <View style={styles.xAxis} />
+                    <View style={styles.yAxis} />
+                </View>
+            </View>
+        </Pressable>
+    );
 };
 
 // Controller Input Display Styles
 const styles = StyleSheet.create({
   button: {
-    justifyContent: 'center',
+    width: isAndroid || isIOS ? 200 : 235,
+    height: isAndroid || isIOS ? 40 : 100,
+    left: isAndroid || isIOS ? '35%' : '0%',
     alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10,
+    marginTop: 0,
+    marginRight: 0,
+    borderColor: 'white',
   },
   gridContainer: {
     flexDirection: 'row',

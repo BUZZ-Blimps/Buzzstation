@@ -59,7 +59,7 @@ return (
   {isAndroid || isIOS && (
   <Pressable 
       style={[buttonStyle.button, { backgroundColor: buttonColor }]}
-      onPressIn={onPress}
+      onPress={onPress}
       role='button'
       accessible={true}
       android_disableSound={true}

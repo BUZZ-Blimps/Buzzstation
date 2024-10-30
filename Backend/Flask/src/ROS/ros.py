@@ -47,6 +47,7 @@ class Basestation(Node):
         self.create_blimps_loop()
 
     def init_attributes(self):
+        
         # Global Basestation Node Class (Used in other files)
         global basestation_node
         basestation_node = self
@@ -65,6 +66,14 @@ class Basestation(Node):
             durability=DurabilityPolicy.TRANSIENT_LOCAL
         )
 
+        # QoS Profile for Motor Commands
+        self.motor_commands_qos_profile = QoSProfile(
+            history=HistoryPolicy.KEEP_LAST,
+            depth=10,
+            reliability=ReliabilityPolicy.RELIABLE,
+            durability=DurabilityPolicy.VOLATILE
+        )
+
         # Redis Client
         self.redis_client = redis_client
 
@@ -73,6 +82,7 @@ class Basestation(Node):
         self.enemy_color = bool(int(self.redis_client.get('enemy_color').decode('utf-8')))
 
     def create_blimps_loop(self):
+
         # Heartbeat Subscriptions
         self.heartbeat_subs = {}
 
@@ -96,7 +106,7 @@ class Basestation(Node):
         self.blimps_timer = self.create_timer(blimps_loop_period, blimps_loop)
 
         # Faking Barometer Serial Port Connection
-        self.fake_barometer = False # Default: False (To-Do: Read from a yaml file or make a button on frontend UI)
+        self.fake_barometer = True # Default: False (To-Do: Read from a yaml file or make a button on frontend UI)
 
         # Barometer Publisher
         self.pub_barometer = self.create_publisher(Float64, 'Barometer/reading', 10)

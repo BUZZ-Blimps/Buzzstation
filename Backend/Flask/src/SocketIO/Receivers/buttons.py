@@ -18,12 +18,13 @@ logger = get_logger('Basestation')
 @socketio.on('toggle_name_button')
 def toggle_name_button(val):
     from SocketIO.socketio import name_button_colors
+    from ROS.ros import basestation_node
 
     # Retrieve Blimp Name and UserID
     name = val['name']
     userID = val['userID']
 
-    # Turn on Piloting for Specified User
+    # Turn on Piloting for Specified User (Connect to Blimp)
     if name not in name_button_colors:
         
         # Only allow each user to pilot one blimp
@@ -35,6 +36,9 @@ def toggle_name_button(val):
             # Make Blimp Button Blue for UserID, Red for everyone else
             socketio.emit('toggle_name_button_color', { 'userID': userID, 'name': name})
 
+            # Start Motor Commands Timer
+            basestation_node.current_blimps[name].motor_commands_timer = basestation_node.create_timer(float(1.0 / 100), basestation_node.current_blimps[name].publish_motor_commands)
+
     # Turn off Piloting (Disconnect from blimp)
     elif name_button_colors[name] == userID:
 
@@ -43,6 +47,11 @@ def toggle_name_button(val):
 
         # Make Blimp Name Button Green for all users
         socketio.emit('toggle_name_button_color', { 'userID': 'none', 'name': name})
+
+        # Stop Motor Commands Timer
+        if basestation_node.current_blimps[name].motor_commands_timer is not None:
+            basestation_node.current_blimps[name].motor_commands_timer.cancel()
+            basestation_node.current_blimps[name].motor_commands_timer = None
 
     # Store Blimp Button Colors to Redis
     redis_client.set('name_button_colors', json.dumps(name_button_colors))

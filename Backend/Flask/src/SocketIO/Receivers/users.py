@@ -48,3 +48,8 @@ def inactive_user(userID):
 
                 # Store Blimp Button Colors to Redis
                 redis_client.set('name_button_colors', json.dumps(name_button_colors))
+
+                # Stop Motor Commands Timer
+                if basestation_node.current_blimps[name].motor_commands_timer is not None:
+                    basestation_node.current_blimps[name].motor_commands_timer.cancel()
+                    basestation_node.current_blimps[name].motor_commands_timer = None

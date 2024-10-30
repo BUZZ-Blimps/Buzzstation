@@ -1,4 +1,5 @@
 // TopButtons.tsx
+
 import React from 'react';
 import { SafeAreaView, Image, Pressable, StyleSheet, Platform } from 'react-native';
 import Button from '../../Components/Button';
@@ -6,17 +7,33 @@ import Controller from '../../Controller/Controller';
 import { handleLogoPress } from '../Functions/HandleLogoPress';
 import { useBarometer } from '../../AllBlimps/Barometer';
 import { isAndroid, isIOS } from '../../Constants/Constants';
+import { getUserID } from '../../Users/UserManager';
 
-interface TopButtonsProps {
-  setOverlayImage: React.Dispatch<React.SetStateAction<boolean>>; // Function to toggle overlay image
-}
+// Redux
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../Redux/Store';
+import { setOverlayImageState } from '../../Redux/States';
 
-const TopButtons: React.FC<TopButtonsProps> = ({ setOverlayImage }) => {
+
+const TopButtons = () => {
   
+  const dispatch = useDispatch();
+
+  // Overlay Image State
+  const overlayImageState = useSelector((state: RootState) => state.app.overlayImageState);
+
+  // User ID
+  const { userID } = getUserID();
+
+  // Barometer Color
+  const barometerColor = useSelector((state: RootState) => state.app.barometerColor);
+
+  // Barometer Text
+  const barometerText = useSelector((state: RootState) => state.app.barometerText);
+
+  // Barometer Button Style and Click Function
   const {
     BarometerButtonStyle,
-    buttonColor: barometerButtonColor,
-    buttonText: barometerButtonText,
     handleClick: handleBarometerClick,
   } = useBarometer('#E11C1C', 'Barometer: Disconnected');
 
@@ -28,23 +45,15 @@ const TopButtons: React.FC<TopButtonsProps> = ({ setOverlayImage }) => {
         blimpName='none'
         buttonKey='controller'
         buttonColor='black'
-        buttonStyle={{
-          ...BarometerButtonStyle.button,
-          width: isAndroid || isIOS ? 200 : 235,
-          height: isAndroid || isIOS ? 40 : 100,
-          marginTop: 5,
-          marginRight: 20,
-          borderColor: 'white',
-        }}
-        onPress={() => setOverlayImage(prev => !prev)} // Toggle overlay image on controller button press
+        onPress={() => dispatch(setOverlayImageState(!overlayImageState))} // Toggle overlay image on controller button press
       />
 
       {/* Buzz Blimps Logo */}
-      <Pressable onPress={handleLogoPress}>
+      <Pressable onPress={() => handleLogoPress(userID)}>
         <Image
           source={require('../../../assets/buzz_blimps_logo.png')}
           resizeMode='contain'
-          style={Platform.OS === 'ios' || Platform.OS === 'android' ? styles.imageHalfSize : styles.image}
+          style={isAndroid || isIOS ? styles.imageHalfSize : styles.image}
         />
       </Pressable>
 
@@ -52,8 +61,8 @@ const TopButtons: React.FC<TopButtonsProps> = ({ setOverlayImage }) => {
       <Button
         blimpName='none'
         buttonKey='barometer'
-        buttonColor={barometerButtonColor}
-        buttonText={barometerButtonText}
+        buttonColor={barometerColor}
+        buttonText={barometerText}
         buttonStyle={BarometerButtonStyle}
         onPress={handleBarometerClick}
       />
@@ -67,12 +76,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: '1%',
   },
   image: {
   },
   imageHalfSize: {
     width: 624 / 2.6,
     height: 150 / 2.6,
+    left: isAndroid || isIOS ? '8%' : '0%',
   },
 });
 

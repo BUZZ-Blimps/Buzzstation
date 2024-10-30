@@ -34,7 +34,8 @@ import cv2
 # Other Packages
 from time import time # used
 import numpy as np # used
-import atexit
+import ast # used
+import atexit # used
 import sys # used
 import signal # used
 import os # used
@@ -47,7 +48,7 @@ import traceback # not used
 
 # Initialize Flask App and SocketIO
 app = Flask('Backend Server')
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
 
 # Connect to Redis server
 redis_client = redis.StrictRedis(host='localhost', port=6379, db=0)

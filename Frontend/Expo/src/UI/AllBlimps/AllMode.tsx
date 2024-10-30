@@ -6,8 +6,9 @@ import { StyleSheet } from 'react-native';
 // Constants
 import { socket, isIOS, isAndroid, isWeb} from '../Constants/Constants';
 
-// Modes
-import { useModes } from '../Blimps/Components/Modes';
+// Redux
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '../Redux/Store';
 
 interface Button {
     AllModeButtonStyle: any;
@@ -16,17 +17,17 @@ interface Button {
 
 export const useAllMode = (defaultColor: string, buttonKey: string): Button => {
 
-    // Modes
-    const { modeButtonColors } = useModes();
-  
+    // Mode Colors
+    const modeColors = useSelector((state: RootState) => state.app.modeColors);
+    
     // All Mode Button Click
     const handleClick = (buttonKey: string) => {
         if (buttonKey === 'all_auto') {
 
-            // Iterate through the modeButtonColors dictionary
-            for (const name in modeButtonColors) {
+            // Iterate through the modeColors dictionary
+            for (const name in modeColors) {
 
-                if (modeButtonColors.hasOwnProperty(name)) {
+                if (modeColors.hasOwnProperty(name)) {
 
                     // Testing
                     //console.log(`Mode for ${name}: ${modeButtonColors[name]}`);
@@ -47,9 +48,9 @@ export const useAllMode = (defaultColor: string, buttonKey: string): Button => {
 
         } else if (buttonKey === 'all_manual') {
             // Iterate through the modeButtonColors dictionary
-            for (const name in modeButtonColors) {
+            for (const name in modeColors) {
 
-                if (modeButtonColors.hasOwnProperty(name)) {
+                if (modeColors.hasOwnProperty(name)) {
 
                     // Testing
                     //console.log(`Mode for ${name}: ${modeButtonColors[name]}`);

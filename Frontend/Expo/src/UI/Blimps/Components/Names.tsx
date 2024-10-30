@@ -7,23 +7,31 @@ import { StyleSheet } from 'react-native';
 // Constants
 import { socket, isIOS, isAndroid, isWeb} from '../../Constants/Constants';
 
-// User ID's
+// User ID
 import { getUserID } from '../../Users/UserManager';
 import { Float } from 'react-native/Libraries/Types/CodegenTypes';
 
+// Redux
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '../../Redux/Store';
+import { setNames, setNameColors, setNameLastHeartbeats } from '../../Redux/States';
+
 export const useNames = () => {
+
+  // Redux Dispatch
+  const dispatch: AppDispatch = useDispatch();
 
   // User ID
   const { userID } = getUserID();
 
   // Names
-  const [names, setNames] = useState<string[]>([]);
+  const names = useSelector((state: RootState) => state.app.names);
 
   // Name Button Colors
-  const [nameColors, setNameColors] = useState<{ [key: string]: string }>({});
+  const nameColors = useSelector((state: RootState) => state.app.nameColors);
 
   // Name Last Hearbeats
-  const [nameLastHeartbeat, setNameLastHeartbeats] = useState<{ [key: string]: Float }>({});
+  const nameLastHeartbeats = useSelector((state: RootState) => state.app.nameLastHeartbeats);
 
   // Update Names
   useEffect(() => {
@@ -31,9 +39,9 @@ export const useNames = () => {
     // Define the event handler for 'update_names'
     const handleUpdateNames = (data: string[]) => {
       if (data[0] !== '') {
-        setNames(data); // Update state with new names list
+        dispatch(setNames(data)); // Update state with new names list
       } else {
-        setNames([]); // If no data, set to empty array
+        dispatch(setNames([])); // If no data, set to empty array
       }
     };
 
@@ -47,7 +55,7 @@ export const useNames = () => {
       };
     }
 
-  }, [socket]);
+  }, [socket, names, dispatch]);
 
   // Update Name Color
   useEffect(() => {
@@ -62,13 +70,7 @@ export const useNames = () => {
         newColor = 'green'; // Color for all users if userID is 'none' // green
       }
 
-      // Testing
-      //console.log(newColor);
-
-      setNameColors((prevColors) => ({
-        ...prevColors,
-        [receivedName]: newColor,
-      }));
+      dispatch(setNameColors({ [receivedName]: newColor }));
     };
 
     if (socket) {
@@ -77,9 +79,9 @@ export const useNames = () => {
       return () => {
         socket.off('toggle_name_button_color', handleToggleNameButtonColor);
       };
-      }
+    }
 
-  }, [socket, userID]);
+  }, [socket, userID, nameColors, dispatch]);
 
   // Update Name Last Heartbeats
   useEffect(() => {
@@ -87,14 +89,7 @@ export const useNames = () => {
     const handleNameLastHeartbeat = (val: { name: string; time_since_last_heartbeat: Float }) => {
       const { name: receivedName, time_since_last_heartbeat: receivedLastHeartbeat } = val;
 
-      // Testing
-      // console.log(receivedName);
-      // console.log(receivedLastHeartbeat);
-
-      setNameLastHeartbeats((prevLastHeartbeats) => ({
-        ...prevLastHeartbeats,
-        [receivedName]: receivedLastHeartbeat,
-      }));
+      dispatch(setNameLastHeartbeats({ [receivedName]: receivedLastHeartbeat }));
     };
 
     if (socket) {
@@ -105,28 +100,24 @@ export const useNames = () => {
       };
     }
 
-  }, [socket, nameLastHeartbeat]);
+  }, [socket, nameLastHeartbeats, dispatch]);
 
   // Name Button Click
   const handleNameClick = (name: string) => {
-    if (name !== 'none') {
-      if (userID) {
+    if (name !== 'none' && userID && socket) {
 
-        if (socket) {
-          socket.emit('toggle_name_button', { userID: userID, name: name });
-        }
+      socket.emit('toggle_name_button', { userID: userID, name: name });
+    
+      // Testing
+      //console.log('Blimp ' + name + ' pressed by ' + userID);
 
-        // Testing
-        //console.log('Blimp ' + name + ' pressed by ' + userID);
-
-      }
     }
   }
 
   // Calculate normalized heartbeat
   const getNormalizedHeartbeat = (name: string): number => {
     const maxHeartbeat = 5.0;
-    const heartbeat = nameLastHeartbeat[name] || 0;
+    const heartbeat = nameLastHeartbeats[name] || 0;
     // console.log('Name: ' + name);
     // console.log('Heartbeat: ' + heartbeat);
     // console.log('Normalized: ' + Math.round((Math.min(heartbeat / maxHeartbeat, 1) + Number.EPSILON) * 100) / 100);

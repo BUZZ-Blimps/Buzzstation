@@ -16,31 +16,44 @@ import { useAllMode } from '../../AllBlimps/AllMode';
 // Constants
 import {isIOS, isAndroid, isWeb} from '../../Constants/Constants';
 
+// Redux
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '../../Redux/Store';
+
 const AllBlimpsButtons = () => {
+
+  // Goal Click Function
   const { 
-    buttonColor: goalColorButtonColor, 
     handleClick: handleGoalColorClick 
   } = useTargetButtonColor('#FF5D01', 'goal_color');
 
+  // Enemy Click Function
   const { 
-    buttonColor: enemyColorButtonColor, 
     handleClick: handleEnemyColorClick 
   } = useTargetButtonColor('#0044A6', 'enemy_color');
 
+  // All Auto Click Function
   const { 
     handleClick: handleAllAutoClick 
   } = useAllMode('green', 'all_auto');
 
+  // All Manual Click Function
   const { 
     handleClick: handleAllManualClick 
   } = useAllMode('#E11C1C', 'all_manual');
+
+  // Goal Color
+  const goalColor = useSelector((state: RootState) => state.app.goalColor);
+
+  // Enemy Color
+  const enemyColor = useSelector((state: RootState) => state.app.enemyColor);
 
   return (
     <SafeAreaView style={styles.allBlimpsButtonContainer}>
       <Button 
         blimpName='none' 
         buttonKey='goal_color' 
-        buttonColor={goalColorButtonColor} 
+        buttonColor={goalColor} 
         buttonText='Goal' 
         buttonStyle={TargetButtonStyle} 
         onPress={() => handleGoalColorClick('goal_color')} 
@@ -48,7 +61,7 @@ const AllBlimpsButtons = () => {
       <Button 
         blimpName='none' 
         buttonKey='enemy_color' 
-        buttonColor={enemyColorButtonColor} 
+        buttonColor={enemyColor} 
         buttonText='Enemy' 
         buttonStyle={TargetButtonStyle} 
         onPress={() => handleEnemyColorClick('enemy_color')} 

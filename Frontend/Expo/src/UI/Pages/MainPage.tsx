@@ -1,10 +1,13 @@
 // Main Page //
 
 // React
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 // React Native
 import { SafeAreaView, StyleSheet } from 'react-native';
+
+// React Navigation
+import { useFocusEffect, useRoute } from '@react-navigation/native';
 
 // Components
 import SidebarMenu from './Components/SidebarMenu';
@@ -20,27 +23,45 @@ import { disableStyleWarning } from './Functions/DisableStyleWarning';
 import {isIOS, isAndroid, isWeb} from '../Constants/Constants';
 
 const MainPage: React.FC = () => {
-    
+
+  // Disable Style Warning
   disableStyleWarning();
 
-  const [isOverlayImage, setOverlayImage] = useState(false);
+  // Show Components
+  const [showComponents, setShowComponents] = useState(true);
+
+  // Only Mount Components on Current Page
+  useFocusEffect(
+    React.useCallback(() => {
+      // When focused, show components
+      setShowComponents(true);
+      return () => {
+        // Cleanup when navigating away
+        setShowComponents(false); // This will effectively unmount the components
+      };
+    }, [])
+  );
 
   return (
     <SafeAreaView style={styles.container}>
 
-       <SidebarMenu />
+       {showComponents && (
+        <>
+          <SidebarMenu />
 
-       <TopButtons setOverlayImage={setOverlayImage} />
+          <TopButtons />
 
-      <SafeAreaView style={styles.mainContainer}>
+          <SafeAreaView style={styles.mainContainer}>
 
-        <BlimpButtons />
+            <BlimpButtons />
 
-        <AllBlimpsButtons />
+            <AllBlimpsButtons />
 
-      </SafeAreaView>
-
-      <OverlayImage isOverlayImage={isOverlayImage} />
+          </SafeAreaView>
+          
+          <OverlayImage />
+        </>
+      )}
 
     </SafeAreaView>
   );
@@ -55,6 +76,7 @@ const styles = StyleSheet.create({
   mainContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
+    marginTop: -10,
   },
 });
 

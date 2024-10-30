@@ -24,6 +24,7 @@ def remove_timeout_blimps(basestation_node, timeout_blimp_names):
             remove_blimp(basestation_node, blimp)
 
 def remove_blimp(basestation_node, blimp):
+    
     logger.info(str('Detected timeout of Blimp: ' + blimp.name))
 
     if blimp.name in name_button_colors:
@@ -39,6 +40,11 @@ def remove_blimp(basestation_node, blimp):
     # Destroy Blimp Publishers and Subscribers
     destroy_publishers(blimp)
     destroy_subscribers(blimp)
+
+    # Stop Motor Commands Timer
+    if hasattr(blimp, 'motor_commands_timer') and blimp.motor_commands_timer is not None:
+        blimp.motor_commands_timer.cancel()
+        blimp.motor_commands_timer = None
     
     # Remove from current blimps and blimp names
     del basestation_node.current_blimps[blimp.name]

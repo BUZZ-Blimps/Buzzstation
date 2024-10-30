@@ -25,39 +25,60 @@ import { useCalibrate } from './Components/Calibrate'; // Import the useCalibrat
 // Vision
 import { useVision } from './Components/Vision'; // Import the useVision hook
 
+// Redux
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '../Redux/Store';
+import { setCatchIcons, setShootIcons } from '../Redux/States';
+
 const BlimpsContainer: React.FC = () => {
 
-  // Names
-  const { names, nameColors, nameButtonStyle, getNormalizedHeartbeat, handleNameClick } = useNames();
+  // Redux Dispatch
+  const dispatch: AppDispatch = useDispatch();
 
-  // States
-  const { stateValues, stateButtonStyle } = useStates();
+  // Names
+  const names = useSelector((state: RootState) => state.app.names);
+  // Name Button Colors
+  const nameColors = useSelector((state: RootState) => state.app.nameColors);
+  // Name Last Hearbeats
+  const nameLastHeartbeats = useSelector((state: RootState) => state.app.nameLastHeartbeats);
+  // Name Button Style and Heartbeat and Click Functions
+  const { nameButtonStyle, getNormalizedHeartbeat, handleNameClick } = useNames();
+  
+  // State Values
+  const stateValues = useSelector((state: RootState) => state.app.stateValues);
+  // State Button Style
+  const { stateButtonStyle } = useStates();
 
   // Modes
-  const { modeButtonColors, modeButtonStyle, handleModeClick } = useModes();
+  const modeColors = useSelector((state: RootState) => state.app.modeColors);
+  // Mode Button Style and Click Function
+  const { modeButtonStyle, handleModeClick } = useModes();
 
-  // Calibrations
-  const { calibrateButtonColors, calibrateButtonTexts, CalibrateButton, handleCalibrateClick } = useCalibrate();
+  // Calibrate Colors
+  const calibrateColors = useSelector((state: RootState) => state.app.calibrateColors);
+  // Calibrate Texts
+  const calibrateTexts = useSelector((state: RootState) => state.app.calibrateTexts);
+  // Calibrate Button and Click Function
+  const { CalibrateButton, handleCalibrateClick } = useCalibrate();
 
-  // Visions
-  const { visionColors, visionButtonStyle, handleVisionClick } = useVision();
+  // Vision Colors
+  const visionColors = useSelector((state: RootState) => state.app.visionColors);
+  // Vision Button Style and Click Function
+  const { visionButtonStyle, handleVisionClick } = useVision();
 
-  // Catch Icon
-  const [isCatchIcon, setCatchIcon] = useState<{ [key: string]: boolean }>({});
+  // Catch Icons
+  const catchIcons = useSelector((state: RootState) => state.app.catchIcons);
 
-  // Catch Icon
-  const [isShootIcon, setShootIcon] = useState<{ [key: string]: boolean }>({});
+  // Shoot Icons
+  const shootIcons = useSelector((state: RootState) => state.app.shootIcons);
 
-  // Toggle Catch Icon
+  // Toggle Catch Icons
   useEffect(() => {
 
     const toggleCatchIcon = (data: { name: string; val: boolean }) => {
       const { name: receivedName, val: recievedVal } = data;
 
-      setCatchIcon((prevVals) => ({
-        ...prevVals,
-        [receivedName]: recievedVal,
-      }));
+      dispatch(setCatchIcons({ [receivedName]: recievedVal }));
     };
 
     if (socket) {
@@ -68,18 +89,16 @@ const BlimpsContainer: React.FC = () => {
       };
     }
 
-  }, [socket, isCatchIcon]);
+  }, [socket, catchIcons]);
 
-  // Shoot Catch Icon
+  // Toggle Shoot Icons
   useEffect(() => {
 
     const toggleShootIcon = (data: { name: string; val: boolean }) => {
       const { name: receivedName, val: recievedVal } = data;
 
-      setShootIcon((prevVals) => ({
-        ...prevVals,
-        [receivedName]: recievedVal,
-      }));
+      dispatch(setShootIcons({ [receivedName]: recievedVal }));
+      
     };
 
     if (socket) {
@@ -90,14 +109,14 @@ const BlimpsContainer: React.FC = () => {
       };
     }
 
-  }, [socket, isShootIcon]);
+  }, [socket, shootIcons]);
 
   const checkCatchIcon = (name: string): boolean => {
-    return isCatchIcon[name] === true; // Returns true if the name is true, otherwise false
+    return catchIcons[name] === true; // Returns true if the name is true, otherwise false
   };
 
   const checkShootIcon = (name: string): boolean => {
-    return isShootIcon[name] === true; // Returns true if the name is true, otherwise false
+    return shootIcons[name] === true; // Returns true if the name is true, otherwise false
   };
 
   return (
@@ -115,7 +134,8 @@ const BlimpsContainer: React.FC = () => {
             ...modeButtonStyle,
             button: {
                 ...modeButtonStyle.button,
-                marginTop: -10,
+                marginTop: isAndroid || isIOS ? -5 : -10,
+                marginBottom: isAndroid || isIOS ? -5 : 0,
             },
           }}
           onPress={() => null}
@@ -131,7 +151,8 @@ const BlimpsContainer: React.FC = () => {
             ...modeButtonStyle,
             button: {
                 ...stateButtonStyle.button,
-                marginTop: -10,
+                marginTop: isAndroid || isIOS ? -5 : -10,
+                marginBottom: isAndroid || isIOS ? -5 : 0,
             },
           }}
           onPress={() => null}
@@ -147,7 +168,8 @@ const BlimpsContainer: React.FC = () => {
             ...modeButtonStyle,
             button: {
                 ...modeButtonStyle.button,
-                marginTop: -10,
+                marginTop: isAndroid || isIOS ? -5 : -10,
+                marginBottom: isAndroid || isIOS ? -5 : 0,
             },
           }}
           onPress={() => null}
@@ -163,7 +185,8 @@ const BlimpsContainer: React.FC = () => {
             ...modeButtonStyle,
             button: {
                 ...modeButtonStyle.button,
-                marginTop: -10,
+                marginTop: isAndroid || isIOS ? -5 : -10,
+                marginBottom: isAndroid || isIOS ? -5 : 0,
                 width: 130,
             },
           }}
@@ -180,7 +203,8 @@ const BlimpsContainer: React.FC = () => {
             ...modeButtonStyle,
             button: {
                 ...modeButtonStyle.button,
-                marginTop: -10,
+                marginTop: isAndroid || isIOS ? -5 : -10,
+                marginBottom: isAndroid || isIOS ? -5 : 0,
             },
           }}
           onPress={() => null}
@@ -238,8 +262,8 @@ const BlimpsContainer: React.FC = () => {
               <Button 
                 blimpName={name} // Blimp Name
                 buttonKey='mode' // Type of Button
-                buttonColor={modeButtonColors[name] || '#E11C1C'} // Button Color (Default: Red)
-                buttonText={modeButtonColors[name] === 'green' ? 'Auto' : 'Manual'} // Text Seen on Button
+                buttonColor={modeColors[name] || '#E11C1C'} // Button Color (Default: Red)
+                buttonText={modeColors[name] === 'green' ? 'Auto' : 'Manual'} // Text Seen on Button
                 buttonStyle={modeButtonStyle} // Button Style
                 onPress={() => handleModeClick(name)} // On Press Function
               />
@@ -248,8 +272,8 @@ const BlimpsContainer: React.FC = () => {
               <CalibrateButton
                 blimpName={name}
                 buttonKey='calibrate'
-                buttonColor={calibrateButtonColors[name] || '#E11C1C'}
-                buttonText={calibrateButtonTexts[name] || 'Height: None'}
+                buttonColor={calibrateColors[name] || '#E11C1C'}
+                buttonText={calibrateTexts[name] || 'Height: None'}
                 onPress={() => handleCalibrateClick(name)}
               />
 

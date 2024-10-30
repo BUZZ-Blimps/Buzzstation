@@ -7,16 +7,24 @@ import { StyleSheet, Text, View, Pressable } from 'react-native';
 // Constants
 import { socket, isIOS, isAndroid, isWeb} from '../../Constants/Constants';
 
+// Redux
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '../../Redux/Store';
+import { setCalibrateColors, setCalibrateTexts } from '../../Redux/States';
+
 // Disable Style Warning
 disableStyleWarning();
 
 export const useCalibrate = () => {
+
+  // Redux Dispatch
+  const dispatch: AppDispatch = useDispatch();
     
-  // Calibrate Button Colors
-  const [calibrateButtonColors, setButtonColors] = useState<{ [key: string]: string }>({});
+  // Calibrate Colors
+  const calibrateColors = useSelector((state: RootState) => state.app.calibrateColors);
   
-  // Calibrate Button Texts
-  const [calibrateButtonTexts, setButtonTexts] = useState<{ [key: string]: string }>({});
+  // Calibrate Texts
+  const calibrateTexts = useSelector((state: RootState) => state.app.calibrateTexts);
 
   // Update Calibrate Button Color
   useEffect(() => {
@@ -35,10 +43,7 @@ export const useCalibrate = () => {
 
       if (receivedButtonKey === 'calibrate_barometer') {
         // Update calibrateColors with the new color for the specific blimp
-        setButtonColors(prevButtonColors => ({
-          ...prevButtonColors,
-          [receivedName]: newColor,
-        }));
+        dispatch(setCalibrateColors({ [receivedName]: newColor }));
 
         // Testing
         //console.log(`${receivedButtonKey} for ${receivedName} changed to ${receivedButtonColor}`);
@@ -67,10 +72,7 @@ export const useCalibrate = () => {
 
       if (receivedButtonKey === 'height') {
         // Update Button Texts with the new text for the specific blimp
-        setButtonTexts(prevButtonTexts => ({
-          ...prevButtonTexts,
-          [receivedName]: 'Height: ' + receivedValue,
-        }));
+        dispatch(setCalibrateTexts({ [receivedName]: 'Height: ' + receivedValue }));
 
         // Testing
         //console.log(`${receivedButtonKey} for ${receivedName} changed to ${receivedValue}`);
@@ -97,8 +99,6 @@ export const useCalibrate = () => {
   };
 
   return {
-    calibrateButtonColors,
-    calibrateButtonTexts,
     CalibrateButton,
     handleCalibrateClick,
   };

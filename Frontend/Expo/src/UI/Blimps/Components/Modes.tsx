@@ -7,10 +7,18 @@ import { StyleSheet } from 'react-native';
 // Constants
 import { socket, isIOS, isAndroid, isWeb} from '../../Constants/Constants';
 
+// Redux
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '../../Redux/Store';
+import { setModeColors } from '../../Redux/States';
+
 export const useModes = () => {
 
-  // Mode Button Colors
-  const [modeButtonColors, setModeButtonColors] = useState<{ [key: string]: string }>({});
+  // Redux Dispatch
+  const dispatch: AppDispatch = useDispatch();
+
+  // Mode Colors
+  const modeColors = useSelector((state: RootState) => state.app.modeColors);
 
   // Update Mode Button Color
   useEffect(() => {
@@ -30,10 +38,7 @@ export const useModes = () => {
 
       if (receivedButtonKey === 'mode') {
         // Update modeColors with the new color for the specific blimp
-        setModeButtonColors(prevModeButtonColors => ({
-            ...prevModeButtonColors,
-            [receivedName]: newColor,
-        }));
+        dispatch(setModeColors({ [receivedName]: newColor }));
 
         // Testing
         //console.log(`${receivedButtonKey} for ${receivedName} changed to ${receivedButtonColor}`);
@@ -88,7 +93,6 @@ export const useModes = () => {
   });
 
   return {
-    modeButtonColors,
     modeButtonStyle,
     handleModeClick,
   };

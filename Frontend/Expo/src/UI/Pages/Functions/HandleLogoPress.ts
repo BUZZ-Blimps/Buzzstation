@@ -9,27 +9,27 @@ import * as Updates from 'expo-updates';
 // SocketIO
 import { socket } from '../../Constants/Constants';
 
-// User ID
-import { getUserID } from '../../Users/UserManager';
-
 // Toggle Full Screen
 import { toggleFullScreen } from './ToggleFullScreen';
 
-export function handleLogoPress() {
-    
-    if (Platform.OS === 'web') {
-      toggleFullScreen();
-    } else {
-      const reloadApp = async () => {
-        await Updates.reloadAsync();
-      };
+export const handleLogoPress = (userID: string | null) => {
   
-      reloadApp();
+  if (Platform.OS === 'web') {
 
-      const { userID } = getUserID();
-  
+      toggleFullScreen();
+
+  } else {
+
+      const reloadApp = async () => {
+          await Updates.reloadAsync();
+      };
+
+      // Emit inactive user event before reloading the app
       if (userID) {
-        socket.emit('inactive_user', userID); // Emit inactive user event
+          socket.emit('inactive_user', userID);
       }
-    }
-}
+
+      reloadApp();
+  }
+
+};

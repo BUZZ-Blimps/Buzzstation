@@ -21,6 +21,7 @@ logger = get_logger('Basestation')
 def get_blimp_motor_command(val):
     from ROS.ros import basestation_node
     from ROS.Communication.publishers import publish_generic
+    from SocketIO.socketio import name_button_colors
 
     # Retrieve Blimp Name and Key
     name = val['name']
@@ -31,7 +32,7 @@ def get_blimp_motor_command(val):
     axes[2] = float(axes[2])
     axes[3] = float(axes[3] * -1) # Invert
 
-    if name in basestation_node.current_blimp_names:
+    if name in basestation_node.current_blimp_names and name in name_button_colors:
 
         if hasattr(basestation_node.current_blimps[name], 'motor_commands'):
 
@@ -39,7 +40,9 @@ def get_blimp_motor_command(val):
 
                 # Change the Value of the Motor Commands for the Specific Blimp Name
                 setattr(basestation_node.current_blimps[name], 'motor_commands', axes)
-                publish_generic('publish_' + 'motor_commands', basestation_node.current_blimps[name])
+
+                # Set Motor Commands Updated to False (Not Used Currently)
+                setattr(basestation_node.current_blimps[name], 'motor_commands_updated', False)
 
 # Get Blimp Button Release
 @socketio.on('blimp_button')
@@ -185,9 +188,9 @@ def get_blimp_button_release(val):
         # Toggle Controller Mapping Overlay Image (Done on Frontend)
         pass
 
-    # Menu (To-Do: Open Sidebar Menu)
+    # Menu
     elif button == 'button9':
-        # Open Sidebar Menu (Changes D-Pad, A Button, and B Button Functionality)
+        # Open Sidebar Menu (Done on Frontend) (Changes D-Pad, A Button, and B Button Functionality)
         pass
     
     # Left Stick (LS) (Unused)
@@ -215,10 +218,16 @@ def get_blimp_button_release(val):
 
             # Turn on Piloting for Specified User
             if blimp_name not in name_button_colors:
+
                 # Remove the old blimp name if exists
                 if name in name_button_colors:
                     del name_button_colors[name]
 
+                    # Stop Motor Commands Timer
+                    if basestation_node.current_blimps[name].motor_commands_timer is not None:
+                        basestation_node.current_blimps[name].motor_commands_timer.cancel()
+                        basestation_node.current_blimps[name].motor_commands_timer = None
+                
                 # Store Blimp Button Colors to Redis
                 redis_client.set('name_button_colors', json.dumps(name_button_colors))
 
@@ -236,9 +245,47 @@ def get_blimp_button_release(val):
                     # Make Blimp Button Blue for UserID, Red for everyone else
                     socketio.emit('toggle_name_button_color', {'userID': userID, 'name': blimp_name})
 
+                    # Start Motor Commands Timer
+                    basestation_node.current_blimps[blimp_name].motor_commands_timer = basestation_node.create_timer(float(1.0 / 100), basestation_node.current_blimps[blimp_name].publish_motor_commands)
+
                     # Break out of the Loop
                     break
-    
+
+        # Safety for Disconnecting Blimp #
+        
+        # Zero out Motor Commands
+        if hasattr(basestation_node.current_blimps[name], 'motor_commands'):
+
+            if basestation_node.current_blimps[name].motor_commands != [float(0.0), float(0.0), float(0.0), float(0.0)]:
+
+                # Change the Value of the Motor Commands for the Specific Blimp Name
+                setattr(basestation_node.current_blimps[name], 'motor_commands', [float(0.0), float(0.0), float(0.0), float(0.0)])
+                publish_generic('publish_' + 'motor_commands', basestation_node.current_blimps[name])
+
+        # Turn off Shooting
+        if hasattr(basestation_node.current_blimps[name], 'shooting'):
+
+            if basestation_node.current_blimps[name].shooting is True:
+                
+                # Set Shooting to False
+                basestation_node.current_blimps[name].shooting = False
+                publish_generic('publish_' + 'shooting', basestation_node.current_blimps[name])
+
+                # Toggle Shoot Icon
+                socketio.emit('toggle_shoot_icon',  { 'name': name, 'val': basestation_node.current_blimps[name].shooting })
+
+        # Turn off Catching
+        if hasattr(basestation_node.current_blimps[name], 'catching'):
+
+            if basestation_node.current_blimps[name].catching is True:
+                
+                # Set Catching to False
+                basestation_node.current_blimps[name].catching = False
+                publish_generic('publish_' + 'catching', basestation_node.current_blimps[name])
+
+                # Toggle Catch Icon
+                socketio.emit('toggle_catch_icon',  { 'name': name, 'val': basestation_node.current_blimps[name].catching })
+
     # Down (D-pad)
     elif button == 'button13':
         # Switch to Blimp Below or Disconnect
@@ -260,6 +307,11 @@ def get_blimp_button_release(val):
                 if name in name_button_colors:
                     del name_button_colors[name]
 
+                    # Stop Motor Commands Timer
+                    if basestation_node.current_blimps[name].motor_commands_timer is not None:
+                        basestation_node.current_blimps[name].motor_commands_timer.cancel()
+                        basestation_node.current_blimps[name].motor_commands_timer = None
+                
                 # Store Blimp Button Colors to Redis
                 redis_client.set('name_button_colors', json.dumps(name_button_colors))
 
@@ -277,9 +329,47 @@ def get_blimp_button_release(val):
                     # Make Blimp Button Blue for UserID, Red for everyone else
                     socketio.emit('toggle_name_button_color', {'userID': userID, 'name': blimp_name})
 
+                    # Start Motor Commands Timer
+                    basestation_node.current_blimps[blimp_name].motor_commands_timer = basestation_node.create_timer(float(1.0 / 100), basestation_node.current_blimps[blimp_name].publish_motor_commands)
+
                     # Break out of the Loop
                     break
     
+        # Safety for Disconnecting Blimp #
+        
+        # Zero out Motor Commands
+        if hasattr(basestation_node.current_blimps[name], 'motor_commands'):
+
+            if basestation_node.current_blimps[name].motor_commands != [float(0.0), float(0.0), float(0.0), float(0.0)]:
+
+                # Change the Value of the Motor Commands for the Specific Blimp Name
+                setattr(basestation_node.current_blimps[name], 'motor_commands', [float(0.0), float(0.0), float(0.0), float(0.0)])
+                publish_generic('publish_' + 'motor_commands', basestation_node.current_blimps[name])
+
+        # Turn off Shooting
+        if hasattr(basestation_node.current_blimps[name], 'shooting'):
+
+            if basestation_node.current_blimps[name].shooting is True:
+                
+                # Set Shooting to False
+                basestation_node.current_blimps[name].shooting = False
+                publish_generic('publish_' + 'shooting', basestation_node.current_blimps[name])
+
+                # Toggle Shoot Icon
+                socketio.emit('toggle_shoot_icon',  { 'name': name, 'val': basestation_node.current_blimps[name].shooting })
+
+        # Turn off Catching
+        if hasattr(basestation_node.current_blimps[name], 'catching'):
+
+            if basestation_node.current_blimps[name].catching is True:
+                
+                # Set Catching to False
+                basestation_node.current_blimps[name].catching = False
+                publish_generic('publish_' + 'catching', basestation_node.current_blimps[name])
+
+                # Toggle Catch Icon
+                socketio.emit('toggle_catch_icon',  { 'name': name, 'val': basestation_node.current_blimps[name].catching })
+
     # Left (D-pad)
     elif button == 'button14':
         # Disconnect from any currently selected Blimp Name
@@ -294,6 +384,46 @@ def get_blimp_button_release(val):
 
             # Make Blimp Name Button Green for all users
             socketio.emit('toggle_name_button_color', { 'userID': 'none', 'name': name})
+
+            # Stop Motor Commands Timer
+            if basestation_node.current_blimps[name].motor_commands_timer is not None:
+                basestation_node.current_blimps[name].motor_commands_timer.cancel()
+                basestation_node.current_blimps[name].motor_commands_timer = None
+
+        # Safety for Disconnecting Blimp #
+        
+        # Zero out Motor Commands
+        if hasattr(basestation_node.current_blimps[name], 'motor_commands'):
+
+            if basestation_node.current_blimps[name].motor_commands != [float(0.0), float(0.0), float(0.0), float(0.0)]:
+
+                # Change the Value of the Motor Commands for the Specific Blimp Name
+                setattr(basestation_node.current_blimps[name], 'motor_commands', [float(0.0), float(0.0), float(0.0), float(0.0)])
+                publish_generic('publish_' + 'motor_commands', basestation_node.current_blimps[name])
+
+        # Turn off Shooting
+        if hasattr(basestation_node.current_blimps[name], 'shooting'):
+
+            if basestation_node.current_blimps[name].shooting is True:
+                
+                # Set Shooting to False
+                basestation_node.current_blimps[name].shooting = False
+                publish_generic('publish_' + 'shooting', basestation_node.current_blimps[name])
+
+                # Toggle Shoot Icon
+                socketio.emit('toggle_shoot_icon',  { 'name': name, 'val': basestation_node.current_blimps[name].shooting })
+
+        # Turn off Catching
+        if hasattr(basestation_node.current_blimps[name], 'catching'):
+
+            if basestation_node.current_blimps[name].catching is True:
+                
+                # Set Catching to False
+                basestation_node.current_blimps[name].catching = False
+                publish_generic('publish_' + 'catching', basestation_node.current_blimps[name])
+
+                # Toggle Catch Icon
+                socketio.emit('toggle_catch_icon',  { 'name': name, 'val': basestation_node.current_blimps[name].catching })
 
     # Right (D-pad)
     elif button == 'button15':
@@ -389,9 +519,9 @@ def get_nonblimp_button_release(val):
         # Toggle Controller Mapping Overlay Image (Done on Frontend)
         pass
 
-    # Menu (To-Do: Open Sidebar Menu)
+    # Menu
     elif button == 'button9':
-        # Open Sidebar Menu
+        # Open Sidebar Menu (Done on Frontend) (Changes D-Pad, A Button, and B Button Functionality)
         pass
     
     # Left Stick (LS) (Unused)
@@ -424,6 +554,9 @@ def get_nonblimp_button_release(val):
                     # Make Blimp Button Blue for UserID, Red for everyone else
                     socketio.emit('toggle_name_button_color', { 'userID': userID, 'name': blimp_name})
     
+                    # Start Motor Commands Timer
+                    basestation_node.current_blimps[blimp_name].motor_commands_timer = basestation_node.create_timer(float(1.0 / 100), basestation_node.current_blimps[blimp_name].publish_motor_commands)
+
                     # Break out of the Loop
                     break
 
@@ -449,6 +582,9 @@ def get_nonblimp_button_release(val):
                     # Make Blimp Button Blue for UserID, Red for everyone else
                     socketio.emit('toggle_name_button_color', { 'userID': userID, 'name': blimp_name})
     
+                    # Start Motor Commands Timer
+                    basestation_node.current_blimps[blimp_name].motor_commands_timer = basestation_node.create_timer(float(1.0 / 100), basestation_node.current_blimps[blimp_name].publish_motor_commands)
+
                     # Break out of the Loop
                     break
 
@@ -478,6 +614,9 @@ def get_nonblimp_button_release(val):
                     # Make Blimp Button Blue for UserID, Red for everyone else
                     socketio.emit('toggle_name_button_color', { 'userID': userID, 'name': blimp_name})
     
+                    # Start Motor Commands Timer
+                    basestation_node.current_blimps[blimp_name].motor_commands_timer = basestation_node.create_timer(float(1.0 / 100), basestation_node.current_blimps[blimp_name].publish_motor_commands)
+
                     # Break out of the Loop
                     break
 

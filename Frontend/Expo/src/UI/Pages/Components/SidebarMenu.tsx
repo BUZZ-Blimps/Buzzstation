@@ -1,7 +1,7 @@
 // SidebarMenu.tsx
 
 // React
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 
 
 // React Native
@@ -16,6 +16,11 @@ import { isIOS, isAndroid, isWeb} from '../../Constants/Constants';
 // Navigation
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 
+// Redux
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../../Redux/Store';
+import { setSidebarMenuState } from '../../Redux/States'; 
+
 // Define the navigation type locally within this file
 type RootStackParamList = {
   Buzzstation: undefined;
@@ -27,25 +32,42 @@ type RootStackParamList = {
 };
 
 const SidebarMenu = () => {
+
+  // Redux Dispatch
+  const dispatch = useDispatch();
+
+  // Sidebar Menu State
+  let sidebarMenuState = useSelector((state: RootState) => state.app.sidebarMenuState);
+
+  // Sidebar Menu Previous State
+  const previousSidebarMenuState = useRef(sidebarMenuState);
+
   // Use the typed navigation prop directly in the file
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
+  // Sidebar Menu Width
   const menuWidth = 150; // Declare menuWidth here
-  const sidebarPosition = useSharedValue(-menuWidth); // Start hidden
-  const isMenuVisible = useSharedValue(false); // Track visibility state
-  const isMenuVisibleRef = useRef(isMenuVisible.value); // Ref to track menu visibility
+  
+  // Sidebar Position
+  const sidebarPosition = useSharedValue(sidebarMenuState ? 0 : -menuWidth);
 
   // Toggle Sidebar Menu
   const toggleSidebarMenu = useCallback(() => {
-    isMenuVisibleRef.current = !isMenuVisible.value; // Update the ref
-    isMenuVisible.value = !isMenuVisible.value; // Toggle the visibility
+    sidebarMenuState = !sidebarMenuState;
+    dispatch(setSidebarMenuState(sidebarMenuState));
+    sidebarPosition.value = withTiming(sidebarMenuState ? 0 : -menuWidth, { duration: 250 });
+    previousSidebarMenuState.current = sidebarMenuState; // Update the previous state
+  }, [sidebarMenuState, previousSidebarMenuState, sidebarPosition, menuWidth, dispatch]);
 
-    // Animate the sidebar position
-    sidebarPosition.value = withTiming(isMenuVisibleRef.current ? 0 : -menuWidth, { duration: 250 });
-  }, [isMenuVisible.value, sidebarPosition, menuWidth]); // Dependencies for the callback
+  // Controller Sidebar Menu Toggle
+  useEffect(() => {
+    if (previousSidebarMenuState.current !== sidebarMenuState) {
+      sidebarPosition.value = withTiming(sidebarMenuState ? 0 : -menuWidth, { duration: 250 });
+      previousSidebarMenuState.current = sidebarMenuState; // Update the previous state
+    }
+  }, [sidebarMenuState, previousSidebarMenuState, sidebarPosition, menuWidth]);
 
   // Animated style for the sidebar
-  
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: sidebarPosition.value }],
   }));
