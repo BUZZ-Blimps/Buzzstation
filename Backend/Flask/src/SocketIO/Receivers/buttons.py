@@ -146,7 +146,7 @@ def toggle_blimp_calibrate_button_color(name):
     from ROS.ros import basestation_node
     from ROS.Communication.publishers import publish_generic
 
-    if basestation_node.barometer_serial != None or basestation_node.fake_barometer == True:
+    if basestation_node.barometer_online is True or basestation_node.fake_barometer is True:
 
         if hasattr(basestation_node.current_blimps[name], 'calibrate_barometer'):
 

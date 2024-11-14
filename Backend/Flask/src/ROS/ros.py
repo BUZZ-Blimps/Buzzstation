@@ -23,6 +23,7 @@ To-Do:
 # Imports
 from Packages.packages import *
 from .Joy.ros_joy import init_ros_joy, enable_ros_joy
+#from time import time
 
 global basestation_node
 
@@ -108,27 +109,26 @@ class Basestation(Node):
         # Faking Barometer Serial Port Connection
         self.fake_barometer = False # Default: False (To-Do: Read from a yaml file or make a button on frontend UI)
 
-        # Barometer Publisher
-        self.pub_barometer = self.create_publisher(Float64, 'Barometer/reading', 10)
+        self.barometer_subscriber = self.create_subscription(Float64, '/Barometer/reading', self.barometer_callback, 10)
 
-        # Barometer Serial Port
-        self.barometer_serial = None
-
-        # Barometer Reading
+        # # Barometer Reading
         self.barometer_reading = 99668.2 # Competition Default Value: 99668.2
+        self.barometer_online = False
+        self.barometer_time = time()
 
-        # Barometer Loop Speed
+        # # Barometer Loop Speed
         self.barometer_loop_speed = 5 # (Hz) Depends on CPU Speed
 
-        # Barometer Loop Period
+        # # Barometer Loop Period
         barometer_timer_period = 1.0/self.barometer_loop_speed
 
-        # Create Barometer Loop Timer
-        from .Barometer_Loop.barometer_loop import barometer_loop, fake_barometer_loop
-        if not self.fake_barometer:
-            self.barometer_timer = self.create_timer(barometer_timer_period, barometer_loop)
-        else:
-            self.barometer_timer = self.create_timer(barometer_timer_period, fake_barometer_loop)
+        from .Barometer_Loop.barometer_loop import barometer_loop
+        self.barometer_timer = self.create_timer(barometer_timer_period, barometer_loop)
+
+    def barometer_callback(self, msg):
+        self.barometer_time = time()
+        self.barometer_reading = msg.data
+        self.barometer_online = True
 
 # ROS 2 Thread
 def ros_node():
