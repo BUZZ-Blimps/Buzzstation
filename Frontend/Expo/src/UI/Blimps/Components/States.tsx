@@ -12,6 +12,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../../Redux/Store';
 import { setStateValues } from '../../Redux/States';
 
+const state_dict = ["Searching", "Approach", "Catching", "Caught", "Goal Search", "Approach Goal", "Scoring Start", "Shooting", "Scored"]
+
 export const useStates = () => {
 
     // Redux Dispatch
@@ -44,40 +46,43 @@ export const useStates = () => {
             // False: Searching
             // True: Approaching
 
-            let newValue = 'None'; // Default color 
-            if (receivedValue === '0') {
-            newValue = 'Searching';
-            } else if (receivedValue === '1') {
-            newValue = 'Approaching';
-            } else if (receivedValue === '2') {
-                newValue = 'Catching';
-            } else if (receivedValue === '3') {
-                newValue = 'Caught';
-            } else if (receivedValue === '4') {
-                newValue = 'Goal Search';
-            } else if (receivedValue === '5') {
-                newValue = 'Goal Approach';
-            } else if (receivedValue === '6') {
-                newValue = 'Scoring Start';
-            } else if (receivedValue === '7') {
-                newValue = 'Shooting';
-            } else if (receivedValue === '8') {
-                newValue = 'Scored';
-            } else if (receivedValue === 'False') {
-                newValue = 'Searching';
-            } else if (receivedValue === 'True') {
-                newValue = 'Approaching';
-            } 
-            
+            let newValue = 'None'; // Default color
 
             if (receivedButtonKey === 'state_machine') {
+
+                newValue = state_dict[receivedValue]
+
+                // if (receivedValue === '0') {
+                //     newValue = 'Searching';
+                // } else if (receivedValue === '1') {
+                //     newValue = 'Approaching';
+                // } else if (receivedValue === '2') {
+                //     newValue = 'Catching';
+                // } else if (receivedValue === '3') {
+                //     newValue = 'Caught';
+                // } else if (receivedValue === '4') {
+                //     newValue = 'Goal Search';
+                // } else if (receivedValue === '5') {
+                //     newValue = 'Goal Approach';
+                // } else if (receivedValue === '6') {
+                //     newValue = 'Scoring Start';
+                // } else if (receivedValue === '7') {
+                //     newValue = 'Shooting';
+                // } else if (receivedValue === '8') {
+                //     newValue = 'Scored';
+                // } else if (receivedValue === 'False') {
+                //     newValue = 'Searching';
+                // } else if (receivedValue === 'True') {
+                //     newValue = 'Approaching';
+                // }
+
                 // Update State Values with the new value for the specific blimp
                 dispatch(setStateValues({ [receivedName]: newValue }));
 
+                // console.log(newValue)
                 // Testing
                 //console.log(`${receivedButtonKey} for ${receivedName} changed to ${receivedValue}`);
             }
-
         };
 
         if (socket) {

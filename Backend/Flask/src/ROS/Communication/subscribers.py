@@ -20,9 +20,8 @@ def create_subscribers(blimp):
 
     # Attack Blimp
     else:
-
         # State Machine
-        blimp.sub_state_machine = create_sub(blimp, 'state_machine', 'Bool')
+        blimp.sub_state_machine = create_sub(blimp, 'state_machine', 'Float64')
 
     # Height
     blimp.sub_height = create_sub(blimp, 'height', 'Float64')
@@ -38,10 +37,7 @@ def create_subscribers(blimp):
 
 def create_sub(blimp, key, data_type):
     if key == 'state_machine':
-        if data_type == 'Bool':
-            sub = blimp.basestation_node.create_subscription(Bool, f'{blimp.name}/{key}', blimp.state_machine_callback, 10)
-        elif data_type == 'Int64':
-            sub = blimp.basestation_node.create_subscription(Int64, f'{blimp.name}/{key}', blimp.state_machine_callback, 10)
+        sub = blimp.basestation_node.create_subscription(Int64, f'{blimp.name}/{key}', blimp.state_machine_callback, 10)
     elif key == 'height':
         if data_type == 'Float64':
             sub = blimp.basestation_node.create_subscription(Float64, f'{blimp.name}/{key}', blimp.height_callback, 10)

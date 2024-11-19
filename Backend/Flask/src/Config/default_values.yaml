@@ -4,7 +4,7 @@ goal_color: 0
 
 # Enemy Color #
 # 0: Blue, 1: Red
-enemy_color: 0
+enemy_color: 1
 
 # Default Barometer Value #
 barometer: 99878.99

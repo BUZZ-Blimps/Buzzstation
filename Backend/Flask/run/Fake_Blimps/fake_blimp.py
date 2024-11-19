@@ -35,6 +35,8 @@ class Blimp(Node):
         self.catching_blimp_names = ['BurnCream', 'SillyAh', 'Turbo', 'GameChamber', 'FiveGuys', 'SuperBeef']
         self.attack_blimp_names = ['Yoshi', 'Luigi', 'Geoph', 'ThisGuy']
 
+        self.state_dict = ["searching", "approach", "catching", "caught", "goalSearch", "approachGoal", "scoringStart", "shooting", "scored"]
+
         # To-Do: Test without Identify (Using State Machine from now on; Can still add /identify for basestation lost state)
         # self.pub_identify = self.create_publisher(String, '/identify', 10)
 
@@ -89,7 +91,7 @@ class Blimp(Node):
         self.vision_update_interval = 10  # seconds
 
         # State Machine
-        main_loop_period = 1  # seconds
+        main_loop_period = 0.5  # seconds
         self.main_loop_timer = self.create_timer(main_loop_period, self.main_loop)
 
         data_timer_period = 1  # seconds
@@ -123,12 +125,20 @@ class Blimp(Node):
 
         # Catching Blimp
         if self.name in self.catching_blimp_names:
-            self.state_machine = round(random.random()*8)
+            # self.state_machine = round(random.random()*8)
+
+            if (self.state_machine < 8):
+                self.state_machine = self.state_machine + 1
+            else:
+                self.state_machine = 0
+
+            print(self.state_dict[self.state_machine])
+
             self.publish_catching_blimp_state_machine()
 
         # Attacking Blimp
         elif self.name in self.attack_blimp_names:
-            self.state_machine = random.choice([True, False])
+            # self.state_machine = random.choice([True, False])
             self.publish_attack_blimp_state_machine()
 
     def publish_heartbeat(self):

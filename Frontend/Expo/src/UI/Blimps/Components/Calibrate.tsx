@@ -75,7 +75,7 @@ export const useCalibrate = () => {
         dispatch(setCalibrateTexts({ [receivedName]: 'Height: ' + receivedValue }));
 
         // Testing
-        //console.log(`${receivedButtonKey} for ${receivedName} changed to ${receivedValue}`);
+        // console.log(`${receivedButtonKey} for ${receivedName} changed to ${receivedValue}`);
       }
     };
 

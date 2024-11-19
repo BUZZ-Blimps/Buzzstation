@@ -110,7 +110,6 @@ export const useNames = () => {
     
       // Testing
       //console.log('Blimp ' + name + ' pressed by ' + userID);
-
     }
   }
 
@@ -121,7 +120,9 @@ export const useNames = () => {
     // console.log('Name: ' + name);
     // console.log('Heartbeat: ' + heartbeat);
     // console.log('Normalized: ' + Math.round((Math.min(heartbeat / maxHeartbeat, 1) + Number.EPSILON) * 100) / 100);
-    return Math.round((Math.min(heartbeat / maxHeartbeat, 1) + Number.EPSILON) * 100) / 100; // Rounded to 2 decimal places
+    const normalizedHeartbeat = Math.round((Math.min(heartbeat / maxHeartbeat, 1) + Number.EPSILON) * 100) / 100; // Rounded to 2 decimal places
+
+    return normalizedHeartbeat
   };
 
   // Name Button Style

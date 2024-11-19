@@ -60,25 +60,56 @@ def update_blimp_component_color(blimp, component, default_color, nondefault_col
 
 # Generic Function for updating the value of a ROS topic's UI component for a Blimp's component
 def update_blimp_component_value(blimp, component):
+
+    # logger.info('hewwo')
+    # logger.info(str(blimp.to_dict()))
+
+    blimp_component_set = False
     if hasattr(blimp, component):
+        # Blimp Value
+        blimp_component_value = getattr(blimp, component)
+        if blimp_component_value is not None:
+            blimp_component_set = True
+
+    if blimp_component_set:
 
         # Get Redis Value for the Blimp's Component
-        current_value = redis_client.hget(f'blimp:{blimp.name}', component)
-        
-        if current_value is not None:
+        redis_value = redis_client.hget(f'blimp:{blimp.name}', component)
 
-            # Redis Value
-            current_value = current_value.decode('utf-8')
-            
-            # Blimp Value
-            blimp_component_value = getattr(blimp, component)
+        # if component == 'state_machine':
+        #     logger.info('state update hewwo')
+        #     state_dict = ["searching", "approach", "catching", "caught", "goalSearch", "approachGoal", "scoringStart", "shooting", "scored"]
+        #     blimp.basestation_node.get_logger().info(component)
+        #     blimp.basestation_node.get_logger().info(state_dict[int(blimp_component_value)])
 
-            if str(blimp_component_value) != str(current_value):
+        update_value = False
+        if redis_value is None:
+            update_value = True
+            # logger.info('redis not set')
+        else:
+            redis_value = redis_value.decode('utf-8')
+            # logger.info("redis_value=" + redis_value)
 
-                # Update Frontend
-                socketio.emit('update_button_value', {'name': blimp.name, 'key': component, 'value': current_value})
-                
-        elif component == 'state_machine':
+            if str(redis_value) != str(blimp_component_value):
+                update_value = True
+
+        if update_value:
+            # logger.info(component + " update value to " + str(blimp_component_value))
+
+            # Update redis
+            redis_client.hset(f'blimp:{blimp.name}', component, str(blimp_component_value))
+
+            # Update Frontend
+            socketio.emit('update_button_value', {'name': blimp.name, 'key': component, 'value': blimp_component_value})
+            # logger.info("UPDATED")
+        # else:
+        #     logger.info("NO UPDATE")
+
+    else:
+        redis_client.hdel(f'blimp:{blimp.name}', component)
+        # redis_client.hmset(f'blimp:{blimp.name}', blimp.to_dict())
+
+        if component == 'state_machine':
             
             # Sets Component Value to Default at Start of Program
             socketio.emit('update_button_value', {'name': blimp.name, 'key': component, 'value': 'None'})

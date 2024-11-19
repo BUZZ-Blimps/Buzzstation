@@ -30,7 +30,7 @@ def create_publishers(blimp):
         blimp.pub_shooting = create_pub(blimp, 'shooting', 'Bool')
 
         # State Machine (For changing state of blimp during testing)
-        blimp.pub_state_machine = create_pub(blimp, 'state_machine', 'Int64')
+        # blimp.pub_state_machine = create_pub(blimp, 'state_machine', 'Int64')
         """
         0: Searching
         1: Approach
@@ -50,7 +50,7 @@ def create_publishers(blimp):
         blimp.pub_enemy_color = create_pub(blimp, 'enemy_color', 'Bool')
 
         # State Machine (For changing state of blimp during testing)
-        blimp.pub_state_machine = create_pub(blimp, 'state_machine', 'Bool')
+        # blimp.pub_state_machine = create_pub(blimp, 'state_machine', 'Bool')
         """
         False: Searching
         True: Approaching
@@ -90,7 +90,7 @@ def destroy_publishers(blimp):
         destroy_pub(blimp, 'pub_shooting')
 
         # State Machine (For changing state of blimp during testing)
-        destroy_pub(blimp, 'pub_state_machine')
+        # destroy_pub(blimp, 'pub_state_machine')
         """
         0: Searching
         1: Approach
@@ -110,7 +110,7 @@ def destroy_publishers(blimp):
         destroy_pub(blimp, 'pub_enemy_color')
 
         # State Machine (For changing state of blimp during testing)
-        destroy_pub(blimp, 'pub_state_machine')
+        # destroy_pub(blimp, 'pub_state_machine')
         """
         False: Searching
         True: Approaching

@@ -31,6 +31,8 @@ class Blimp:
         # Create Subscribers for all Blimp Topics
         create_subscribers(self)
 
+        self.state_dict = ["searching", "approach", "catching", "caught", "goalSearch", "approachGoal", "scoringStart", "shooting", "scored"]
+
     # Initialize Blimp Values
     def init_values(self, basestation_node, name):
 
@@ -78,7 +80,7 @@ class Blimp:
             self.enemy_color = self.get_redis_value('enemy_color', 'Bool')
 
             # State Machine
-            self.state_machine = False
+            self.state_machine = 0
             """
             False: Searching
             True: Approaching
@@ -130,31 +132,31 @@ class Blimp:
     # Make Blimp Data JSON Readable for Redis
     def to_dict(self):
         base_dict = {
-            'name': str(self.name),
-            'type': str(self.type),
-            'state_machine': str(self.state_machine),
-            'mode': str(self.mode),
-            'vision': str(self.vision),
-            'motor_commands': str(self.motor_commands),
-            'calibrate_barometer': str(self.calibrate_barometer),
-            'calibrated': str(self.calibrated),
-            'height': str(self.height),
-            'z_velocity': str(self.z_velocity),
-            'log': str(self.log),
+            'name': self.name,
+            'type': self.type,
+            'state_machine': self.state_machine,
+            'mode': self.mode,
+            'vision': self.vision,
+            'motor_commands': self.motor_commands,
+            'calibrate_barometer': self.calibrate_barometer,
+            'calibrated': self.calibrated,
+            'height': self.height,
+            'z_velocity': self.z_velocity,
+            'log': self.log,
         }
 
         # Catching blimp
         if not self.type:
             catching_dict = {
-                'catching': str(self.catching),
-                'shooting': str(self.shooting),
-                'goal_color': str(self.goal_color),
+                'catching': self.catching,
+                'shooting': self.shooting,
+                'goal_color': self.goal_color,
             }
             base_dict.update(catching_dict)
         # Attacking blimp
         else:
             attacking_dict = {
-                'enemy_color': str(self.enemy_color),
+                'enemy_color': self.enemy_color,
             }
             base_dict.update(attacking_dict)
 
@@ -185,6 +187,7 @@ class Blimp:
     # State Machine Callback
     def state_machine_callback(self, msg):
         self.state_machine = msg.data
+        # self.basestation_node.get_logger().info(self.state_dict[self.state_machine])
 
     # Height Callback
     def height_callback(self, msg):
