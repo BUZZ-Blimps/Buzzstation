@@ -61,11 +61,12 @@ export const useModes = () => {
   const handleModeClick = (name: string) => {
 
     const val = { name: name, key: 'mode'};
+
+    console.log(val);
     
     if (socket) {
       socket.emit('toggle_blimp_button_color', val);
     }
-
   };
 
   // Mode Button Style

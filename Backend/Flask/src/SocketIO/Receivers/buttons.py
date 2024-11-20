@@ -66,6 +66,8 @@ def toggle_blimp_button_color(val):
     name = val['name']
     key = val['key']
 
+    logger.info(str(name) + " " + str(key))
+
     if hasattr(basestation_node.current_blimps[name], key):
 
         # Change the Value of the Key for the Specific Blimp Name
@@ -96,7 +98,7 @@ def toggle_blimp_button_color(val):
 
                     # Toggle Shoot Icon
                     socketio.emit('toggle_shoot_icon',  { 'name': name, 'val': basestation_node.current_blimps[name].shooting })
-        
+
 # Set Blimp Button to a Specific Value (i.e. All Auto, All Manual)
 @socketio.on('set_blimp_button_value')
 def set_blimp_button_value(val):

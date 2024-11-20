@@ -7,7 +7,7 @@ def generate_launch_description():
         ExecuteProcess(cmd=['./basestation.sh'], name='basestation_process', output='screen', shell=True),
         Node(
             package='joy',
-            namespace='/Basestation',
+            namespace='Basestation',
             executable='joy_node',
             name='joy_node',
             parameters=[

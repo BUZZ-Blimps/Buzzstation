@@ -19,50 +19,64 @@ logger = get_logger('Basestation')
 
 # Generic Function for updating the color of a ROS topic's UI component for a Blimp's component
 def update_blimp_component_color(blimp, component, default_color, nondefault_color):
+
+    blimp_component_set = False
     if hasattr(blimp, component):
+        # Blimp Value
+        blimp_component_value = getattr(blimp, component)
+        if blimp_component_value is not None:
+            blimp_component_set = True
+
+    if blimp_component_set:
 
         # Get Redis Value for the Blimp's Component
-        current_value = redis_client.hget(f'blimp:{blimp.name}', component)
+        redis_value = redis_client.hget(f'blimp:{blimp.name}', component)
         
-        if current_value is not None:
-
-            # Redis Value
-            current_value = current_value.decode('utf-8')
-            
-            # Blimp Value
-            blimp_component_value = getattr(blimp, component)
-
-            if str(blimp_component_value) != str(current_value):
-
-                # Get Color
-                if component == 'vision':
-                    # Default Value is True
-                    color = default_color if blimp_component_value else nondefault_color
-                    if color == 'green':
-                        # To-Do: Startup Blimp Vision Code
-                        logger.info('Restarting Vision for ' + blimp.name)
-                    else:
-                        # To-Do: Stop Blimp Vision Code
-                        logger.info('Stopping Vision for ' + blimp.name)
-                else:
-                    # Default Value is False
-                    color = default_color if not blimp_component_value else nondefault_color
-
-                # Update Frontend
-                socketio.emit('update_button_color', {'name': blimp.name, 'key': component, 'color': color})
-                
-                # Publish if the value has changed
-                publish_generic(f'publish_{component}', blimp)
+        update_value = False
+        if redis_value is None:
+            update_value = True
         else:
+            redis_value = redis_value.decode('utf-8')
+            if str(redis_value) != str(blimp_component_value):
+                update_value = True
+
+        if update_value:
+
+            # logger.info("update value of " + str(component) + " to " + str(blimp_component_value))
+
+            # Get Color
+            if component == 'vision':
+                # Default Value is True
+                color = default_color if blimp_component_value else nondefault_color
+                if color == 'green':
+                    # To-Do: Startup Blimp Vision Code
+                    logger.info('Restarting Vision for ' + blimp.name)
+                else:
+                    # To-Do: Stop Blimp Vision Code
+                    logger.info('Stopping Vision for ' + blimp.name)
+            else:
+                # Default Value is False
+                color = default_color if not blimp_component_value else nondefault_color
+
+            # Update Frontend
+            color_update_val = {'name': blimp.name, 'key': component, 'color': color}
+            # logger.info(str(color_update_val))
+            socketio.emit('update_button_color', color_update_val)
             
-            # Sets Component Color to Default at Start of Program
-            socketio.emit('update_button_color', {'name': blimp.name, 'key': component, 'color': default_color})
+            # Update redis
+            redis_client.hset(f'blimp:{blimp.name}', component, str(blimp_component_value))
+
+            # Publish if the value has changed
+            publish_generic(f'publish_{component}', blimp)
+
+    else:
+        redis_client.hdel(f'blimp:{blimp.name}', component)
+
+        # Sets Component Color to Default at Start of Program
+        socketio.emit('update_button_color', {'name': blimp.name, 'key': component, 'color': default_color})
 
 # Generic Function for updating the value of a ROS topic's UI component for a Blimp's component
 def update_blimp_component_value(blimp, component):
-
-    # logger.info('hewwo')
-    # logger.info(str(blimp.to_dict()))
 
     blimp_component_set = False
     if hasattr(blimp, component):
@@ -76,46 +90,33 @@ def update_blimp_component_value(blimp, component):
         # Get Redis Value for the Blimp's Component
         redis_value = redis_client.hget(f'blimp:{blimp.name}', component)
 
-        # if component == 'state_machine':
-        #     logger.info('state update hewwo')
-        #     state_dict = ["searching", "approach", "catching", "caught", "goalSearch", "approachGoal", "scoringStart", "shooting", "scored"]
-        #     blimp.basestation_node.get_logger().info(component)
-        #     blimp.basestation_node.get_logger().info(state_dict[int(blimp_component_value)])
-
         update_value = False
         if redis_value is None:
             update_value = True
-            # logger.info('redis not set')
         else:
             redis_value = redis_value.decode('utf-8')
-            # logger.info("redis_value=" + redis_value)
-
             if str(redis_value) != str(blimp_component_value):
                 update_value = True
 
         if update_value:
-            # logger.info(component + " update value to " + str(blimp_component_value))
+            # logger.info("update value of " + str(component) + " to " + str(blimp_component_value))
 
             # Update redis
             redis_client.hset(f'blimp:{blimp.name}', component, str(blimp_component_value))
 
             # Update Frontend
             socketio.emit('update_button_value', {'name': blimp.name, 'key': component, 'value': blimp_component_value})
-            # logger.info("UPDATED")
-        # else:
-        #     logger.info("NO UPDATE")
 
+            # Publish if the value has changed
+            publish_generic(f'publish_{component}', blimp)
     else:
         redis_client.hdel(f'blimp:{blimp.name}', component)
-        # redis_client.hmset(f'blimp:{blimp.name}', blimp.to_dict())
 
         if component == 'state_machine':
-            
             # Sets Component Value to Default at Start of Program
             socketio.emit('update_button_value', {'name': blimp.name, 'key': component, 'value': 'None'})
 
         elif component == 'height':
-            
             # Sets Component Color and Value to Default at Start of Program
             socketio.emit('update_button_color', {'name': blimp.name, 'key': component, 'color': 'red'})
             socketio.emit('update_button_value', {'name': blimp.name, 'key': component, 'value': 'None'})
@@ -124,7 +125,9 @@ def update_blimp_component_value(blimp, component):
 
 # Generic Function for updating the color of a ROS topic's UI component for all blimps (Global Value i.e. Goal Color, Enemy Color)
 def update_component_for_all_blimps(basestation_node, component, default_color, nondefault_color):
+    
     current_value = bool(int(redis_client.get(component).decode('utf-8')))
+
     if getattr(basestation_node, component) is not current_value:
 
         # Check if list is empty or not (True = Not Empty, False = Empty)

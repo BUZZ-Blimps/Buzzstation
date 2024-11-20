@@ -126,16 +126,15 @@ def destroy_pub(blimp, key):
     blimp.basestation_node.destroy_publisher(getattr(blimp, key))
 
 # Generic Publish Function #
-
 def publish_generic(publish_function_name, blimp):
     # Get the function object based on its name
     publish_function = globals().get(publish_function_name, None)
     if publish_function:
+        
         # Call the function with the blimp argument
         publish_function(blimp)
 
 # Barometer Publisher #
-
 def publish_barometer(basestation_node):
     # Publish barometer value to the ROS topic
     msg = Float64()

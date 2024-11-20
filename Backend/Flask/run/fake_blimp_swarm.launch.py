@@ -10,8 +10,8 @@ def generate_launch_description():
         # ExecuteProcess(cmd=['./fake_blimp.sh GameChamber'], name='fake_blimp_4', output='screen', shell=True),
         # ExecuteProcess(cmd=['./fake_blimp.sh FiveGuys'], name='fake_blimp_5', output='screen', shell=True),
         # ExecuteProcess(cmd=['./fake_blimp.sh SuperBeef'], name='fake_blimp_6', output='screen', shell=True),
-        ExecuteProcess(cmd=['./fake_blimp.sh Yoshi'], name='fake_blimp_6', output='screen', shell=True),
-        ExecuteProcess(cmd=['./fake_blimp.sh Luigi'], name='fake_blimp_6', output='screen', shell=True),
-        ExecuteProcess(cmd=['./fake_blimp.sh Geoph'], name='fake_blimp_6', output='screen', shell=True),
+        # ExecuteProcess(cmd=['./fake_blimp.sh Yoshi'], name='fake_blimp_6', output='screen', shell=True),
+        # ExecuteProcess(cmd=['./fake_blimp.sh Luigi'], name='fake_blimp_6', output='screen', shell=True),
+        # ExecuteProcess(cmd=['./fake_blimp.sh Geoph'], name='fake_blimp_6', output='screen', shell=True),
         # ExecuteProcess(cmd=['./fake_blimp.sh ThisGuy'], name='fake_blimp_6', output='screen', shell=True)
     ])
