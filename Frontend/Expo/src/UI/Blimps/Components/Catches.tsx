@@ -10,17 +10,15 @@ import { socket, isIOS, isAndroid, isWeb} from '../../Constants/Constants';
 // Redux
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../../Redux/Store';
-import { setStateValues } from '../../Redux/States';
+import { setCatchValues } from '../../Redux/States';
 
-const state_dict = ["Searching", "Approach", "Catching", "Caught", "Goal Search", "Approach Goal", "Scoring Start", "Shooting", "SANTA CAME EARLY!!!"]
-
-export const useStates = () => {
+export const useCatches = () => {
 
     // Redux Dispatch
     const dispatch: AppDispatch = useDispatch();
   
-    // State Values
-    const stateValues = useSelector((state: RootState) => state.app.stateValues);
+    // Catch Values
+    const catchValues = useSelector((state: RootState) => state.app.catchValues);
 
     // Update State Button Text Value
     useEffect(() => {
@@ -46,19 +44,16 @@ export const useStates = () => {
             // False: Searching
             // True: Approaching
 
-            // console.log(receivedButtonKey)
+            if (receivedButtonKey === 'catches') {
 
-            let newValue = 'None'; // Default color
-            if (receivedButtonKey === 'state_machine') {
+                let newValue = receivedValue.toString();
 
-                newValue = state_dict[receivedValue]
+                // Update catch count value with the new value for the specific blimp
+                dispatch(setCatchValues({ [receivedName]: newValue }));
 
-                // Update State Values with the new value for the specific blimp
-                dispatch(setStateValues({ [receivedName]: newValue }));
-
-                // console.log(newValue)
-                // Testing
-                //console.log(`${receivedButtonKey} for ${receivedName} changed to ${receivedValue}`);
+            //     // console.log(newValue)
+            //     // Testing
+            //     //console.log(`${receivedButtonKey} for ${receivedName} changed to ${receivedValue}`);
             }
         };
 
@@ -71,11 +66,10 @@ export const useStates = () => {
                 socket.off('update_button_value', handleUpdateButtonValue);
             };
         }
-
     }, [socket]);
 
-    // State Button Style
-    const stateButtonStyle = StyleSheet.create({
+    // Catch Button Style
+    const catchButtonStyle = StyleSheet.create({
       button: {
         width: 140,
         height: 40,
@@ -99,7 +93,6 @@ export const useStates = () => {
     });
   
     return {
-      stateButtonStyle,
+      catchButtonStyle,
     };
-
 };

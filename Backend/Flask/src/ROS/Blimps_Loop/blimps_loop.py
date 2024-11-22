@@ -46,6 +46,7 @@ def update_blimp_values(current_blimps):
         
         # State
         update_blimp_component_value(current_blimps[name], 'state_machine')
+        update_blimp_component_value(current_blimps[name], 'catches')
 
         # Mode
         update_blimp_component_color(current_blimps[name], 'mode', 'red', 'green')
@@ -104,6 +105,8 @@ def update_blimps():
     #     redis_client.hmset(str("blimp:" + blimp_name), blimp_data)
 
     # End of To-Do #
+
+
 
     # Update Blimp Values on Frontend and over ROS
     update_blimp_values(basestation_node.current_blimps)

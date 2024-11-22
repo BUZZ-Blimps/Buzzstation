@@ -112,7 +112,7 @@ class Basestation(Node):
         self.barometer_subscriber = self.create_subscription(Float64, '/Barometer/reading', self.barometer_callback, 10)
 
         # # Barometer Reading
-        self.barometer_reading = 99668.2 # Competition Default Value: 99668.2
+        self.barometer_reading = 0
         self.barometer_online = False
         self.barometer_time = time()
 

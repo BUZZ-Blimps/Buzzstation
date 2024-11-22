@@ -16,6 +16,9 @@ import { useNames } from './Components/Names'; // Import the useNames hook
 // States
 import { useStates } from './Components/States'; // Import the useModes hook
 
+// Catches
+import { useCatches } from './Components/Catches'; // Import the useCatches hook
+
 // Modes
 import { useModes } from './Components/Modes'; // Import the useModes hook
 
@@ -37,32 +40,46 @@ const BlimpsContainer: React.FC = () => {
 
   // Names
   const names = useSelector((state: RootState) => state.app.names);
+
   // Name Button Colors
   const nameColors = useSelector((state: RootState) => state.app.nameColors);
+
   // Name Last Hearbeats
   const nameLastHeartbeats = useSelector((state: RootState) => state.app.nameLastHeartbeats);
+  
   // Name Button Style and Heartbeat and Click Functions
   const { nameButtonStyle, getNormalizedHeartbeat, handleNameClick } = useNames();
   
   // State Values
   const stateValues = useSelector((state: RootState) => state.app.stateValues);
+
+  // Catch counter values
+  const catchValues = useSelector((state: RootState) => state.app.catchValues);
+
   // State Button Style
   const { stateButtonStyle } = useStates();
 
+  // State Button Style
+  const { catchButtonStyle } = useCatches();
+
   // Modes
   const modeColors = useSelector((state: RootState) => state.app.modeColors);
+  
   // Mode Button Style and Click Function
   const { modeButtonStyle, handleModeClick } = useModes();
 
   // Calibrate Colors
   const calibrateColors = useSelector((state: RootState) => state.app.calibrateColors);
+
   // Calibrate Texts
   const calibrateTexts = useSelector((state: RootState) => state.app.calibrateTexts);
+
   // Calibrate Button and Click Function
   const { CalibrateButton, handleCalibrateClick } = useCalibrate();
 
   // Vision Colors
   const visionColors = useSelector((state: RootState) => state.app.visionColors);
+
   // Vision Button Style and Click Function
   const { visionButtonStyle, handleVisionClick } = useVision();
 
@@ -151,6 +168,22 @@ const BlimpsContainer: React.FC = () => {
             ...modeButtonStyle,
             button: {
                 ...stateButtonStyle.button,
+                marginTop: isAndroid || isIOS ? -5 : -10,
+                marginBottom: isAndroid || isIOS ? -5 : 0,
+            },
+          }}
+          onPress={() => null}
+        />
+
+        <Button
+          blimpName='none'
+          buttonKey='none'
+          buttonText='Catches'
+          buttonColor='black'
+          buttonStyle={{
+            ...modeButtonStyle,
+            button: {
+                ...catchButtonStyle.button,
                 marginTop: isAndroid || isIOS ? -5 : -10,
                 marginBottom: isAndroid || isIOS ? -5 : 0,
             },
@@ -254,6 +287,16 @@ const BlimpsContainer: React.FC = () => {
                 buttonKey='state' // Type of Button
                 buttonColor='grey' // Button Color
                 buttonText={stateValues[name] || 'None'} // Text Seen on Button
+                buttonStyle={stateButtonStyle} // Button Style
+                onPress={() => null} // On Press Function
+              />
+
+              {/* Catch Counter Button */}
+              <Button 
+                blimpName={name} // Blimp Name
+                buttonKey='catches' // Type of Button
+                buttonColor='grey' // Button Color
+                buttonText={catchValues[name] || 'None'} // Text Seen on Button
                 buttonStyle={stateButtonStyle} // Button Style
                 onPress={() => null} // On Press Function
               />

@@ -58,8 +58,6 @@ class Blimp:
             # Shooting
             self.shooting = False
 
-            # State Machine
-            self.state_machine = 0
             """
             0: Searching
             1: Approaching
@@ -78,9 +76,6 @@ class Blimp:
 
             # Enemy Color
             self.enemy_color = self.get_redis_value('enemy_color', 'Bool')
-
-            # State Machine
-            self.state_machine = 0
             """
             False: Searching
             True: Approaching
@@ -90,6 +85,12 @@ class Blimp:
 
         # Mode (False: Manual, True: Autonomous)
         self.mode = False
+
+        # State Machine
+        self.state_machine = 0
+
+        # Number of catches
+        self.catches = 0
 
         # Motor Commands
         self.motor_commands = [float(0.0), float(0.0), float(0.0), float(0.0)]
@@ -135,6 +136,7 @@ class Blimp:
             'name': self.name,
             'type': self.type,
             'state_machine': self.state_machine,
+            'catches': self.catches,
             'mode': self.mode,
             'vision': self.vision,
             'motor_commands': self.motor_commands,
@@ -185,9 +187,9 @@ class Blimp:
         self.heartbeat_data = msg.data
 
     # State Machine Callback
-    def state_machine_callback(self, msg):
-        self.state_machine = msg.data
-        # self.basestation_node.get_logger().info(self.state_dict[self.state_machine])
+    def state_callback(self, msg):
+        self.state_machine = msg.data[0]
+        self.catches = msg.data[1]
 
     # Height Callback
     def height_callback(self, msg):

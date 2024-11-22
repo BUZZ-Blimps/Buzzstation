@@ -7,7 +7,7 @@ ROS 2 Subscribers for Basestation to recieve data from Blimps.
 
 """
 
-from Packages.packages import Bool, Int64, Float64, String
+from Packages.packages import Bool, Int64MultiArray, Float64, String
 
 # Create Subscribers #
 
@@ -16,12 +16,12 @@ def create_subscribers(blimp):
     if blimp.type is False:
 
         # State Machine
-        blimp.sub_state_machine = create_sub(blimp, 'state_machine', 'Int64')
+        blimp.sub_state = create_sub(blimp, 'state', 'Int64MultiArray')
 
     # Attack Blimp
     else:
         # State Machine
-        blimp.sub_state_machine = create_sub(blimp, 'state_machine', 'Float64')
+        blimp.sub_state = create_sub(blimp, 'state', 'Float64')
 
     # Height
     blimp.sub_height = create_sub(blimp, 'height', 'Float64')
@@ -36,8 +36,8 @@ def create_subscribers(blimp):
     blimp.sub_log = create_sub(blimp, 'log', 'String')
 
 def create_sub(blimp, key, data_type):
-    if key == 'state_machine':
-        sub = blimp.basestation_node.create_subscription(Int64, f'{blimp.name}/{key}', blimp.state_machine_callback, 10)
+    if key == 'state':
+        sub = blimp.basestation_node.create_subscription(Int64MultiArray, f'{blimp.name}/{key}', blimp.state_callback, 10)
     elif key == 'height':
         if data_type == 'Float64':
             sub = blimp.basestation_node.create_subscription(Float64, f'{blimp.name}/{key}', blimp.height_callback, 10)
@@ -53,28 +53,25 @@ def create_sub(blimp, key, data_type):
     return sub
 
 def create_heartbeat_sub(blimp):
-        # Subscribe to heartbeat if not already subscribed
-        blimp.basestation_node.heartbeat_subs[blimp.name] = blimp.basestation_node.create_subscription(
-            Bool, # Data Type
-            f"/{blimp.name}/heartbeat", # Topic Name
-            blimp.heartbeat_callback, # Callback
-            1 # QoS Profile
-        )
+    # Subscribe to heartbeat if not already subscribed
+    blimp.basestation_node.heartbeat_subs[blimp.name] = blimp.basestation_node.create_subscription(
+        Bool, # Data Type
+        f"/{blimp.name}/heartbeat", # Topic Name
+        blimp.heartbeat_callback, # Callback
+        1 # QoS Profile
+    )
 
 # Destroy Subscribers #
-
 def destroy_subscribers(blimp):
     # Catching Blimp
     if blimp.type is False:
-
         # State Machine
-        destroy_sub(blimp, 'sub_state_machine')
+        destroy_sub(blimp, 'sub_state')
 
     # Attack Blimp
     else:
-
         # State Machine
-        destroy_sub(blimp, 'sub_state_machine')
+        destroy_sub(blimp, 'sub_state')
 
     # Height
     destroy_sub(blimp, 'sub_height')

@@ -18,7 +18,7 @@ import redis
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, DurabilityPolicy
-from std_msgs.msg import String, Int64, Bool, Float64, Float64MultiArray
+from std_msgs.msg import String, Int64, Bool, Float64, Float64MultiArray, Int64MultiArray
 try:
     from yolo_msgs.msg import BoundingBox # type: ignore
 except:

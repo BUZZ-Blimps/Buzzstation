@@ -9,6 +9,7 @@ interface AppState {
   nameColors: { [key: string]: string };
   nameLastHeartbeats: { [key: string]: number };
   stateValues: { [key: string]: string };
+  catchValues: { [key: string]: number };
   modeColors: { [key: string]: string };
   calibrateColors: { [key: string]: string };
   calibrateTexts: { [key: string]: string };
@@ -30,6 +31,7 @@ const initialState: AppState = {
   nameColors: {},
   nameLastHeartbeats: {},
   stateValues: {},
+  catchValues: {},
   modeColors: {},
   calibrateColors: {},
   calibrateTexts: {},
@@ -63,6 +65,9 @@ const appSlice = createSlice({
     },
     setStateValues(state, action: PayloadAction<{ [key: string]: string }>) {
       Object.assign(state.stateValues, action.payload);
+    },
+    setCatchValues(state, action: PayloadAction<{ [key: string]: string }>) {
+      Object.assign(state.catchValues, action.payload);
     },
     setModeColors(state, action: PayloadAction<{ [key: string]: string }>) {
       Object.assign(state.modeColors, action.payload);
@@ -110,6 +115,7 @@ export const {
   setNameColors,
   setNameLastHeartbeats,
   setStateValues,
+  setCatchValues,
   setModeColors,
   setCalibrateColors,
   setCalibrateTexts,

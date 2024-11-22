@@ -30,7 +30,7 @@ export const useTargetButtonColor = (defaultColor: string, buttonKey: string): B
       const receivedButtonKey: string = val['key'];
       const receivedButtonColor: string = val['color'];
 
-      console.log(val)
+      // console.log(val)
 
       let newColor = defaultColor; // Default color 
       if (receivedButtonColor === 'orange') {
@@ -52,7 +52,7 @@ export const useTargetButtonColor = (defaultColor: string, buttonKey: string): B
             dispatch(setEnemyColor(newColor));
           }
           // Testing
-          console.log(buttonKey + " changed to " + receivedButtonColor);
+          // console.log(buttonKey + " changed to " + receivedButtonColor);
         }
       }
     };
