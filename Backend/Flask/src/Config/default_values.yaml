@@ -7,4 +7,13 @@ goal_color: 0
 enemy_color: 1
 
 # Default Barometer Value #
-barometer: 99878.99
+# Competition Default Value: 99668.2
+barometer: 99668.2
+
+# Fake Barometer #
+# Used for Testing w/o Real Barometer
+# Default: False
+fake_barometer: false
+
+# ROS Joy #
+ros_joy: false

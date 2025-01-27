@@ -37,7 +37,7 @@ def toggle_name_button(val):
             socketio.emit('toggle_name_button_color', { 'userID': userID, 'name': name})
 
             # Start Motor Commands Timer
-            basestation_node.current_blimps[name].motor_commands_timer = basestation_node.create_timer(float(1.0 / 100), basestation_node.current_blimps[name].publish_motor_commands)
+            basestation_node.current_blimps[name].motor_commands_timer = basestation_node.create_timer(float(1.0 / basestation_node.motor_commands_frequency), basestation_node.current_blimps[name].publish_motor_commands)
 
     # Turn off Piloting (Disconnect from blimp)
     elif name_button_colors[name] == userID:

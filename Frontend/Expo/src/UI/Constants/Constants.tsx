@@ -5,11 +5,8 @@
 // IO
 import io from 'socket.io-client';
 
-// Backend URL
-import { url } from '../../Config/Backend_URL';
-
 // Websocket
-export const socket = io(url);
+export const socket = io(process.env.EXPO_PUBLIC_BACKEND_URL);
 
 //==== Platform Type ====//
 

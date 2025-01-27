@@ -18,10 +18,29 @@ def barometer_loop():
         socketio.emit('barometer_reading', 'Disconnected')
         basestation_node.barometer_online = False
 
+<<<<<<< Updated upstream
     elif basestation_node.barometer_online is True:
         basestation_node.redis_client.set('barometer', round(basestation_node.barometer_reading,2))
         socketio.emit('update_barometer_button_color', 'green')
         socketio.emit('barometer_reading', round(basestation_node.barometer_reading,2))
+=======
+    # Check for Wireless Barometer
+    if basestation_node.barometer_online:
+
+        if abs(time()-basestation_node.barometer_time) > 5.0:
+        
+            # Add Barometer Value to Redis
+            redis_client.set('barometer', round(basestation_node.barometer_reading, 2))
+
+            # Emit Barometer Reading to Frontend
+            socketio.emit('update_barometer_button_color', 'green')
+            socketio.emit('barometer_reading', round(basestation_node.barometer_reading, 2))
+
+            basestation_node.barometer_online = False
+
+    # Barometer Serial Port Not Connected
+    elif basestation_node.barometer_serial == None:
+>>>>>>> Stashed changes
 
     else:
         socketio.emit('update_barometer_button_color', 'red')

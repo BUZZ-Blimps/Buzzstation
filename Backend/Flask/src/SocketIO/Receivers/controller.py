@@ -19,6 +19,18 @@ logger = get_logger('Basestation')
 # Get Blimp Motor Command
 @socketio.on('motor_command')
 def get_blimp_motor_command(val):
+
+    # Testing 
+    # SocketIO Emit and Recieve Time
+    #import time
+    #frontend_timestamp = val.get('timestamp')
+    #logger.info('Frontend Time:' + str(frontend_timestamp))
+    #backend_timestamp = int(time.time() * 1000) # Current time in milliseconds
+    #logger.info('Backend Time:' + str(backend_timestamp))
+    #if frontend_timestamp:
+        #latency = backend_timestamp - frontend_timestamp
+        #logger.info(f"Latency from frontend to backend: {latency} ms")
+
     from ROS.ros import basestation_node
     from ROS.Communication.publishers import publish_generic
     from SocketIO.socketio import name_button_colors
@@ -246,7 +258,7 @@ def get_blimp_button_release(val):
                     socketio.emit('toggle_name_button_color', {'userID': userID, 'name': blimp_name})
 
                     # Start Motor Commands Timer
-                    basestation_node.current_blimps[blimp_name].motor_commands_timer = basestation_node.create_timer(float(1.0 / 100), basestation_node.current_blimps[blimp_name].publish_motor_commands)
+                    basestation_node.current_blimps[blimp_name].motor_commands_timer = basestation_node.create_timer(float(1.0 / basestation_node.motor_commands_frequency), basestation_node.current_blimps[blimp_name].publish_motor_commands)
 
                     # Break out of the Loop
                     break
@@ -330,7 +342,7 @@ def get_blimp_button_release(val):
                     socketio.emit('toggle_name_button_color', {'userID': userID, 'name': blimp_name})
 
                     # Start Motor Commands Timer
-                    basestation_node.current_blimps[blimp_name].motor_commands_timer = basestation_node.create_timer(float(1.0 / 100), basestation_node.current_blimps[blimp_name].publish_motor_commands)
+                    basestation_node.current_blimps[blimp_name].motor_commands_timer = basestation_node.create_timer(float(1.0 / basestation_node.motor_commands_frequency), basestation_node.current_blimps[blimp_name].publish_motor_commands)
 
                     # Break out of the Loop
                     break
@@ -555,7 +567,7 @@ def get_nonblimp_button_release(val):
                     socketio.emit('toggle_name_button_color', { 'userID': userID, 'name': blimp_name})
     
                     # Start Motor Commands Timer
-                    basestation_node.current_blimps[blimp_name].motor_commands_timer = basestation_node.create_timer(float(1.0 / 100), basestation_node.current_blimps[blimp_name].publish_motor_commands)
+                    basestation_node.current_blimps[blimp_name].motor_commands_timer = basestation_node.create_timer(float(1.0 / basestation_node.motor_commands_frequency), basestation_node.current_blimps[blimp_name].publish_motor_commands)
 
                     # Break out of the Loop
                     break
@@ -583,7 +595,7 @@ def get_nonblimp_button_release(val):
                     socketio.emit('toggle_name_button_color', { 'userID': userID, 'name': blimp_name})
     
                     # Start Motor Commands Timer
-                    basestation_node.current_blimps[blimp_name].motor_commands_timer = basestation_node.create_timer(float(1.0 / 100), basestation_node.current_blimps[blimp_name].publish_motor_commands)
+                    basestation_node.current_blimps[blimp_name].motor_commands_timer = basestation_node.create_timer(float(1.0 / basestation_node.motor_commands_frequency), basestation_node.current_blimps[blimp_name].publish_motor_commands)
 
                     # Break out of the Loop
                     break
@@ -615,7 +627,7 @@ def get_nonblimp_button_release(val):
                     socketio.emit('toggle_name_button_color', { 'userID': userID, 'name': blimp_name})
     
                     # Start Motor Commands Timer
-                    basestation_node.current_blimps[blimp_name].motor_commands_timer = basestation_node.create_timer(float(1.0 / 100), basestation_node.current_blimps[blimp_name].publish_motor_commands)
+                    basestation_node.current_blimps[blimp_name].motor_commands_timer = basestation_node.create_timer(float(1.0 / basestation_node.motor_commands_frequency), basestation_node.current_blimps[blimp_name].publish_motor_commands)
 
                     # Break out of the Loop
                     break

@@ -60,6 +60,11 @@ const Controller: React.FC<ButtonProps> = ({ blimpName, buttonKey, buttonColor, 
 
     // Helper function to emit socket events
     const emitSocketEvent = (event: string, payload: Record<string, any>) => {
+        // Testing
+        // Send timestamp to Backend
+        // const timestamp = Date.now(); // Add a timestamp in milliseconds
+        // console.log(timestamp);
+        // if (socket) socket.emit(event, { ...payload, timestamp });
         if (socket) socket.emit(event, payload);
     };
 
@@ -108,6 +113,7 @@ const Controller: React.FC<ButtonProps> = ({ blimpName, buttonKey, buttonColor, 
 
     // Update Joysticks
     const updateJoysticks = useCallback((gamepad: Gamepad) => {
+
         const { axes } = gamepad;
         const deadZone = 0.1;
 
@@ -129,6 +135,7 @@ const Controller: React.FC<ButtonProps> = ({ blimpName, buttonKey, buttonColor, 
                 dot.value = withTiming(50 + clampedAxes[index] * 45, { duration: 0, easing: Easing.linear });
             });
         }
+
     }, [socket, blimpNames]);
 
     // Joystick and Button Inputs

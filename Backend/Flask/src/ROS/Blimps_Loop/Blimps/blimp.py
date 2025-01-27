@@ -214,7 +214,6 @@ class Blimp:
     # Publish Motor Commands
     def publish_motor_commands(self):
         # Publish motor_commands value to the ROS topic
-        # Frequency = 100 Hz per connected blimp
         msg = Float64MultiArray()
         msg.data = self.motor_commands
         self.pub_motor_commands.publish(msg)

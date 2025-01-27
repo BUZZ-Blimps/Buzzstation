@@ -13,8 +13,6 @@ To-Do:
 
 from Packages.packages import Joy, socketio
 
-enable_ros_joy = False
-
 def init_ros_joy(basestation_node):
     #Subscribe to joystick topic
     basestation_node.joy_sub = basestation_node.create_subscription(Joy, "/Basestation/joy", joy_callback, 1)

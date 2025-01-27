@@ -22,8 +22,6 @@ To-Do:
 
 # Imports
 from Packages.packages import *
-from .Joy.ros_joy import init_ros_joy, enable_ros_joy
-#from time import time
 
 global basestation_node
 
@@ -31,13 +29,18 @@ global basestation_node
 from rclpy.logging import get_logger
 logger = get_logger('Basestation')
 
+# Read the YAML file
+with open('../src/Config/default_values.yaml', 'r') as file:
+    blimp_data = yaml.safe_load(file)
+
 # Basestation Node
 class Basestation(Node):
     def __init__(self):
         super().__init__('Basestation')
 
         # ROS Joy (Controller)
-        if enable_ros_joy is True:
+        if blimp_data.get('ros_joy') is True:
+            from .Joy.ros_joy import init_ros_joy
             logger.info("ROS JOY Enabled")
             init_ros_joy(self)
 
@@ -106,17 +109,30 @@ class Basestation(Node):
         from .Blimps_Loop.blimps_loop import blimps_loop
         self.blimps_timer = self.create_timer(blimps_loop_period, blimps_loop)
 
-        # Faking Barometer Serial Port Connection
-        self.fake_barometer = False # Default: False (To-Do: Read from a yaml file or make a button on frontend UI)
+        # Motor Commands Publisher Frequency
+        self.motor_commands_frequency = 100 # (Hz) for each blimp being controlled
 
-        self.barometer_subscriber = self.create_subscription(Float64, '/Barometer/reading', self.barometer_callback, 10)
+        # Faking Barometer Serial Port Connection
+        self.fake_barometer = blimp_data.get('fake_barometer')
+
+        # Barometer Publisher
+        self.sub_barometer = self.create_subscription(Float64, 'Barometer/reading', self.barometer_callback, 10)
 
         # # Barometer Reading
         self.barometer_reading = 0
         self.barometer_online = False
         self.barometer_time = time()
 
-        # # Barometer Loop Speed
+        # Barometer Reading
+        self.barometer_reading = blimp_data.get('barometer')
+
+        # Barometer Online
+        self.barometer_online = True
+
+        # Barometer Time
+        self.barometer_time = time()
+
+        # Barometer Loop Speed
         self.barometer_loop_speed = 5 # (Hz) Depends on CPU Speed
 
         # # Barometer Loop Period
@@ -128,6 +144,12 @@ class Basestation(Node):
     def barometer_callback(self, msg):
         self.barometer_time = time()
         self.barometer_reading = msg.data
+        self.barometer_online = True
+
+    # Barometer Callback
+    def barometer_callback(self, msg):
+        self.barometer_reading = msg.data
+        self.barometer_time = time()
         self.barometer_online = True
 
 # ROS 2 Thread

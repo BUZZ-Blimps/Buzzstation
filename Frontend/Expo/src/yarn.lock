@@ -3661,6 +3661,22 @@ expo-modules-autolinking@1.11.3, expo-modules-autolinking@^1.11.2:
     require-from-string "^2.0.2"
     resolve-from "^5.0.0"
 
+<<<<<<< Updated upstream
+=======
+expo-modules-autolinking@^1.11.2:
+  version "1.11.2"
+  resolved "https://registry.yarnpkg.com/expo-modules-autolinking/-/expo-modules-autolinking-1.11.2.tgz#98245eb66f157bbfebebd2d576256ea7c683c605"
+  integrity sha512-fdcaNO8ucHA3yLNY52ZUENBcAG7KEx8QyMmnVNavO1JVBGRMZG8JyVcbrhYQDtVtpxkbai5YzwvLutINvbDZDQ==
+  dependencies:
+    chalk "^4.1.0"
+    commander "^7.2.0"
+    fast-glob "^3.2.5"
+    find-up "^5.0.0"
+    fs-extra "^9.1.0"
+    require-from-string "^2.0.2"
+    resolve-from "^5.0.0"
+
+>>>>>>> Stashed changes
 expo-modules-core@1.12.26:
   version "1.12.26"
   resolved "https://registry.yarnpkg.com/expo-modules-core/-/expo-modules-core-1.12.26.tgz#86c4087dc6246abfc4d7f5e61097dc8cc4b22262"
@@ -3716,7 +3732,11 @@ expo-updates@~0.25.27:
     ignore "^5.3.1"
     resolve-from "^5.0.0"
 
+<<<<<<< Updated upstream
 expo@~51.0.37:
+=======
+expo@~51.0.38:
+>>>>>>> Stashed changes
   version "51.0.38"
   resolved "https://registry.yarnpkg.com/expo/-/expo-51.0.38.tgz#e4127b230454a34a507cfb9f1a2e4b3855cb0579"
   integrity sha512-/B9npFkOPmv6WMIhdjQXEY0Z9k/67UZIVkodW8JxGIXwKUZAGHL+z1R5hTtWimpIrvVhyHUFU3f8uhfEKYhHNQ==
