@@ -4,10 +4,9 @@ goal_color: 0
 
 # Enemy Color #
 # 0: Blue, 1: Red
-enemy_color: 1
+enemy_color: 0
 
-# Default Barometer Value #
-# Competition Default Value: 99668.2
+# Fake Barometer Value #
 barometer: 99668.2
 
 # Fake Barometer #
