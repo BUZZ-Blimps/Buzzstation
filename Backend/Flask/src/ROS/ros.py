@@ -118,11 +118,6 @@ class Basestation(Node):
         # Barometer Publisher
         self.barometer_subscriber = self.create_subscription(Float64, '/Barometer/reading', self.barometer_callback, 10)
 
-        # # Barometer Reading
-        self.barometer_reading = 0
-        self.barometer_online = False
-        self.barometer_time = time()
-
         # Barometer Reading
         self.barometer_reading = blimp_data.get('barometer')
 
