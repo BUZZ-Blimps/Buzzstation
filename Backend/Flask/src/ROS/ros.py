@@ -116,7 +116,7 @@ class Basestation(Node):
         self.fake_barometer = blimp_data.get('fake_barometer')
 
         # Barometer Publisher
-        self.sub_barometer = self.create_subscription(Float64, 'Barometer/reading', self.barometer_callback, 10)
+        self.barometer_subscriber = self.create_subscription(Float64, '/Barometer/reading', self.barometer_callback, 10)
 
         # # Barometer Reading
         self.barometer_reading = 0
@@ -127,7 +127,7 @@ class Basestation(Node):
         self.barometer_reading = blimp_data.get('barometer')
 
         # Barometer Online
-        self.barometer_online = True
+        self.barometer_online = False
 
         # Barometer Time
         self.barometer_time = time()
@@ -144,12 +144,6 @@ class Basestation(Node):
     def barometer_callback(self, msg):
         self.barometer_time = time()
         self.barometer_reading = msg.data
-        self.barometer_online = True
-
-    # Barometer Callback
-    def barometer_callback(self, msg):
-        self.barometer_reading = msg.data
-        self.barometer_time = time()
         self.barometer_online = True
 
 # ROS 2 Thread
