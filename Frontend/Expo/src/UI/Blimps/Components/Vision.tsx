@@ -1,16 +1,41 @@
 // Vision.tsx
 
 // React and React Native
-import { useState, useEffect } from 'react';
+import { useState, useEffect,useRef } from 'react';
 import { StyleSheet } from 'react-native';
+import ReactHlsPlayer from 'react-hls-player';
 
 // Constants
 import { socket, isIOS, isAndroid, isWeb} from '../../Constants/Constants';
+
+interface CameraStreamProps {
+  name:string // blimp name
+}
+
+const CameraStream :React.FC<CameraStreamProps> = ({ name}) =>  {
+  const playerRef = useRef(null);
+  return (
+    <div>
+      <div>Camera Stream for {name}</div>
+      <ReactHlsPlayer
+        playerRef={playerRef}
+        src="http://192.168.0.200:8888/cam4/video1_stream.m3u8"  // Ensure your URL is a valid m3u8 stream
+        autoPlay={true}
+        controls={true}
+        width="100%"
+        height="auto"
+        hlsConfig={{}}
+      />
+    </div>
+  );
+};
 
 export const useVision = () => {
   
     // Vision Button Colors
     const [visionColors, setVisionColors] = useState<{ [key: string]: string }>({});
+    // Show vision stream state
+    const [showCameraStream, setShowCameraStream] = useState<{ [key: string]: boolean }>({});
   
     // Update Vision Button Color
     useEffect(() => {
@@ -37,7 +62,7 @@ export const useVision = () => {
           }));
 
           // Testing
-          //console.log(`${receivedButtonKey} for ${receivedName} changed to ${receivedButtonColor}`);
+          console.log(`${receivedButtonKey} for ${receivedName} changed to ${receivedButtonColor}`);
         }
 
       };
@@ -62,6 +87,18 @@ export const useVision = () => {
       if (socket) {
         socket.emit('toggle_blimp_button_color', val);
       }
+
+      // Testing
+      console.log("Vision Clicked");
+      setShowCameraStream((prevState) => {
+        // Set only the clicked blimp's vision to true, disable others
+        const newState: { [key: string]: boolean } = {};
+        Object.keys(prevState).forEach((key) => {
+          newState[key] = false; // Turn off all other streams
+        });
+        newState[name] = !prevState[name]; // Toggle only the clicked blimp
+        return newState;
+      });
 
     };
 
@@ -93,6 +130,8 @@ export const useVision = () => {
       visionColors,
       visionButtonStyle,
       handleVisionClick,
+      showCameraStream,
+      CameraStream
     };
 
 };

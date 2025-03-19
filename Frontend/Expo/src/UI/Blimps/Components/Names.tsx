@@ -3,6 +3,7 @@
 // React and React Native
 import { useState, useEffect } from 'react';
 import { StyleSheet } from 'react-native';
+import ReactHlsPlayer from 'react-hls-player';
 
 // Constants
 import { socket, isIOS, isAndroid, isWeb} from '../../Constants/Constants';
@@ -108,8 +109,8 @@ export const useNames = () => {
 
       socket.emit('toggle_name_button', { userID: userID, name: name });
     
-      // Testing
-      //console.log('Blimp ' + name + ' pressed by ' + userID);
+      // // Testing
+      // console.log('Blimp ' + name + ' pressed by ' + userID);
     }
   }
 

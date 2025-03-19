@@ -81,7 +81,7 @@ const BlimpsContainer: React.FC = () => {
   const visionColors = useSelector((state: RootState) => state.app.visionColors);
 
   // Vision Button Style and Click Function
-  const { visionButtonStyle, handleVisionClick } = useVision();
+  const { visionButtonStyle, handleVisionClick,showCameraStream, CameraStream } = useVision();
 
   // Catch Icons
   const catchIcons = useSelector((state: RootState) => state.app.catchIcons);
@@ -135,6 +135,7 @@ const BlimpsContainer: React.FC = () => {
   const checkShootIcon = (name: string): boolean => {
     return shootIcons[name] === true; // Returns true if the name is true, otherwise false
   };
+
 
   return (
     <View style={styles.container}>
@@ -203,10 +204,12 @@ const BlimpsContainer: React.FC = () => {
                 ...modeButtonStyle.button,
                 marginTop: isAndroid || isIOS ? -5 : -10,
                 marginBottom: isAndroid || isIOS ? -5 : 0,
+                width: 130,
             },
           }}
           onPress={() => null}
         />
+
 
         {/* Calibrate Header */}
         <Button
@@ -227,7 +230,7 @@ const BlimpsContainer: React.FC = () => {
         />
 
         {/* Vision Header */}
-        {/* <Button
+        <Button
           blimpName='none'
           buttonKey='none'
           buttonText='Vision'
@@ -241,7 +244,7 @@ const BlimpsContainer: React.FC = () => {
             },
           }}
           onPress={() => null}
-        /> */}
+        />
 
       </View>
       
@@ -269,6 +272,8 @@ const BlimpsContainer: React.FC = () => {
                   resizeMode="contain" // Ensure the image maintains its aspect ratio
                 />
               )}
+
+              
 
               {/* Name Button */}
               <Button 
@@ -321,16 +326,20 @@ const BlimpsContainer: React.FC = () => {
               />
 
               {/* Vision Button */}
-              {/* <Button 
+              <Button 
                 blimpName={name} // Blimp Name
                 buttonKey='vision' // Type of Button
                 buttonColor={visionColors[name] || 'green'} // Button Color (Default: Green)
                 buttonText={visionColors[name] === 'green' ? 'On' : 'Off'} // Text Seen on Button
                 buttonStyle={visionButtonStyle} // Button Style
                 onPress={() => handleVisionClick(name)} // On Press Function
-              /> */}
-
+              />
             </View>
+            {showCameraStream[name] && (
+              <View style={styles.cameraContainer}>
+                <CameraStream name={name} />
+             </View>
+            )}
             
           </View>
         ))
@@ -366,6 +375,12 @@ const styles = StyleSheet.create({
     height: 500/10, // Adjust height to 75% of the parent
     left: isAndroid || isIOS ? '-8.5%' : '-8.5%', // Center horizontally
     pointerEvents: 'none', // Make the image non-clickable
+  },
+  cameraContainer: {
+    marginTop: 5,
+    width: '100%',
+    alignItems: 'center',
+    backgroundColor: 'black', // Optional: gives a background
   },
 });
 

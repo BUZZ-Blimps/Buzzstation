@@ -9,6 +9,7 @@ import { SafeAreaView, StyleSheet } from 'react-native';
 // React Navigation
 import { useFocusEffect, useRoute } from '@react-navigation/native';
 
+
 // Components
 import SidebarMenu from './Components/SidebarMenu';
 import TopButtons from './Components/TopButtons';
@@ -21,6 +22,7 @@ import { disableStyleWarning } from './Functions/DisableStyleWarning';
 
 // Constants
 import {isIOS, isAndroid, isWeb} from '../Constants/Constants';
+
 
 const MainPage: React.FC = () => {
 
