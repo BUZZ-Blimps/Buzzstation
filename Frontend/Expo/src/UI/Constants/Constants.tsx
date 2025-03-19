@@ -6,7 +6,8 @@
 import io from 'socket.io-client';
 
 // Websocket
-export const socket = io(process.env.EXPO_PUBLIC_BACKEND_URL);
+//export const socket = io(process.env.EXPO_PUBLIC_BACKEND_URL);
+export const socket = io("192.168.0.200:5000");
 
 //==== Platform Type ====//
 

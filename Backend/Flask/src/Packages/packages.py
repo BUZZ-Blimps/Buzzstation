@@ -75,6 +75,7 @@ def check_wifi():
     # Check if the current SSID is in the allowed list
     if ssid not in allowed_networks:
         logger.info("Invalid WiFi selected! Must be on one of the allowed networks.")
+        logger.info(f'The Current SSID is: $$${ssid}$$$')
         return False
     else:
         return True

@@ -58,7 +58,10 @@ const MainPage: React.FC = () => {
             <AllBlimpsButtons />
 
           </SafeAreaView>
+
           
+          
+
           <OverlayImage />
         </>
       )}
