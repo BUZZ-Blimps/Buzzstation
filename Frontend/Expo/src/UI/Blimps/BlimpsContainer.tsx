@@ -1,11 +1,11 @@
 // BlimpsContainer.tsx
 
 // React and React Native
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 
 // Constants
-import { socket, isIOS, isAndroid, isWeb} from '../Constants/Constants';
+import { socket, isIOS, isAndroid, isWeb } from '../Constants/Constants';
 
 // Button Component
 import Button from '../Components/Button';
@@ -34,17 +34,17 @@ import { RootState, AppDispatch } from '../Redux/Store';
 import { setCatchIcons, setShootIcons } from '../Redux/States';
 
 const BlimpsContainer: React.FC = () => {
-
   // Redux Dispatch
   const dispatch: AppDispatch = useDispatch();
 
   // Names
   const names = useSelector((state: RootState) => state.app.names);
+  const [prevNamesLength, setPrevNamesLength] = useState(names.length);
 
   // Name Button Colors
   const nameColors = useSelector((state: RootState) => state.app.nameColors);
 
-  // Name Last Hearbeats
+  // Name Last Heartbeats
   const nameLastHeartbeats = useSelector((state: RootState) => state.app.nameLastHeartbeats);
   
   // Name Button Style and Heartbeat and Click Functions
@@ -81,7 +81,7 @@ const BlimpsContainer: React.FC = () => {
   const visionColors = useSelector((state: RootState) => state.app.visionColors);
 
   // Vision Button Style and Click Function
-  const { visionButtonStyle, handleVisionClick,showCameraStream, CameraStream } = useVision();
+  const { visionButtonStyle, handleVisionClick, showCameraStream, CameraStream } = useVision();
 
   // Catch Icons
   const catchIcons = useSelector((state: RootState) => state.app.catchIcons);
@@ -91,42 +91,40 @@ const BlimpsContainer: React.FC = () => {
 
   // Toggle Catch Icons
   useEffect(() => {
-
     const toggleCatchIcon = (data: { name: string; val: boolean }) => {
       const { name: receivedName, val: recievedVal } = data;
-
       dispatch(setCatchIcons({ [receivedName]: recievedVal }));
     };
 
     if (socket) {
       socket.on('toggle_catch_icon', toggleCatchIcon);
-
       return () => {
         socket.off('toggle_catch_icon', toggleCatchIcon);
       };
     }
-
   }, [socket, catchIcons]);
 
   // Toggle Shoot Icons
   useEffect(() => {
-
     const toggleShootIcon = (data: { name: string; val: boolean }) => {
       const { name: receivedName, val: recievedVal } = data;
-
       dispatch(setShootIcons({ [receivedName]: recievedVal }));
-      
     };
 
     if (socket) {
       socket.on('toggle_shoot_icon', toggleShootIcon);
-
       return () => {
         socket.off('toggle_shoot_icon', toggleShootIcon);
       };
     }
-
   }, [socket, shootIcons]);
+
+  // This effect will run when the length of names changes.
+  useEffect(() => {
+    if (names.length !== prevNamesLength) {
+      setPrevNamesLength(names.length);
+    }
+  }, [names]);
 
   const checkCatchIcon = (name: string): boolean => {
     return catchIcons[name] === true; // Returns true if the name is true, otherwise false
@@ -136,11 +134,122 @@ const BlimpsContainer: React.FC = () => {
     return shootIcons[name] === true; // Returns true if the name is true, otherwise false
   };
 
+  // Memoizing the names rendering to avoid unnecessary re-renders
+  const memoizedBlimps = useMemo(() => {
+    return (names.map((name, index) => 
+      <View key={index}>
+        {/* Main Blimp Buttons Row */}
+        <View style={styles.buttonRow}>
+          {/* Catch Icon */}
+          {checkCatchIcon(name) && (
+            <Image
+              source={require('../.././assets/catch_icon.png')}
+              style={styles.icons}
+              resizeMode="contain"
+            />
+          )}
 
+          {/* Shoot Icon */}
+          {checkShootIcon(name) && (
+            <Image
+              source={require('../.././assets/shoot_icon.png')}
+              style={styles.icons}
+              resizeMode="contain"
+            />
+          )}
+
+          {/* Name Button */}
+          <Button
+            blimpName={name}
+            buttonKey='name'
+            buttonColor={nameColors[name] || 'green'}
+            buttonText={name}
+            buttonStyle={nameButtonStyle}
+            buttonHeartbeat={getNormalizedHeartbeat(name)}
+            onPress={() => handleNameClick(name)}
+          />
+
+          {/* State Dropdown */}
+          <Button
+            blimpName={name}
+            buttonKey='state'
+            buttonColor='grey'
+            buttonText={stateValues[name] || 'None'}
+            buttonStyle={stateButtonStyle}
+            onPress={() => null}
+          />
+
+          {/* Catch Counter Button */}
+          <Button
+            blimpName={name}
+            buttonKey='catches'
+            buttonColor='grey'
+            buttonText={catchValues[name] || 'None'}
+            buttonStyle={stateButtonStyle}
+            onPress={() => null}
+          />
+
+          {/* Mode Button */}
+          <Button
+            blimpName={name}
+            buttonKey='mode'
+            buttonColor={modeColors[name] || '#E11C1C'}
+            buttonText={modeColors[name] === 'green' ? 'Auto' : 'Manual'}
+            buttonStyle={modeButtonStyle}
+            onPress={() => handleModeClick(name)}
+          />
+
+          {/* Calibrate Button */}
+          <CalibrateButton
+            blimpName={name}
+            buttonKey='calibrate'
+            buttonColor={calibrateColors[name] || '#E11C1C'}
+            buttonText={calibrateTexts[name] || 'Height: None'}
+            onPress={() => handleCalibrateClick(name)}
+          />
+
+          {/* Vision Button */}
+          <Button
+            blimpName={name}
+            buttonKey='vision'
+            buttonColor={visionColors[name] || 'green'}
+            buttonText={visionColors[name] === 'green' ? 'On' : 'Off'}
+            buttonStyle={visionButtonStyle}
+            onPress={() => handleVisionClick(name)}
+          />
+        </View>
+        
+      </View>
+    ));
+  }, [names, nameColors, catchIcons, shootIcons, stateValues, catchValues, modeColors, calibrateColors, calibrateTexts, visionColors, showCameraStream]);
+
+  
+  const MemoizedCameraStream = useMemo(() => {
+    return (names.map((name, index) => 
+      <View key={index}>
+          {showCameraStream[name] && (
+              <View key={index} style={styles.cameraContainer}>
+                <CameraStream name={name} />
+              </View>
+            )}
+        
+      </View>
+    ));
+  },[names,showCameraStream]);
+  
   return (
-    <View style={styles.container}>
-      {/* Row of 5 Column Header */}
+    <View>
+      <View style = {styles.streamColumn}>
+        
+      {/* Left Column for Streams */}
+      {MemoizedCameraStream}
+       
+        
+      </View>
+
+      <View style={styles.container}>
       <View style={styles.buttonRow}>
+        {/* Header buttons here */}
         
         {/* Blimps Header */}
         <Button
@@ -245,111 +354,15 @@ const BlimpsContainer: React.FC = () => {
           }}
           onPress={() => null}
         />
-
       </View>
-      
-      {names.length > 0 ? (
-        names.map((name, index) => (
-          <View key={index}>
 
-            {/* Main Blimp Buttons Row */}
-            <View style={styles.buttonRow}>
-
-              {/* Catch Icon */}
-              {checkCatchIcon(name) && (
-                <Image
-                  source={require('../.././assets/catch_icon.png')} // Replace with your image path
-                  style={styles.icons} // style
-                  resizeMode="contain" // Ensure the image maintains its aspect ratio
-                />
-              )}
-
-              {/* Shoot Icon */}
-              {checkShootIcon(name) && (
-                <Image
-                  source={require('../.././assets/shoot_icon.png')} // Replace with your image path
-                  style={styles.icons} // style
-                  resizeMode="contain" // Ensure the image maintains its aspect ratio
-                />
-              )}
-
-              
-
-              {/* Name Button */}
-              <Button 
-                blimpName={name} // Blimp Name
-                buttonKey='name' // Type of Button
-                buttonColor={nameColors[name] || 'green'} // Button Color
-                buttonText={name} // Text Seen on Button
-                buttonStyle={nameButtonStyle} // Button Style
-                buttonHeartbeat={getNormalizedHeartbeat(name)} // Pass normalized heartbeat value here
-                onPress={() => handleNameClick(name)} // On Press Function
-              />
-
-              {/* State Dropdown */}
-              <Button 
-                blimpName={name} // Blimp Name
-                buttonKey='state' // Type of Button
-                buttonColor='grey' // Button Color
-                buttonText={stateValues[name] || 'None'} // Text Seen on Button
-                buttonStyle={stateButtonStyle} // Button Style
-                onPress={() => null} // On Press Function
-              />
-
-              {/* Catch Counter Button */}
-              <Button 
-                blimpName={name} // Blimp Name
-                buttonKey='catches' // Type of Button
-                buttonColor='grey' // Button Color
-                buttonText={catchValues[name] || 'None'} // Text Seen on Button
-                buttonStyle={stateButtonStyle} // Button Style
-                onPress={() => null} // On Press Function
-              />
-
-              {/* Mode Button */}
-              <Button 
-                blimpName={name} // Blimp Name
-                buttonKey='mode' // Type of Button
-                buttonColor={modeColors[name] || '#E11C1C'} // Button Color (Default: Red)
-                buttonText={modeColors[name] === 'green' ? 'Auto' : 'Manual'} // Text Seen on Button
-                buttonStyle={modeButtonStyle} // Button Style
-                onPress={() => handleModeClick(name)} // On Press Function
-              />
-
-              {/* Calibrate Button */}
-              <CalibrateButton
-                blimpName={name}
-                buttonKey='calibrate'
-                buttonColor={calibrateColors[name] || '#E11C1C'}
-                buttonText={calibrateTexts[name] || 'Height: None'}
-                onPress={() => handleCalibrateClick(name)}
-              />
-
-              {/* Vision Button */}
-              <Button 
-                blimpName={name} // Blimp Name
-                buttonKey='vision' // Type of Button
-                buttonColor={visionColors[name] || 'green'} // Button Color (Default: Green)
-                buttonText={visionColors[name] === 'green' ? 'On' : 'Off'} // Text Seen on Button
-                buttonStyle={visionButtonStyle} // Button Style
-                onPress={() => handleVisionClick(name)} // On Press Function
-              />
-            </View>
-            {showCameraStream[name] && (
-              <View style={styles.cameraContainer}>
-                <CameraStream name={name} />
-             </View>
-            )}
-            
-          </View>
-        ))
-      ) : (
-        // When no blimps are available, render nothing
-        <View />
-      )}
+      <View>
+        {memoizedBlimps}
+      </View>
     </View>
+    </View>
+    
   );
-
 };
 
 // Blimps Container and Button Row Styles
@@ -358,30 +371,42 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     left: isAndroid || isIOS ? '5%' : '0%',
-    //backgroundColor: 'white', // Use for testing of columns
+    position: 'relative'
   },
   buttonRow: {
-    flexDirection: 'row', // Arrange buttons in a row
+    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: -3,
-    marginBottom: 10, // Space between rows
+    marginBottom: 10,
     marginLeft: isAndroid || isIOS ? -50 : 0,
   },
   icons: {
-    position: 'absolute',
-    zIndex: 1, // Put behind buttons
-    width: 500/10, // Adjust width to 75% of the parent
-    height: 500/10, // Adjust height to 75% of the parent
-    left: isAndroid || isIOS ? '-8.5%' : '-8.5%', // Center horizontally
-    pointerEvents: 'none', // Make the image non-clickable
+    position: 'relative',
+    zIndex: 1,
+    width: 500 / 10,
+    height: 500 / 10,
+    left: isAndroid || isIOS ? '-8.5%' : '-8.5%',
+    pointerEvents: 'none',
   },
   cameraContainer: {
     marginTop: 5,
     width: '100%',
     alignItems: 'center',
-    backgroundColor: 'black', // Optional: gives a background
+    backgroundColor: 'black',
+    position: "relative",
   },
+  streamColumn: {
+    width: '40%', // Adjust width as needed
+    paddingRight: 10,
+    alignItems: 'flex-start', // Left-aligned components in the column
+    flexDirection: 'column', // Stack components vertically
+    transform: 'translateX(-15vw)', // Position outside the normal flow of the container
+    left: 0, // Align to the left outside the container
+    zIndex: 10, // Ensure the stream column is above other elements
+    position: 'absolute',
+  },
+  
 });
 
 export default BlimpsContainer;

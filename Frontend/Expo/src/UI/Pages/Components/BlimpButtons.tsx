@@ -28,6 +28,7 @@ const styles = StyleSheet.create({
     marginTop: '1.75%',
     marginLeft: isAndroid || isIOS ? '10%' : 100,
     right: isAndroid || isIOS ? '4%' : '0%', // Center horizontally
+    position:"relative"
   },
 });
 

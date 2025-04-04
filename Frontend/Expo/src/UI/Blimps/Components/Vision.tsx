@@ -1,7 +1,7 @@
 // Vision.tsx
 
 // React and React Native
-import { useState, useEffect,useRef } from 'react';
+import { useState, useEffect,useRef,useCallback } from 'react';
 import { StyleSheet } from 'react-native';
 import ReactHlsPlayer from 'react-hls-player';
 
@@ -12,14 +12,29 @@ interface CameraStreamProps {
   name:string // blimp name
 }
 
+
+// Map camera names to their HLS stream URLs
+const cameraUrlMap: Record<string, string> = {
+  BurnCream : "http://192.168.0.200:8888/cam1/video1_stream.m3u8",
+  SillyAh: "http://192.168.0.200:8888/cam2/video1_stream.m3u8",
+  Turbo: "http://192.168.0.200:8888/cam3/video1_stream.m3u8",
+  GameChamber: "http://192.168.0.200:8888/cam4/video1_stream.m3u8",
+  GravyLongWay: "http://192.168.0.200:8888/cam5/video1_stream.m3u8",
+  SuperBeef: "http://192.168.0.200:8888/cam6/video1_stream.m3u8",
+};
+
 const CameraStream :React.FC<CameraStreamProps> = ({ name}) =>  {
   const playerRef = useRef(null);
+  const streamUrl = cameraUrlMap[name];
+  if (!streamUrl) {
+    return <div>Camera stream for "{name}" not found.</div>;
+  }
   return (
     <div>
       <div>Camera Stream for {name}</div>
       <ReactHlsPlayer
         playerRef={playerRef}
-        src="http://192.168.0.200:8888/cam4/video1_stream.m3u8"  // Ensure your URL is a valid m3u8 stream
+        src= {streamUrl} //"http://192.168.0.200:8888/cam4/video1_stream.m3u8"  // Ensure your URL is a valid m3u8 stream
         autoPlay={true}
         controls={true}
         width="100%"
@@ -90,15 +105,10 @@ export const useVision = () => {
 
       // Testing
       console.log("Vision Clicked");
-      setShowCameraStream((prevState) => {
-        // Set only the clicked blimp's vision to true, disable others
-        const newState: { [key: string]: boolean } = {};
-        Object.keys(prevState).forEach((key) => {
-          newState[key] = false; // Turn off all other streams
-        });
-        newState[name] = !prevState[name]; // Toggle only the clicked blimp
-        return newState;
-      });
+      setShowCameraStream((prev) => ({
+        ...prev,
+        [name]: !prev[name], // Toggle only the relevant blimp's vision state
+      }));
 
     };
 

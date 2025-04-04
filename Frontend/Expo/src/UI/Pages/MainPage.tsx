@@ -77,11 +77,13 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 20,
     backgroundColor: 'black',
+    position : "relative"
   },
   mainContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     marginTop: -10,
+    position: "relative"
   },
 });
 
