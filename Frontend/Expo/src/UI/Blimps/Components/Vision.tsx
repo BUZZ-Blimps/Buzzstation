@@ -27,14 +27,18 @@ const CameraStream :React.FC<CameraStreamProps> = ({ name}) =>  {
   const playerRef = useRef(null);
   const streamUrl = cameraUrlMap[name];
   if (!streamUrl) {
-    return <div>Camera stream for "{name}" not found.</div>;
+    return (
+      <div style={{ color: 'white' }}>
+        Camera stream for "{name}" not found.
+      </div>
+    );
   }
   return (
-    <div>
+    <div style={{ color: 'white' }}>
       <div>Camera Stream for {name}</div>
       <ReactHlsPlayer
         playerRef={playerRef}
-        src= {streamUrl} //"http://192.168.0.200:8888/cam4/video1_stream.m3u8"  // Ensure your URL is a valid m3u8 stream
+        src={streamUrl}
         autoPlay={true}
         controls={true}
         width="100%"
