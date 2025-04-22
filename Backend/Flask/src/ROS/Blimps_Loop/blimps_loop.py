@@ -54,6 +54,8 @@ def update_blimp_values(current_blimps):
         # Height
         update_blimp_component_value(current_blimps[name], 'height')
 
+        # Battery Status
+        update_blimp_component_value(current_blimps[name], 'battery_status')
         # Vision
         update_blimp_component_color(current_blimps[name], 'vision', 'green', 'red')
 
@@ -94,19 +96,14 @@ def update_blimps():
         logger.info('Blimp Names Changed')
 
     # Update Blimp Values on Frontend and over ROS
-    # update_blimp_values(basestation_node.current_blimps)
-
-    # To-Do: Make this latched by comparing to most recent data if changed #
-    # Blimps Dictionary
-    # blimps_dict = {blimp.name: blimp.to_dict() for blimp in basestation_node.current_blimps.values()}
-
-    # Store each blimp's data in Redis using HMSET
-    # for blimp_name, blimp_data in blimps_dict.items():
-    #     redis_client.hmset(str("blimp:" + blimp_name), blimp_data)
-
-    # End of To-Do #
-
-
-
-    # Update Blimp Values on Frontend and over ROS
     update_blimp_values(basestation_node.current_blimps)
+
+    # Ensure all blimp data is stored in Redis correctly
+    for name, blimp in basestation_node.current_blimps.items():
+        # Get all blimp data as dictionary
+        blimp_data = blimp.to_dict()
+        
+        # Store each field individually to ensure correct format
+        for field, value in blimp_data.items():
+            if value is not None:
+                redis_client.hset(f"blimp:{name}", field, str(value))

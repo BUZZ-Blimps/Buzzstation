@@ -25,6 +25,9 @@ import { useModes } from './Components/Modes'; // Import the useModes hook
 // Calibrate
 import { useCalibrate } from './Components/Calibrate'; // Import the useCalibrate hook
 
+// Battery
+import { useBattery } from './Components/Battery'; // Import the useBattery hook
+
 // Vision
 import { useVision } from './Components/Vision'; // Import the useVision hook
 
@@ -76,6 +79,15 @@ const BlimpsContainer: React.FC = () => {
 
   // Calibrate Button and Click Function
   const { CalibrateButton, handleCalibrateClick } = useCalibrate();
+
+  // Battery Colors
+  const batteryColors = useSelector((state: RootState) => state.app.batteryColors);
+
+  // Battery Texts
+  const batteryTexts = useSelector((state: RootState) => state.app.batteryTexts);
+
+  // Battery Button and Click Function
+  const { BatteryButton, handleBatteryClick } = useBattery();
 
   // Vision Colors
   const visionColors = useSelector((state: RootState) => state.app.visionColors);
@@ -184,9 +196,18 @@ const BlimpsContainer: React.FC = () => {
             blimpName={name}
             buttonKey='catches'
             buttonColor='grey'
-            buttonText={catchValues[name] || 'None'}
+            buttonText={catchValues[name] !== undefined ? String(catchValues[name]) : 'None'}
             buttonStyle={stateButtonStyle}
             onPress={() => null}
+          />
+
+          {/* Battery Button */}
+          <BatteryButton
+            blimpName={name}
+            buttonKey='battery'
+            buttonColor={batteryColors[name] || 'grey'}
+            buttonText={batteryTexts[name] || 'Battery: N/A'}
+            onPress={() => handleBatteryClick(name)}
           />
 
           {/* Mode Button */}
@@ -221,7 +242,7 @@ const BlimpsContainer: React.FC = () => {
         
       </View>
     ));
-  }, [names, nameColors, catchIcons, shootIcons, stateValues, catchValues, modeColors, calibrateColors, calibrateTexts, visionColors, showCameraStream]);
+  }, [names, nameColors, catchIcons, shootIcons, stateValues, catchValues, batteryColors, batteryTexts, modeColors, calibrateColors, calibrateTexts, visionColors, showCameraStream]);
 
   
   const MemoizedCameraStream = useMemo(() => {
@@ -296,6 +317,24 @@ const BlimpsContainer: React.FC = () => {
                 ...catchButtonStyle.button,
                 marginTop: isAndroid || isIOS ? -5 : -10,
                 marginBottom: isAndroid || isIOS ? -5 : 0,
+            },
+          }}
+          onPress={() => null}
+        />
+
+        {/* Battery Header */}
+        <Button
+          blimpName='none'
+          buttonKey='none'
+          buttonText='Battery'
+          buttonColor='black'
+          buttonStyle={{
+            ...modeButtonStyle,
+            button: {
+                ...modeButtonStyle.button,
+                marginTop: isAndroid || isIOS ? -5 : -10,
+                marginBottom: isAndroid || isIOS ? -5 : 0,
+                width: 130,
             },
           }}
           onPress={() => null}

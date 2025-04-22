@@ -16,6 +16,8 @@ interface AppState {
   visionColors: { [key: string]: string };
   catchIcons: { [key: string]: boolean };
   shootIcons: { [key: string]: boolean };
+  batteryColors: { [key: string]: string };
+  batteryTexts: { [key: string]: string };
   goalColor: string;
   enemyColor: string;
   barometerColor: string;
@@ -38,6 +40,8 @@ const initialState: AppState = {
   visionColors: {},
   catchIcons: {},
   shootIcons: {},
+  batteryColors: {},
+  batteryTexts: {},
   goalColor: '',
   enemyColor: '',
   barometerColor: '',
@@ -66,7 +70,7 @@ const appSlice = createSlice({
     setStateValues(state, action: PayloadAction<{ [key: string]: string }>) {
       Object.assign(state.stateValues, action.payload);
     },
-    setCatchValues(state, action: PayloadAction<{ [key: string]: string }>) {
+    setCatchValues(state, action: PayloadAction<{ [key: string]: number }>) {
       Object.assign(state.catchValues, action.payload);
     },
     setModeColors(state, action: PayloadAction<{ [key: string]: string }>) {
@@ -86,6 +90,12 @@ const appSlice = createSlice({
     },
     setShootIcons(state, action: PayloadAction<{ [key: string]: boolean }>) {
       Object.assign(state.shootIcons, action.payload);
+    },
+    setBatteryColors(state, action: PayloadAction<{ [key: string]: string }>) {
+      Object.assign(state.batteryColors, action.payload);
+    },
+    setBatteryTexts(state, action: PayloadAction<{ [key: string]: string }>) {
+      Object.assign(state.batteryTexts, action.payload);
     },
     setGoalColor(state, action: PayloadAction<string>) {
       state.goalColor = action.payload;
@@ -122,6 +132,8 @@ export const {
   setVisionColors,
   setCatchIcons,
   setShootIcons,
+  setBatteryColors,
+  setBatteryTexts,
   setGoalColor,
   setEnemyColor,
   setBarometerColor,

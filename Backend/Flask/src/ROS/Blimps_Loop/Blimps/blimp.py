@@ -113,6 +113,9 @@ class Blimp:
         # Z Velocity
         self.z_velocity = None
 
+        # Battery Status
+        self.battery_status = None
+
         # Vision (False: Off, True: On)
         self.vision = True # Default: True (Initialize Blimp Vision on Startup)
 
@@ -144,6 +147,7 @@ class Blimp:
             'calibrated': self.calibrated,
             'height': self.height,
             'z_velocity': self.z_velocity,
+            'battery_status': self.battery_status,
             'log': self.log,
         }
 
@@ -200,6 +204,12 @@ class Blimp:
     def z_velocity_callback(self, msg):
         self.z_velocity = round(msg.data, 2)
         self.z_velocity = str(f"{self.z_velocity:.2f}") + 'm/s'
+
+    # Battery Status Callback
+    def battery_status_callback(self, msg):
+        voltage = round(msg.data[0], 2)
+        percentage = round(msg.data[1], 2)
+        self.battery_status = f"{voltage},{percentage}"
 
     # Vision Callback
     def vision_callback(self, msg):

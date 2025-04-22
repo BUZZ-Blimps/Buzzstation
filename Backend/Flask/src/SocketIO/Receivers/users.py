@@ -26,6 +26,14 @@ def handle_connect():
     # Get Redis Values upon Connection
     get_redis_values()
 
+# Request for battery status
+@socketio.on('request_battery_status')
+def handle_request_battery():
+    from SocketIO.Senders.redis import get_button_values
+    
+    # Send battery status values to the requesting client
+    get_button_values('battery_status')
+
 # User Inactivity/Disconnection
 @socketio.on('inactive_user')
 def inactive_user(userID):

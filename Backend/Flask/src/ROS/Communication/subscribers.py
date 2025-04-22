@@ -7,7 +7,7 @@ ROS 2 Subscribers for Basestation to recieve data from Blimps.
 
 """
 
-from Packages.packages import Bool, Int64MultiArray, Float64, String
+from Packages.packages import Bool, Int64MultiArray, Float64, Float64MultiArray, String
 
 # Create Subscribers #
 
@@ -29,6 +29,9 @@ def create_subscribers(blimp):
     # Z-Velocity
     blimp.sub_z_velocity = create_sub(blimp, 'z_velocity', 'Float64')
 
+    # Battery Status
+    blimp.sub_battery_status = create_sub(blimp, 'battery_status', 'Float64MultiArray')
+
     # Vision
     blimp.sub_vision = create_sub(blimp, 'vision', 'Bool')
 
@@ -44,6 +47,9 @@ def create_sub(blimp, key, data_type):
     elif key == 'z_velocity':
         if data_type == 'Float64':
             sub = blimp.basestation_node.create_subscription(Float64, f'{blimp.name}/{key}', blimp.z_velocity_callback, 10)
+    elif key == 'battery_status':
+        if data_type == 'Float64MultiArray':
+            sub = blimp.basestation_node.create_subscription(Float64MultiArray, f'{blimp.name}/{key}', blimp.battery_status_callback, 10)
     elif key == 'vision':
         if data_type == 'Bool':
             sub = blimp.basestation_node.create_subscription(Bool, f'{blimp.name}/{key}', blimp.vision_callback, 10)
@@ -78,6 +84,9 @@ def destroy_subscribers(blimp):
 
     # Z-Velocity
     destroy_sub(blimp, 'sub_z_velocity')
+
+    # Battery Status
+    destroy_sub(blimp, 'sub_battery_status')
 
     # Vision
     destroy_sub(blimp, 'sub_vision')

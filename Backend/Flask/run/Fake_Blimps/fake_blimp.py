@@ -2,7 +2,7 @@
 
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Bool, String, Int64, Float64, Float64MultiArray
+from std_msgs.msg import Bool, String, Int64, Float64, Float64MultiArray, Int64MultiArray
 import sys
 import random
 import time
@@ -18,6 +18,7 @@ class Blimp(Node):
 
         # State Machine
         self.state_machine = 0
+        self.catches = 0
 
         # Barometer Reading
         self.barometer_reading = None
@@ -47,7 +48,7 @@ class Blimp(Node):
 
         # State Machine
         if self.name in self.catching_blimp_names:
-            self.pub_state_machine = self.create_publisher(Int64, self.node_name + '/' + 'state_machine', 10)
+            self.pub_state_machine = self.create_publisher(Int64MultiArray, self.node_name + '/' + 'state_machine', 10)
         elif self.name in self.attack_blimp_names:
             self.pub_state_machine = self.create_publisher(Bool, self.node_name + '/' + 'state_machine', 10)
 
@@ -55,6 +56,7 @@ class Blimp(Node):
         self.pub_vision = self.create_publisher(Bool, self.node_name + '/' + 'vision', 10)
         self.pub_height = self.create_publisher(Float64, self.node_name + '/' + 'height', 10)
         self.pub_z_velocity = self.create_publisher(Float64, self.node_name + '/' + 'z_velocity', 10)
+        self.pub_battery_status = self.create_publisher(Float64MultiArray, self.node_name + '/' + 'battery_status', 10)
         self.pub_log = self.create_publisher(String, self.node_name + '/' + 'log', 10)
 
         # Subscribers #
@@ -129,10 +131,13 @@ class Blimp(Node):
 
             if (self.state_machine < 8):
                 self.state_machine = self.state_machine + 1
+                # Occasionally increment catches when state cycles through
+                if self.state_machine == 8 and random.random() > 0.7:
+                    self.catches += 1
             else:
                 self.state_machine = 0
 
-            print(self.state_dict[self.state_machine])
+            print(f"State: {self.state_dict[self.state_machine]}, Catches: {self.catches}")
 
             self.publish_catching_blimp_state_machine()
 
@@ -147,8 +152,8 @@ class Blimp(Node):
         self.pub_heartbeat.publish(msg)
 
     def publish_catching_blimp_state_machine(self):
-        msg = Int64()
-        msg.data = self.state_machine
+        msg = Int64MultiArray()
+        msg.data = [self.state_machine, self.catches]
         self.pub_state_machine.publish(msg)
 
     def publish_attack_blimp_state_machine(self):
@@ -162,19 +167,30 @@ class Blimp(Node):
         self.pub_vision.publish(msg)
 
     def data_loop(self):
+        # Height data
         self.height = 30 * random.random() - 15
-        #self.height = 20 * random.random() - 10
-        #self.height = 10 * random.random()
-        self.z_velocity = 5*random.random()
+        self.z_velocity = 5 * random.random()
 
+        # Battery data - simulate a battery between 7.0-8.0V and 0-100% charge
+        battery_voltage = 7.0 + (1.0 * random.random())  # voltage between 7.0-8.0V
+        battery_percentage = random.randint(20, 100)  # percentage between 20-100%
+
+        # Create messages
         self.height_msg = Float64()
         self.height_msg.data = self.height
 
         self.z_velocity_msg = Float64()
         self.z_velocity_msg.data = self.z_velocity
 
+        self.battery_msg = Float64MultiArray()
+        self.battery_msg.data = [battery_voltage, float(battery_percentage)]
+        print(f"DEBUG: Fake blimp {self.name} publishing battery status: {battery_voltage:.2f}V, {battery_percentage}%")
+
+        # Publish messages
         self.pub_height.publish(self.height_msg)
         self.pub_z_velocity.publish(self.z_velocity_msg)
+        self.pub_battery_status.publish(self.battery_msg)
+        print(f"DEBUG: Published battery status message for {self.name}")
 
     # Subscribers #
 

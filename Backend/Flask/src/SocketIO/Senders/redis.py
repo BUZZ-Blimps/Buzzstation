@@ -68,6 +68,9 @@ def get_redis_values():
     # Height Values
     get_button_values('height')
 
+    # Battery Status Values
+    get_button_values('battery_status')
+
     # Vision Button Colors
     get_vision_button_colors()
 
@@ -100,8 +103,21 @@ def get_button_values(component):
     for name in current_names.split(','):
         if redis_client.hget(str('blimp:' + name), component) is not None:
             current_component_value = redis_client.hget(str('blimp:' + name), component).decode('utf-8')
+            
+            # Debug battery status specifically
+            if component == 'battery_status':
+                print(f"DEBUG: Found battery status in Redis for {name}: {current_component_value}")
+            
             # Send Update to Frontend
             socketio.emit('update_button_value', {'name': name, 'key': component, 'value': current_component_value})
+            
+            # Debug emission for battery status
+            if component == 'battery_status':
+                print(f"DEBUG: Emitted battery status socketio event for {name}")
+        else:
+            # Debug missing component
+            if component == 'battery_status':
+                print(f"DEBUG: No battery_status found in Redis for blimp:{name}")
 
 # Get Current Blimp Names
 def get_names():
