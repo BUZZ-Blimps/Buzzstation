@@ -2,7 +2,7 @@
 
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Bool, String, Int64, Float64, Float64MultiArray, Int64MultiArray
+from std_msgs.msg import Bool, String, Int64, Float64, Float32MultiArray, Float64MultiArray, Int64MultiArray
 import sys
 import random
 import time

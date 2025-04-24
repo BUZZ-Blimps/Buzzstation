@@ -17,6 +17,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../../Redux/Store';
 import { setNames, setNameColors, setNameLastHeartbeats } from '../../Redux/States';
 
+const stringMap = {
+  "BurnCream" : "1. BurnCream",
+  "SillyAh" : "2. SillyAh",
+  "Turbo" : "3. Turbo",
+  "GameChamber" : "4. GameChamber",
+  "GravyLongWay" : "5. GravyLongWay",
+  "SuperBeef" : "6. SuperBeef"
+};
+
 export const useNames = () => {
 
   // Redux Dispatch
@@ -40,7 +49,10 @@ export const useNames = () => {
     // Define the event handler for 'update_names'
     const handleUpdateNames = (data: string[]) => {
       if (data[0] !== '') {
-        dispatch(setNames(data)); // Update state with new names list
+
+        const modified_data = data.map((item, index) => stringMap[item]);
+
+        dispatch(setNames(modified_data)); // Update state with new names list
       } else {
         dispatch(setNames([])); // If no data, set to empty array
       }
