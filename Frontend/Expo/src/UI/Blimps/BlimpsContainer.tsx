@@ -36,6 +36,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../Redux/Store';
 import { setCatchIcons, setShootIcons } from '../Redux/States';
 
+const nameToNumber = {
+   "BurnCream" : "1",
+   "SillyAh" : "2",
+   "Turbo" : "3",
+   "GameChamber" : "4",
+   "GravyLongWay" : "5",
+   "SuperBeef" : "6"
+ };
+
 const BlimpsContainer: React.FC = () => {
   // Redux Dispatch
   const dispatch: AppDispatch = useDispatch();
@@ -170,6 +179,15 @@ const BlimpsContainer: React.FC = () => {
             />
           )}
 
+          <Button 
+            blimpName='none'
+            buttonKey='none'
+            buttonText={nameToNumber[name]}
+            buttonColor='black'
+            buttonStyle={nameButtonStyle}
+            onPress={() => null}
+          />
+
           {/* Name Button */}
           <Button
             blimpName={name}
@@ -265,18 +283,33 @@ const BlimpsContainer: React.FC = () => {
       {/* Left Column for Streams */}
       {MemoizedCameraStream}
        
-        
       </View>
 
       <View style={styles.container}>
       <View style={styles.buttonRow}>
         {/* Header buttons here */}
         
+        <Button
+          blimpName='none'
+          buttonKey='none'
+          buttonText='Blimp Number'
+          buttonColor='black'
+          buttonStyle={{
+            ...modeButtonStyle,
+            button: {
+                ...modeButtonStyle.button,
+                marginTop: isAndroid || isIOS ? -5 : -10,
+                marginBottom: isAndroid || isIOS ? -5 : 0,
+            },
+          }}
+          onPress={() => null}
+        />
+
         {/* Blimps Header */}
         <Button
           blimpName='none'
           buttonKey='none'
-          buttonText='Blimps'
+          buttonText='Blimp Name'
           buttonColor='black'
           buttonStyle={{
             ...modeButtonStyle,
