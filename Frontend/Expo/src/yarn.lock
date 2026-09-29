@@ -6193,11 +6193,6 @@ react-freeze@^1.0.0:
   resolved "https://registry.yarnpkg.com/react-freeze/-/react-freeze-1.0.4.tgz#cbbea2762b0368b05cbe407ddc9d518c57c6f3ad"
   integrity sha512-r4F0Sec0BLxWicc7HEyo2x3/2icUTrRmDjaaRyzzn+7aDyFZliszMDOgLVwSnQnYENOlL1o569Ze2HZefk8clA==
 
-react-gamepads@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/react-gamepads/-/react-gamepads-1.0.0.tgz#72373c6bd332e0c42bb2d1584413d71fdb34f5da"
-  integrity sha512-jfmIBHI1EgjhEUOGTYnrzfhM6fV75d/rZAEuG90fwYBJ2mP2z+Z42UoodXa3OD00q9zGFeQCESlSY20UjAIGzA==
-
 react-hls-player@^3.0.7:
   version "3.0.7"
   resolved "https://registry.yarnpkg.com/react-hls-player/-/react-hls-player-3.0.7.tgz#1f66f55c2a5dc1fa6441ddc47b7c892079a276cf"

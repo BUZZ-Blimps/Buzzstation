@@ -26,7 +26,6 @@
     "expo-updates": "~0.25.27",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-gamepads": "^1.0.0",
     "react-hls-player": "^3.0.7",
     "react-native": "0.74.5",
     "react-native-gesture-handler": "~2.16.1",

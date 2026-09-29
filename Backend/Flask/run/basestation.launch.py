@@ -11,7 +11,8 @@ def generate_launch_description():
             executable='joy_node',
             name='joy_node',
             parameters=[
-                {'dev': '/dev/input/js0'},
+                {'device_id': 0},
+                {'deadzone': 0.1},
                 {'coalesce_interval_ms': 10},
                 {'autorepeat_rate': 20.0}
             ],

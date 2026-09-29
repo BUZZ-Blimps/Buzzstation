@@ -65,7 +65,7 @@ export const useNames = () => {
       const { userID: receivedUserID, name: receivedName } = val;
 
       let newColor = '#E11C1C'; // Default color for other users // red
-      if (receivedUserID === userID) {
+      if (receivedUserID === userID || receivedUserID === 'joy') {
         newColor = '#006FFF'; // Color for the current user // blue
       } else if (receivedUserID === 'none') {
         newColor = 'green'; // Color for all users if userID is 'none' // green

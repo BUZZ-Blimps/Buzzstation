@@ -1,7 +1,7 @@
 // Controller.tsx
 
 // React
-import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
+import React, { useEffect } from 'react';
 
 // React Native
 import { View, Pressable, StyleSheet } from 'react-native';
@@ -10,18 +10,14 @@ import { View, Pressable, StyleSheet } from 'react-native';
 import Animated, { Easing, useSharedValue, withTiming, useAnimatedStyle } from 'react-native-reanimated';
 
 // Constants
-import { socket, isIOS, isAndroid, isWeb } from '../Constants/Constants';
-
-// User ID
-import { getUserID } from '../Users/UserManager';
+import { socket, isIOS, isAndroid } from '../Constants/Constants';
 
 // Redux
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../Redux/Store';
 import { setSidebarMenuState } from '../Redux/States'; 
 
-// Gamepads
-import { useGamepads } from "react-gamepads";
+// Controller input is read by the Backend over ROS (joy_node), this component only displays it
 
 interface ButtonProps {
     blimpName: string; // Name of the blimp
@@ -33,7 +29,6 @@ interface ButtonProps {
 const Controller: React.FC<ButtonProps> = ({ blimpName, buttonKey, buttonColor, onPress }) => {
     const dispatch = useDispatch();
     const sidebarMenuState = useSelector((state: RootState) => state.app.sidebarMenuState);
-    const { userID } = getUserID();
 
     // Dot Values
     const leftDotX = useSharedValue(50);
@@ -41,110 +36,38 @@ const Controller: React.FC<ButtonProps> = ({ blimpName, buttonKey, buttonColor, 
     const rightDotX = useSharedValue(50);
     const rightDotY = useSharedValue(50);
 
-    // Names and Colors
-    const names = useSelector((state: RootState) => state.app.names);
-    const nameColors = useSelector((state: RootState) => state.app.nameColors);
-
-    // Axes and Button States
-    const prevAxesRef = useRef([0, 0, 0, 0]);
-    const [buttonStates, setButtonStates] = useState<{ [key: string]: boolean }>({});
-    const prevButtonStatesRef = useRef<{ [key: string]: boolean }>({});
-
-    // GamePads
-    const [gamepads, setGamepads] = useState<{ [index: number]: Gamepad }>({});
-    if (isWeb) useGamepads((gamepads) => setGamepads(gamepads));
-    const firstGamepad = Object.values(gamepads)[0];
-
-    // Memoized blimp names
-    const blimpNames = useMemo(() => names.filter((name) => nameColors[name] === '#006FFF'), [names, nameColors]);
-
-    // Helper function to emit socket events
-    const emitSocketEvent = (event: string, payload: Record<string, any>) => {
-        // Testing
-        // Send timestamp to Backend
-        // const timestamp = Date.now(); // Add a timestamp in milliseconds
-        // console.log(timestamp);
-        // if (socket) socket.emit(event, { ...payload, timestamp });
-        if (socket) socket.emit(event, payload);
-    };
-
-    // Update Buttons
-    const updateButtons = useCallback((gamepad: Gamepad) => {
-        const newButtonStates = gamepad.buttons.reduce((acc, button, index) => {
-            acc[`button${index}`] = button.pressed;
-            return acc;
-        }, {} as { [key: string]: boolean });
-
-        const prevButtonStates = prevButtonStatesRef.current;
-        let stateChanged = false;
-
-        // Handle state changes
-        for (const key in newButtonStates) {
-            if (prevButtonStates[key] !== newButtonStates[key]) {
-                stateChanged = true;
-
-                if (prevButtonStates[key] && !newButtonStates[key]) {
-                    const count = blimpNames.reduce((count, name) => {
-                        const val = { name, button: key, userID: String(userID) };
-                        emitSocketEvent('blimp_button', val);
-
-                        if (val.button === 'button8') onPress();
-                        if (val.button === 'button9') dispatch(setSidebarMenuState(!sidebarMenuState));
-
-                        return count + 1;
-                    }, 0);
-
-                    // Handle non-blimp buttons if no blimps are connected
-                    if (count === 0) {
-                        const val = { button: key, userID: String(userID) };
-                        if (val.button === 'button8') onPress();
-                        if (val.button === 'button9') dispatch(setSidebarMenuState(!sidebarMenuState));
-                        emitSocketEvent('nonblimp_button', val);
-                    }
-                }
-            }
-        }
-
-        if (stateChanged) {
-            setButtonStates((prev) => ({ ...prev, ...newButtonStates }));
-            prevButtonStatesRef.current = newButtonStates;
-        }
-    }, [socket, blimpNames, userID, onPress, dispatch, sidebarMenuState]);
-
-    // Update Joysticks
-    const updateJoysticks = useCallback((gamepad: Gamepad) => {
-
-        const { axes } = gamepad;
-        const deadZone = 0.1;
-
-        const deadZoneApplied = (value: number) => (Math.abs(value) < deadZone ? 0 : value);
-        const clampedAxes = axes.map((axis) => parseFloat(deadZoneApplied(axis).toFixed(2)));
-
-        const prevAxes = prevAxesRef.current;
-        const axesChanged = !clampedAxes.every((value, index) => value === prevAxes[index]);
-
-        if (axesChanged) {
-            prevAxesRef.current = clampedAxes;
-            blimpNames.forEach((name) => {
-                const val = { name, axes: clampedAxes };
-                emitSocketEvent('motor_command', val);
-            });
-
-            // Animate the values
-            [leftDotX, leftDotY, rightDotX, rightDotY].forEach((dot, index) => {
-                dot.value = withTiming(50 + clampedAxes[index] * 45, { duration: 0, easing: Easing.linear });
-            });
-        }
-
-    }, [socket, blimpNames]);
-
-    // Joystick and Button Inputs
+    // Motor Commands from Backend ([Left X, Left Y, Right X, Right Y], Right and Up are positive)
     useEffect(() => {
-        if (firstGamepad) {
-            updateJoysticks(firstGamepad);
-            updateButtons(firstGamepad);
+        const motorCommandsHandler = (axes: number[]) => {
+            const [leftX, leftY, rightX, rightY] = axes;
+            leftDotX.value = withTiming(50 + leftX * 45, { duration: 0, easing: Easing.linear });
+            leftDotY.value = withTiming(50 - leftY * 45, { duration: 0, easing: Easing.linear });
+            rightDotX.value = withTiming(50 + rightX * 45, { duration: 0, easing: Easing.linear });
+            rightDotY.value = withTiming(50 - rightY * 45, { duration: 0, easing: Easing.linear });
+        };
+
+        if (socket) {
+            socket.on('motor_commands', motorCommandsHandler);
+            return () => {
+                socket.off('motor_commands', motorCommandsHandler);
+            };
         }
-    }, [firstGamepad, updateJoysticks, updateButtons]);
+    }, [socket]);
+
+    // Controller View and Menu Buttons
+    useEffect(() => {
+        const toggleOverlayImageHandler = () => onPress();
+        const toggleSidebarMenuHandler = () => dispatch(setSidebarMenuState(!sidebarMenuState));
+
+        if (socket) {
+            socket.on('toggle_overlay_image', toggleOverlayImageHandler);
+            socket.on('toggle_sidebar_menu', toggleSidebarMenuHandler);
+            return () => {
+                socket.off('toggle_overlay_image', toggleOverlayImageHandler);
+                socket.off('toggle_sidebar_menu', toggleSidebarMenuHandler);
+            };
+        }
+    }, [socket, onPress, dispatch, sidebarMenuState]);
 
     // Left Dot Animation
     const leftDotStyle = useAnimatedStyle(() => ({
@@ -157,28 +80,6 @@ const Controller: React.FC<ButtonProps> = ({ blimpName, buttonKey, buttonColor, 
         left: rightDotX.value,
         top: rightDotY.value,
     }));
-
-    // User ID Reference
-    const userIDRef = useRef(userID);
-    useEffect(() => {
-        userIDRef.current = userID;
-    }, [userID]);
-
-    // Reload Page
-    useEffect(() => {
-      const reloadPageHandler = (receivedUserID: string) => {
-          if (isWeb && userIDRef.current === receivedUserID) {
-              window.location.reload();
-          }
-      };
-
-      if (socket) {
-          socket.on('reload_page', reloadPageHandler);
-          return () => {
-              socket.off('reload_page', reloadPageHandler);
-          };
-      }
-    }, [socket]);
 
     return (
         <Pressable style={styles.button} onPress={onPress}>

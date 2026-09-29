@@ -1,11 +1,10 @@
-# ========== Controller ========== #
+# ========== Joy Buttons ========== #
 
 """
 Description:
 
-SocketIO controller events are handled here. This include motor commands 
-and controller button releases for when the user is connected or not 
-connected to a blimp.
+Controller button releases from ROS Joy (ros_joy.py) are handled here,
+for when the controller is connected or not connected to a blimp.
 
 """
 
@@ -16,58 +15,12 @@ from Packages.packages import *
 from rclpy.logging import get_logger
 logger = get_logger('Basestation')
 
-# Get Blimp Motor Command
-@socketio.on('motor_command')
-def get_blimp_motor_command(val):
-
-    # Testing 
-    # SocketIO Emit and Recieve Time
-    #import time
-    #frontend_timestamp = val.get('timestamp')
-    #logger.info('Frontend Time:' + str(frontend_timestamp))
-    #backend_timestamp = int(time.time() * 1000) # Current time in milliseconds
-    #logger.info('Backend Time:' + str(backend_timestamp))
-    #if frontend_timestamp:
-        #latency = backend_timestamp - frontend_timestamp
-        #logger.info(f"Latency from frontend to backend: {latency} ms")
-
-    from ROS.ros import basestation_node
-    from ROS.Communication.publishers import publish_generic
-    from SocketIO.socketio import name_button_colors
-
-    # Retrieve Blimp Name and Key
-    name = val['name']
-    axes = val['axes']
-
-    axes[0] = float(axes[0])
-    axes[1] = float(axes[1] * -1) # Invert
-    axes[2] = float(axes[2])
-    axes[3] = float(axes[3] * -1) # Invert
-
-    if name in basestation_node.current_blimp_names and name in name_button_colors:
-
-        if hasattr(basestation_node.current_blimps[name], 'motor_commands'):
-
-            if basestation_node.current_blimps[name].mode is False:
-
-                # Change the Value of the Motor Commands for the Specific Blimp Name
-                setattr(basestation_node.current_blimps[name], 'motor_commands', axes)
-
-                # Set Motor Commands Updated to False (Not Used Currently)
-                setattr(basestation_node.current_blimps[name], 'motor_commands_updated', False)
-
-# Get Blimp Button Release
-@socketio.on('blimp_button')
-def get_blimp_button_release(val):
+# Handle Blimp Button Release
+def handle_blimp_button(name, button, userID):
     from ROS.ros import basestation_node
     from ROS.Communication.publishers import publish_generic
     from SocketIO.socketio import name_button_colors
     from SocketIO.Receivers.buttons import toggle_blimp_calibrate_button_color
-
-    # Retrieve Blimp Name, Key, and User ID
-    name = val['name']
-    button = val['button']
-    userID = val['userID']
 
     if name not in basestation_node.current_blimp_names:
         return
@@ -449,16 +402,11 @@ def get_blimp_button_release(val):
         # Simulate sending the SIGINT signal to the current process
         os.kill(os.getpid(), signal.SIGINT)
 
-# Get Nonblimp Button Release
-@socketio.on('nonblimp_button')
-def get_nonblimp_button_release(val):
+# Handle Nonblimp Button Release
+def handle_nonblimp_button(button, userID):
     from ROS.ros import basestation_node
     from ROS.Communication.publishers import publish_generic
     from SocketIO.socketio import name_button_colors
-
-    # Retrieve Key and User ID
-    button = val['button']
-    userID = val['userID']
 
     # A
     if button == 'button0':

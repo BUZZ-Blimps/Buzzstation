@@ -15,4 +15,6 @@ barometer: 99668.2
 fake_barometer: false
 
 # ROS Joy #
-ros_joy: false
+# Controller input from joy_node (Used to pilot blimps)
+# Default: True
+ros_joy: true

@@ -9,7 +9,8 @@ Data is sent to the Frontend Server to update every device's UI.
 SocketIO Event Types:
 - User
 - Button
-- Controller
+
+Controller input is received over ROS (see ROS/Joy/ros_joy.py).
 
 """
 
@@ -25,9 +26,6 @@ import SocketIO.Receivers.users
 
 # Button Events
 import SocketIO.Receivers.buttons
-
-# Controller Events
-import SocketIO.Receivers.controller
 
 # Start Backend Server
 def start_backend_server(host, port):

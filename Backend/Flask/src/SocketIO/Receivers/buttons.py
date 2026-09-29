@@ -19,10 +19,13 @@ logger = get_logger('Basestation')
 def toggle_name_button(val):
     from SocketIO.socketio import name_button_colors
     from ROS.ros import basestation_node
+    from ROS.Joy.ros_joy import JOY_USER_ID
 
-    # Retrieve Blimp Name and UserID
+    # Retrieve Blimp Name
     name = val['name']
-    userID = val['userID']
+
+    # Blimps are piloted by the Basestation Controller (ROS Joy), not the User that clicked
+    userID = JOY_USER_ID
 
     # Turn on Piloting for Specified User (Connect to Blimp)
     if name not in name_button_colors:
